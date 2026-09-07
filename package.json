@@ -1,0 +1,15 @@
+{
+  "name": "ic-pathway",
+  "version": "1.0.0",
+  "private": true,
+  "description": "An English digital IC classroom from logic foundations to Verilog, simulation, VCS, and DC synthesis.",
+  "license": "MIT",
+  "engines": {"node": ">=20"},
+  "scripts": {
+    "start": "python3 -m http.server 8000 --directory dist",
+    "test": "node tests/validate.mjs",
+    "test:hdl": "python3 tests/hdl.py",
+    "package:lab": "python3 tools/package_lab.py",
+    "check:lab": "python3 tools/package_lab.py --check"
+  }
+}

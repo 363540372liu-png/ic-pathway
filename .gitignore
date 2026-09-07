@@ -1,0 +1,15 @@
+lab/work/
+__pycache__/
+*.pyc
+.openai/
+.env
+.env.*
+node_modules/
+.DS_Store
+*.vcd
+*.fsdb
+*.log
+*.db
+*.ddc
+*.lib
+simv*

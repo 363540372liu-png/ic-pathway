@@ -1,0 +1,28 @@
+name: Checks
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Validate course, models, progress, and assets
+        run: node tests/validate.mjs
+      - name: Verify the lab archive is current
+        run: python3 tools/package_lab.py --check
+      - name: Install Icarus Verilog
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y iverilog
+      - name: Run actual HDL and defect-rejection checks
+        run: python3 tests/hdl.py

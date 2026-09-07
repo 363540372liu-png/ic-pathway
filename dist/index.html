@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#14252e">
+  <meta name="description" content="Learn digital logic, Verilog, simulation, VCS, and Design Compiler through a small reproducible digital IC project.">
+  <title>IC Pathway · Digital IC Classroom</title>
+  <link rel="stylesheet" href="./style.css">
+  <script src="./curriculum.js" defer></script>
+  <script src="./models.js" defer></script>
+  <script src="./progress.js" defer></script>
+  <script src="./app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#lesson">Skip to lesson content</a>
+  <header class="topbar">
+    <button id="menu-button" class="icon-button" aria-label="Open course navigation" aria-controls="sidebar" aria-expanded="false">☰</button>
+    <a href="#bits" class="brand"><span class="brand-mark" aria-hidden="true">01</span><span>IC Pathway <small>Digital IC Classroom</small></span></a>
+    <div class="top-caption">From your first bit to your first netlist</div>
+    <span class="edition">Beginner course · English</span>
+  </header>
+  <div class="app-shell">
+    <aside id="sidebar" class="sidebar" aria-label="Course navigation">
+      <div class="sidebar-heading"><span>Learning path</span><span id="overall-count">0 / 24</span></div>
+      <progress id="overall-progress" max="24" value="0" aria-label="Course completion progress"></progress>
+      <p class="local-note">Progress stays in this browser</p>
+      <nav id="course-nav" aria-label="Choose a lesson"></nav>
+      <div class="progress-tools"><button id="export-progress" class="quiet-button">Export progress</button><button id="import-button" class="quiet-button">Import progress</button><input id="import-progress" type="file" accept="application/json,.json" hidden></div>
+    </aside>
+    <button class="sidebar-backdrop" id="sidebar-backdrop" aria-label="Close course navigation" hidden></button>
+    <main id="main">
+      <div class="pathbar" id="pathbar" aria-label="Learning stages"></div>
+      <article id="lesson" tabindex="-1"><p>Loading the course…</p></article>
+      <footer class="site-footer">Scope: digital logic, RTL design, functional simulation, and basic synthesis. VCS/DC practice requires a licensed environment.<span>Reference review: September 2026</span></footer>
+    </main>
+  </div>
+  <div id="toast" role="status" aria-live="polite"></div>
+  <noscript><p class="noscript">Enable JavaScript to display lessons, teaching models, and exercise feedback.</p></noscript>
+</body>
+</html>
