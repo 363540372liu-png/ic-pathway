@@ -135,6 +135,7 @@ function walk(directory) {
   return readdirSync(directory, {withFileTypes: true}).flatMap(entry => {
     if (['.git', 'node_modules', '__pycache__', 'work'].includes(entry.name)) return [];
     const path = join(directory, entry.name);
+    if (relative(root, path) === 'cloud/dist') return [];
     return entry.isDirectory() ? walk(path) : [path];
   });
 }
@@ -142,7 +143,8 @@ const files = walk(root);
 
 check('JavaScript and shell/Python source syntax', () => {
   for (const path of files.filter(path => extname(path) === '.js')) {
-    new vm.Script(readFileSync(path, 'utf8'), {filename: relative(root, path)});
+    if (relative(root, path).startsWith('cloud/')) execFileSync(process.execPath, ['--check', path], {stdio: 'pipe'});
+    else new vm.Script(readFileSync(path, 'utf8'), {filename: relative(root, path)});
   }
   for (const path of files.filter(path => extname(path) === '.sh')) {
     execFileSync('bash', ['-n', path], {stdio: 'pipe'});
@@ -187,9 +189,11 @@ check('English shipped text and exclusion of private hosting data', () => {
   for (const path of files) {
     if (extname(path) === '.zip') continue;
     const contents = readFileSync(path, 'utf8');
-    assert.doesNotMatch(contents, /\p{Script=Han}/u, `Non-English text in ${relative(root, path)}`);
+    const name = relative(root, path);
+    const originalEnglish = /^(dist|docs|lab)\//.test(name) || ['LICENSE', 'NOTICE.md', 'CONTRIBUTING.md'].includes(name);
+    if (originalEnglish) assert.doesNotMatch(contents, /\p{Script=Han}/u, `Non-English text in ${name}`);
     assert.doesNotMatch(contents, /appgprj_[0-9a-f]{8,}/i, `Private project ID in ${relative(root, path)}`);
-    assert.doesNotMatch(contents, /https:\/\/[a-z0-9.-]*chatgpt\.site/i, `Private host in ${relative(root, path)}`);
+    if (originalEnglish) assert.doesNotMatch(contents, /https:\/\/[a-z0-9.-]*chatgpt\.site/i, `Unexpected host in English edition: ${name}`);
     assert.doesNotMatch(contents, /gh[pousr]_[a-zA-Z0-9]{30,}/, `Credential-like string in ${relative(root, path)}`);
     assert.doesNotMatch(contents, /-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/);
   }

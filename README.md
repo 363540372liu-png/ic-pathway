@@ -1,3 +1,43 @@
+# IC Pathway · v2.0.0
+
+**芯路 · 数字 IC 学习室：中文云端版现已加入本仓库。**
+
+[打开中文云端学习室](https://ic-pathway.tangy-field-2945.chatgpt.site) · [云端版源码与运行说明](cloud/README.md) · [版本记录](CHANGELOG.md)
+
+## v2.0.0 — 云端进度与 Ultra 阶段检验
+
+- 使用 ChatGPT 账号登录，跨设备同步进度、练习解答和检验记录。
+- 24 课全部补充细致讲解、代码示例、逐步推演与易错点。
+- 每课新增一道代码实践题和两道选择题，附参考解答与自查要点。
+- 第 4、8、10、14、17、21、24 课后提供 7 个 Ultra 检验阶段，分别记录概念成绩与实践自查。
+- 保留旧进度迁移、离线待同步草稿、并发冲突处理与导出备份。
+
+首次迁移请在原来学习的浏览器中打开云端网站并登录。网页不会把保存代码或自查打勾当作 Verilog 仿真通过。
+
+## Repository layout and validation
+
+| Path | Edition / purpose |
+| --- | --- |
+| `cloud/` | Complete v2.0.0 Chinese cloud classroom source, Worker API, D1 schema/migrations, tests and build tooling |
+| `dist/` | Original English static classroom, preserved for GitHub Pages and local reading |
+| `lab/`, `docs/`, `tests/` | Original English lab, guides and validation tools |
+
+With Node.js 24 or later:
+
+```sh
+npm run build:cloud
+npm run test:cloud
+npm test
+```
+
+The cloud build uses only Node built-ins; dependency installation is not needed to build or run its checked-in tests. Install dependencies inside `cloud/` only when maintaining the Drizzle schema tooling. Generated output is `cloud/dist/server/index.js` with hosting metadata and migrations.
+
+**Hosting distinction:** GitHub stores the source; GitHub Pages serves only the original static edition. ChatGPT authentication and persistent progress require the existing Sites hosting runtime and D1 binding. Publishing the cloud folder to GitHub Pages alone does not provide these services. The Worker trusts identity headers supplied by Sites and must not be exposed on an untrusted standalone origin without equivalent authentication. The published source omits the checkout-specific project ID; deploying a copy requires its own registered hosting identity.
+
+The existing English edition and documentation follow below.
+
+---
+
 # IC Pathway
 
 **An open-source, English-language classroom for learning the digital IC front-end flow from first principles.**

@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#14252e">
+  <meta name="description" content="从数字电路基础开始，学习 Verilog、仿真测试、VCS 和 Design Compiler，用一个真实的小项目串起数字 IC 前端流程。">
+  <title>芯路 · 数字 IC 学习室</title>
+  <link rel="stylesheet" href="/style.css">
+  <script src="/curriculum.js" defer></script>
+  <script src="/enrichment.js" defer></script>
+  <script src="/ultra.js" defer></script>
+  <script src="/sync.js" defer></script>
+  <script src="/models.js" defer></script>
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#lesson">跳到课程内容</a>
+  <header class="topbar">
+    <button id="menu-button" class="icon-button" aria-label="打开课程目录" aria-controls="sidebar" aria-expanded="false">☰</button>
+    <a href="#bits" class="brand"><span class="brand-mark" aria-hidden="true">01</span><span>芯路 <small>数字 IC 学习室</small></span></a>
+    <div class="top-caption">从第一位二进制，到第一次综合</div>
+    <div id="account" class="account">正在确认账号…</div>
+  </header>
+  <div class="app-shell">
+    <aside id="sidebar" class="sidebar" aria-label="课程目录">
+      <div class="sidebar-heading"><span>学习路径</span><span id="overall-count">0 / 24</span></div>
+      <progress id="overall-progress" max="24" value="0" aria-label="课程完成进度"></progress>
+      <p class="local-note" role="status">正在载入进度…</p><button id="sync-retry" class="quiet-button">重试同步</button>
+      <nav id="course-nav" aria-label="选择课程"></nav>
+      <div class="progress-tools"><button id="export-progress" class="quiet-button">导出进度</button><button id="import-button" class="quiet-button">导入进度</button><input id="import-progress" type="file" accept="application/json,.json" hidden></div>
+    </aside>
+    <button class="sidebar-backdrop" id="sidebar-backdrop" aria-label="关闭课程目录" hidden></button>
+    <main id="main">
+      <section id="sync-conflict" class="exercise-card" role="alert" hidden></section>
+      <div class="pathbar" id="pathbar" aria-label="学习阶段"></div>
+      <article id="lesson" tabindex="-1"><p>正在载入课程…</p></article>
+      <footer class="site-footer">课程范围：数字电路基础、RTL 设计、功能仿真与基础逻辑综合。VCS / DC 实操需学校授权环境。<span>资料核对：2026 年 9 月</span></footer>
+    </main>
+  </div>
+  <div id="toast" role="status" aria-live="polite"></div>
+  <noscript><p class="noscript">这个学习网站需要启用 JavaScript，才能显示课程、交互演示和练习反馈。</p></noscript>
+</body>
+</html>

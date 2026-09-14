@@ -13,3 +13,8 @@ node_modules/
 *.ddc
 *.lib
 simv*
+
+# Generated cloud build and local runtime state
+cloud/dist/
+cloud/.sites-runtime/
+cloud/.wrangler/

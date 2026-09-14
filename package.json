@@ -1,15 +1,19 @@
 {
   "name": "ic-pathway",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "private": true,
-  "description": "An English digital IC classroom from logic foundations to Verilog, simulation, VCS, and DC synthesis.",
+  "description": "Digital IC learning: Chinese cloud classroom with ChatGPT progress sync and Ultra assessments, plus the original English static edition.",
   "license": "MIT",
-  "engines": {"node": ">=20"},
+  "engines": {
+    "node": ">=24"
+  },
   "scripts": {
     "start": "python3 -m http.server 8000 --directory dist",
     "test": "node tests/validate.mjs",
     "test:hdl": "python3 tests/hdl.py",
     "package:lab": "python3 tools/package_lab.py",
-    "check:lab": "python3 tools/package_lab.py --check"
+    "check:lab": "python3 tools/package_lab.py --check",
+    "build:cloud": "npm --prefix cloud run build",
+    "test:cloud": "cd cloud && node --test tests/progress.test.mjs"
   }
 }
