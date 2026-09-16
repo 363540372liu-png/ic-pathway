@@ -65,7 +65,16 @@ window.IC_SYNC={
        if(v.completed)next.lessons[id].completed=true;
        for(const field of ['draft','extraDraft'])if(v[field]&&v[field]!==next.lessons[id][field]){if(next.lessons[id][field]){delete migrationBase.lessons[id][field];hasConflict=true;}next.lessons[id][field]=v[field];}
       }
-      for(const [k,v]of Object.entries(local.acceptance||{}))if(v)next.acceptance[k]=true;
+      for(const [k,v]of Object.entries(local.acceptance||{}))if(v){next.acceptance||={};next.acceptance[k]=true;}
+      // Merge anonymous extension records once; retain explicit conflict resolution.
+      for(const key of ['ultra','fpga','ultraFPGA','competition']){
+       let incoming=local[key];
+       if(key==='competition'&&incoming){incoming=clone(incoming);incoming.integration=Object.fromEntries(Object.entries(incoming.integration||{}).filter(([,v])=>v));if(!incoming.reflection)delete incoming.reflection;if(!Object.values(incoming.journalDraft||{}).some(v=>Array.isArray(v)?v.length:!!v))delete incoming.journalDraft;}
+       if(key==='fpga'&&incoming){incoming=clone(incoming);incoming.board=Object.fromEntries(Object.entries(incoming.board||{}).filter(([,v])=>v));incoming.lessons=Object.fromEntries(Object.entries(incoming.lessons||{}).filter(([,v])=>v.guided||v.independent||v.evidence||v.completed||v.choices?.some(x=>x!==null)));}
+       if(!incoming||!Object.keys(incoming).length)continue;
+       const conflicts=[];next[key]=merge({},incoming,next[key]||{},'.'+key,conflicts);
+       for(const path of conflicts){const keys=path.slice(1).split('.');let target=migrationBase;for(const k of keys.slice(0,-1)){target=target?.[k];if(!target)break;}if(target)delete target[keys.at(-1)];hasConflict=true;}
+      }
       if(hasConflict){base=migrationBase;api.set(next);ready=true;try{localStorage.setItem('ic-pathway.legacy-owner',user.id);}catch{}showConflict(cloud);return;}
      }else next=local;pending=true;}
    }

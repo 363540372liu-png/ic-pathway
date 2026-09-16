@@ -12,13 +12,25 @@
   <script src="/ultra.js" defer></script>
   <script src="/sync.js" defer></script>
   <script src="/models.js" defer></script>
+  <script src="/fpga/catalog.js" defer></script>
+  <script src="/fpga/examples.js" defer></script>
+  <script src="/fpga/content.js" defer></script>
+  <script src="/fpga/neutral.js" defer></script>
+  <script src="/fpga/foundation.js" defer></script>
+  <script src="/fpga/progress.js" defer></script>
+  <script src="/fpga/view.js" defer></script>
+  <script src="/project/catalog.js" defer></script>
+  <script src="/project/content.js" defer></script>
+  <script src="/project/engineering.js" defer></script>
+  <script src="/project/model.js" defer></script>
+  <script src="/project/view.js" defer></script>
   <script src="/app.js" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#lesson">跳到课程内容</a>
   <header class="topbar">
     <button id="menu-button" class="icon-button" aria-label="打开课程目录" aria-controls="sidebar" aria-expanded="false">☰</button>
-    <a href="#bits" class="brand"><span class="brand-mark" aria-hidden="true">01</span><span>芯路 <small>数字 IC 学习室</small></span></a>
+    <a href="#home" class="brand"><span class="brand-mark" aria-hidden="true">01</span><span>芯路 <small>数字 IC 学习室</small></span></a>
     <div class="top-caption">从第一位二进制，到第一次综合</div>
     <div id="account" class="account">正在确认账号…</div>
   </header>
@@ -33,9 +45,10 @@
     <button class="sidebar-backdrop" id="sidebar-backdrop" aria-label="关闭课程目录" hidden></button>
     <main id="main">
       <section id="sync-conflict" class="exercise-card" role="alert" hidden></section>
+      <nav class="track-nav" aria-label="两条路线与学习进展"><a href="#home">今日概览</a><a href="#learning">Learning Path</a><a href="#competition">Competition Project</a><a href="#ultra-hub">Ultra</a><a href="#skills">Progress</a></nav>
       <div class="pathbar" id="pathbar" aria-label="学习阶段"></div>
       <article id="lesson" tabindex="-1"><p>正在载入课程…</p></article>
-      <footer class="site-footer">课程范围：数字电路基础、RTL 设计、功能仿真与基础逻辑综合。VCS / DC 实操需学校授权环境。<span>资料核对：2026 年 9 月</span></footer>
+      <footer class="site-footer">主线：数字电路、RTL、仿真与综合 · 并行实践：通用 FPGA · 项目：Efinix 图像边缘检测。VCS / DC 实操需学校授权环境。<span>资料核对：2026 年 9 月</span></footer>
     </main>
   </div>
   <div id="toast" role="status" aria-live="polite"></div>

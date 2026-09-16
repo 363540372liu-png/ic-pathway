@@ -5,7 +5,7 @@ const MODEL=window.IC_MODELS;
 const KEY='ic-pathway.progress.v1';
 const $=(s,root=document)=>root.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const blank=()=>({schema:1,course:'ic-pathway',last:'bits',lessons:{},acceptance:{},ultra:{}});
+const blank=()=>({schema:1,course:'ic-pathway',last:'bits',lessons:{},acceptance:{},ultra:{},fpga:{schema:1,lessons:{},readiness:{},board:{}},ultraFPGA:{},competition:window.IC_PROJECT_MODEL.blank()});
 const CHECKS=['我能脱离参考解释组合逻辑、触发器和非阻塞赋值。','我独立写过计数器 RTL，并解释了复位、使能和回绕。','我实际运行过自检，覆盖六类关键行为，并确认故意引入的错误会失败。','我在学校 VCS 环境重新编译并运行了同一设计，保存了实际日志和波形。','我用实际标准单元库与确认过的约束运行了 DC，并检查未约束路径及重要警告。','我保存了网表、面积/建立/保持报告，能解释结果的单位、条件与剩余限制。'];
 let progress=blank(),canStore=true,current,toastTimer,suppressSync=false;
 function normalize(raw){
@@ -20,6 +20,10 @@ function normalize(raw){
   const clean=x=>({draft:typeof x.draft==='string'?x.draft.slice(0,30000):'',choices:[0,1,2,3].map(i=>Number.isInteger(x.choices?.[i])&&x.choices[i]>=0&&x.choices[i]<3?x.choices[i]:null),checks:[0,1,2].map(i=>x.checks?.[i]===true)});
   out.ultra[u.id]={...clean(v),reference:v.reference===true,attempts:(Array.isArray(v.attempts)?v.attempts:[]).filter(a=>a&&typeof a==='object'&&Number.isFinite(Date.parse(a.at))).slice(-10).map(a=>({...clean(a),at:a.at,assisted:!!a.assisted,score:LESSONS.slice(...u.range).filter((l,i)=>a.choices?.[i]===l.extraQuizzes[i%2].correct).length}))};
  }
+ Object.assign(out,window.IC_FPGA_PROGRESS.normalize(raw));
+ out.competition=window.IC_PROJECT_MODEL.normalize(raw);
+ if(window.IC_PROJECT.isRoute(raw.last))out.last=raw.last;
+ if(window.IC_FPGA.isRoute(raw.last))out.last=raw.last;
  return out;
 }
 try{const raw=localStorage.getItem(KEY);if(raw)progress=normalize(JSON.parse(raw));}catch{canStore=false;}
@@ -34,7 +38,11 @@ function renderNav(){
  $('#overall-count').textContent=`${done} / ${LESSONS.length}`;
  $('#overall-progress').max=LESSONS.length;$('#overall-progress').value=done;
  $('#course-nav').innerHTML=STAGES.map((s,i)=>`<div class="nav-group"><h2 class="nav-group-title"><span>${String(i+1).padStart(2,'0')}</span>${esc(s.title)}</h2>${LESSONS.filter(l=>l.stage===i).map(l=>`<a class="lesson-link ${l.id===current.id?'active':''}" href="#${l.id}" ${l.id===current.id?'aria-current="page"':''}><span class="nav-number">${String(LESSONS.indexOf(l)+1).padStart(2,'0')}</span><span>${esc(l.title)}</span>${state(l.id).completed?'<span class="nav-done" aria-label="本课已完成">✓</span>':''}</a>`).join('')}</div>`).join('');
- $('#course-nav').insertAdjacentHTML('beforeend','<div class="nav-group"><h2 class="nav-group-title">ULTRA · 阶段检验</h2><a class="lesson-link" href="#ultra">独立任务与检验记录</a></div>');
+ $('#course-nav').insertAdjacentHTML('beforeend','<div class="nav-group"><h2 class="nav-group-title">ULTRA RTL · 阶段检验</h2><a class="lesson-link" href="#ultra">独立任务与检验记录</a></div>');
+ $('#course-nav').insertAdjacentHTML('beforeend',window.IC_FPGA.nav(progress)+window.IC_PROJECT.nav(progress));
+ document.querySelectorAll('.track-nav a').forEach(a=>{const key=progress.last;const target=key==='home'?'home':key==='skills'?'skills':key.startsWith('ultra')?'ultra-hub':window.IC_PROJECT.isRoute(key)&&key!=='learning'?'competition':'learning';a.classList.toggle('active',a.getAttribute('href')==='#'+target);});
+ if(window.IC_PROJECT.isRoute(progress.last)){document.querySelectorAll('#course-nav .active').forEach(x=>{x.classList.remove('active');x.removeAttribute('aria-current');});}
+ if(window.IC_FPGA.isRoute(progress.last)){document.querySelectorAll('#course-nav .active').forEach(x=>{x.classList.remove('active');x.removeAttribute('aria-current');});const target=progress.last.startsWith('ultra-fpga')?'ultra-fpga':progress.last==='fpga-readiness'?'fpga-readiness':'fpga';const link=document.querySelector('#course-nav a[href="#'+target+'"]');if(link){link.classList.add('active');link.setAttribute('aria-current','page');}}
  $('#pathbar').innerHTML=STAGES.map((s,i)=>`<button class="stage-button ${i===current.stage?'active':''}" data-stage="${i}" ${i===current.stage?'aria-current="step"':''}><span>${String(i+1).padStart(2,'0')}</span>${esc(s.short)}</button>`).join('');
  $('#pathbar').querySelectorAll('[data-stage]').forEach(b=>b.onclick=()=>navigate(LESSONS.find(l=>l.stage===Number(b.dataset.stage)).id));
 }
@@ -48,6 +56,14 @@ function completionStatus(){
  const b=$('#complete-lesson');b.textContent=st.completed?'已完成 · 重新标为待复习':'记录本课完成';b.disabled=!st.completed&&(!st.quizPassed||!st.draft.trim()||!enhanced);
 }
 function renderLesson(id,focus=false){
+ if(window.IC_PROJECT.isRoute(id)){current=current||LESSONS[0];progress.last=id;persist();renderNav();setMenu(false);window.IC_PROJECT.render({progress,persist,esc,toast,codePanel,refreshNav:renderNav},id);if(focus){window.scrollTo({top:0,behavior:'instant'});$('#lesson').focus({preventScroll:true});}return;}
+
+ if(window.IC_FPGA.isRoute(id)){
+  current=current||LESSONS[0];progress.last=id;persist();renderNav();setMenu(false);
+  window.IC_FPGA.render({progress,persist,esc,toast,codePanel,refreshNav:renderNav},id);
+  if(focus){window.scrollTo({top:0,behavior:'instant'});$('#lesson').focus({preventScroll:true});}return;
+ }
+
  if(id==='ultra'||id.startsWith('ultra-')){
  current=current||LESSONS[0];progress.last=id;persist();renderNav();setMenu(false);
  window.IC_ULTRA.render({progress,persist,esc,toast},id==='ultra'?null:id.slice(6));
@@ -70,6 +86,8 @@ function renderLesson(id,focus=false){
  $('#next-lesson').onclick=()=>index<LESSONS.length-1&&navigate(LESSONS[index+1].id);
  document.querySelectorAll('[data-copy]').forEach(button=>button.addEventListener('click',async()=>{const code=button.closest('.code-panel').querySelector('code');try{await navigator.clipboard.writeText(code.textContent);toast('代码已复制');}catch{const range=document.createRange();range.selectNodeContents(code);const sel=window.getSelection();sel.removeAllRanges();sel.addRange(range);toast('已选中代码，请复制');}}));
  document.querySelectorAll('[data-accept]').forEach(input=>input.onchange=()=>{progress.acceptance[input.dataset.accept]=input.checked;persist();updateAcceptance();});
+ window.IC_FPGA.bridge(current.id,progress,esc);
+ window.IC_PROJECT.bridge(current.id,progress,esc);
  updateAcceptance();completionStatus();if(current.lab)renderLab(current.lab);
  if(focus){window.scrollTo({top:0,behavior:'instant'});$('#lesson').focus({preventScroll:true});}
 }
@@ -139,7 +157,7 @@ $('#sidebar-backdrop').onclick=()=>{setMenu(false);$('#menu-button').focus();};
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('#sidebar').classList.contains('open')){setMenu(false);$('#menu-button').focus();}});
 $('#export-progress').onclick=()=>download('芯路-学习进度.json',JSON.stringify({...progress,exportedAt:new Date().toISOString()},null,2));
 $('#import-button').onclick=()=>$('#import-progress').click();
-$('#import-progress').onchange=async e=>{const file=e.target.files?.[0];if(!file)return;try{if(file.size>1024*1024)throw Error('文件过大，请选择本课程导出的进度文件');const imported=normalize(JSON.parse(await file.text()));for(const [id,v]of Object.entries(imported.lessons)){const old=progress.lessons[id];if(!old||v.completed||!old.completed)progress.lessons[id]=v;}for(let i=0;i<CHECKS.length;i++)progress.acceptance[i]=!!progress.acceptance[i]||!!imported.acceptance[i];Object.assign(progress.ultra,imported.ultra);persist();renderLesson(current.id);toast('进度已导入，已完成的课程记录已保留');}catch(error){toast('导入失败：'+error.message);}e.target.value='';};
+$('#import-progress').onchange=async e=>{const file=e.target.files?.[0];if(!file)return;try{if(file.size>1024*1024)throw Error('文件过大，请选择本课程导出的进度文件');const imported=normalize(JSON.parse(await file.text()));for(const [id,v]of Object.entries(imported.lessons)){const old=progress.lessons[id];if(!old||v.completed||!old.completed)progress.lessons[id]=v;}for(let i=0;i<CHECKS.length;i++)progress.acceptance[i]=!!progress.acceptance[i]||!!imported.acceptance[i];Object.assign(progress.ultra,imported.ultra);Object.assign(progress.fpga.lessons,imported.fpga.lessons);Object.assign(progress.fpga.readiness,imported.fpga.readiness);Object.assign(progress.ultraFPGA,imported.ultraFPGA);for(const k of ['modules','milestones','journal','skills','ultra'])Object.assign(progress.competition[k],imported.competition[k]);for(const [k,v]of Object.entries(imported.competition.integration))if(v)progress.competition.integration[k]=v;if(imported.competition.reflection)progress.competition.reflection=imported.competition.reflection;for(const [k,v] of Object.entries(imported.fpga.board))if(v)progress.fpga.board[k]=v;persist();renderLesson(location.hash.slice(1)||progress.last);toast('进度已导入，已完成的课程记录已保留');}catch(error){toast('导入失败：'+error.message);}e.target.value='';};
 window.addEventListener('hashchange',()=>renderLesson(location.hash.slice(1),true));
 renderLesson(location.hash.slice(1)||progress.last);
 window.IC_SYNC.init({get:()=>progress,set:data=>{if(!data)return;progress=normalize(data);suppressSync=true;try{renderLesson(location.hash.slice(1)||progress.last);}finally{suppressSync=false;}}});

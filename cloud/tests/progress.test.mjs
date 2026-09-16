@@ -5,7 +5,7 @@ import vm from 'node:vm';
 import {DatabaseSync} from 'node:sqlite';
 import worker from '../worker/index.js';
 const context=vm.createContext({window:{}});
-for(const file of ['curriculum','enrichment','ultra'])vm.runInContext(fs.readFileSync(`public/${file}.js`,'utf8'),context);
+for(const file of ['curriculum','enrichment','ultra','fpga/catalog','fpga/examples','fpga/content','fpga/neutral','fpga/foundation','fpga/progress','fpga/view','project/catalog','project/content','project/engineering','project/model','project/view'])vm.runInContext(fs.readFileSync(`public/${file}.js`,'utf8'),context);
 const {LESSONS}=context.window.IC_COURSE;
 test('24 stable lessons have two added questions and a substantive code task; seven Ultra stages refer to valid lessons',()=>{
  assert.equal(LESSONS.length,24);
@@ -72,4 +72,18 @@ test('client migrates old progress, saves to the authenticated account, and reta
  offline=true;current.lessons.bits.draft='offline draft';ctx.window.IC_SYNC.schedule();
  const fn=timers.pop();timers.length=0;await fn();await new Promise(resolve=>setImmediate(resolve));
  const cached=JSON.parse(memory.get('ic-pathway.account.client-test'));assert.equal(cached.pending,true);assert.equal(cached.data.lessons.bits.draft,'offline draft');assert.equal(timers.length,0);
+});
+test('v2 clients cannot erase FPGA progress, and stale branch writes use existing CAS protection',async()=>{
+ const branch={...data,fpga:{schema:1,lessons:{'01':{guided:'keep independent branch'}}},ultraFPGA:{led:{spec:'keep Ultra work'}}};
+ assert.equal((await call('old-client','PUT',{revision:0,data:branch})).status,200);
+ assert.equal((await call('old-client','PUT',{revision:1,data:{...data,last:'counter'}})).status,200);
+ let stored=await(await call('old-client')).json();assert.deepEqual(stored.data.fpga,branch.fpga);assert.deepEqual(stored.data.ultraFPGA,branch.ultraFPGA);
+ assert.equal((await call('old-client','PUT',{revision:1,data:{...branch,fpga:{}}})).status,409);
+ stored=await(await call('old-client')).json();assert.equal(stored.data.last,'counter');assert.deepEqual(stored.data.fpga,branch.fpga);
+});
+test('old clients preserve competition journal, milestones and independent skill matrix',async()=>{
+ const competition={schema:1,modules:{'01':{state:'LEARNING'}},milestones:{A:{state:'VERIFYING',evidence:'real note'}},journal:{j1:{attempt:'work'}},skills:{ram:{level:'LEARNING'}},integration:{format:'RGB888'}};
+ assert.equal((await call('legacy-v3','PUT',{revision:0,data:{...data,competition}})).status,200);
+ assert.equal((await call('legacy-v3','PUT',{revision:1,data})).status,200);
+ assert.deepEqual((await(await call('legacy-v3')).json()).data.competition,competition);
 });

@@ -13,6 +13,11 @@ export default {async fetch(request,env){
    const raw=await request.text();if(raw.length>900000)return json({error:'进度过大，请导出备份并缩短解答'},413);
    const body=JSON.parse(raw),data=body.data;
    if(!Number.isSafeInteger(body.revision)||body.revision<0||data?.schema!==1||data?.course!=='ic-pathway'||!data.lessons||typeof data.lessons!=='object'||Array.isArray(data.lessons))return json({error:'无效进度'},400);
+   // Older clients do not know these extensions. Preserve them under the same CAS revision.
+   if(body.revision>0&&(!Object.hasOwn(data,'fpga')||!Object.hasOwn(data,'ultraFPGA')||!Object.hasOwn(data,'competition'))){
+    const row=await readProgress(env.DB,id);
+    if(row?.revision===body.revision){const previous=JSON.parse(row.data);for(const key of ['fpga','ultraFPGA','competition'])if(!Object.hasOwn(data,key)&&Object.hasOwn(previous,key))data[key]=previous[key];}
+   }
    const content=JSON.stringify(data),now=new Date().toISOString();
    let result;
    if(body.revision===0)result=await env.DB.prepare('INSERT INTO learning_progress (user_id,data,revision,updated_at) VALUES (?,?,1,?) ON CONFLICT(user_id) DO NOTHING').bind(id,content,now).run();
