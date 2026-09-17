@@ -14,3 +14,6 @@
 @media(max-width:900px){.project-status-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:600px){.project-status-grid{grid-template-columns:1fr}.project-spec{grid-template-columns:1fr;gap:4px}.project-spec dd{margin-bottom:12px}.track-nav a{font-size:13px;padding:8px 10px}.pixel-grid{width:100%}}
 
 @media(max-width:700px){.topbar .brand small{display:none}.topbar .brand{flex-shrink:0}.topbar .account{margin-left:auto;min-width:0;max-width:180px}.topbar{gap:8px}}
+
+/* Step-by-step reading uses the existing palette; tables scroll inside their container. */
+.teaching-step{padding-bottom:22px;border-bottom:1px solid var(--line)}.teaching-table{overflow-x:auto;margin:18px 0}.teaching-table table{width:100%;border-collapse:collapse;font-size:.94rem;min-width:340px}.teaching-table th,.teaching-table td{text-align:left;vertical-align:top;padding:12px;border:1px solid var(--line);line-height:1.7}.teaching-table th{background:#eaf0f5}.teaching-recap{margin:24px 0}.teaching-recap>summary{font-weight:600;margin-bottom:20px}.teaching-step h2{line-height:1.6}

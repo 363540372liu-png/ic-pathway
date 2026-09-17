@@ -1,3 +1,11 @@
+# v3.1.0 · 2026-09-17
+
+- Added `public/teaching.js`: 14 detailed learning bridges for lessons 11–24, with 79 teaching steps, worked tables, small code fragments, complete counter/testbench examples and reflection checkpoints.
+- Lessons 11–13 continue the existing counter example from wiring and virtual time through waveforms, scheduling, reference values and self-checking. Lessons 14–24 explain tools, paths, synthesis, libraries, timing budgets and evidence before commands.
+- `public/app.js` renders structured reading blocks with escaped text, existing copyable code panels and responsive tables. Prior summaries/code remain available in a review disclosure; all exercise IDs, answers, choices and completion requirements are unchanged.
+- Updated `public/index.html`, `public/style.css` and package version. No persistence/API/schema changes or progress migration.
+- Validation: 19 existing regression tests; direct comparison confirms all 24 lesson IDs, exercises and quiz definitions unchanged; complete new HDL examples parsed/elaborated with pyslang. Browser loaded all 14 expanded lessons and checked desktop/mobile/tablet reading. Commercial simulation and synthesis are external; no new board execution is claimed.
+
 # v3.0.0 · 2026-09-16
 
 ## Architecture and compatibility
