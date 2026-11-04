@@ -19,7 +19,11 @@ for l in data:
  bad=[str(d.code) for d in comp.getAllDiagnostics() if d.isError()]
  if bad:errors.append({'lesson':l['id'],'errors':bad})
  else:passed.append(l['id'])
-report={'tool':'pyslang','validation':'parse and elaborate independent complete examples','default_timescale':'1ns/1ps','passed':passed,'fragments_not_claimed_compiled':fragments,'errors':errors}
+kit=Compilation()
+for f in (root/'public/rtl-lab').glob('*.sv'):kit.addSyntaxTree(SyntaxTree.fromText(chr(96)+'timescale 1ns/1ps\n'+f.read_text()))
+kit.getRoot();kit_errors=[str(d.code) for d in kit.getAllDiagnostics() if d.isError()]
+if kit_errors:errors.append({'lesson':'project-kit','errors':kit_errors})
+report={'kit_errors':kit_errors,'tool':'pyslang','validation':'parse and elaborate independent complete examples','default_timescale':'1ns/1ps','passed':passed,'fragments_not_claimed_compiled':fragments,'errors':errors}
 out=root/'.sites-runtime/textbook-elaboration.json';out.parent.mkdir(exist_ok=True);out.write_text(json.dumps(report,ensure_ascii=False,indent=2))
 print('PASS' if not errors else 'FAIL',len(passed),'complete examples;',len(fragments),'explicit fragments;',errors)
 sys.exit(bool(errors))

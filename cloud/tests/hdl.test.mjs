@@ -3,11 +3,11 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
 const c=vm.createContext({window:{}});
-for(const f of ['hdl-content','textbook-content','textbook-model','textbook','hdl'])vm.runInContext(fs.readFileSync('public/'+f+'.js','utf8'),c);
+for(const f of ['hdl-content','textbook-content','textbook-depth','textbook-model','timing','textbook','hdl'])vm.runInContext(fs.readFileSync('public/'+f+'.js','utf8'),c);
 const H=c.window.IC_HDL;
 test('beginner routes resolve every lesson and preserve legacy course routes',()=>{
- assert.equal(H.lessons.length,42);
- assert.equal(new Set(H.lessons.map(l=>l.id)).size,42);
+ assert.equal(H.lessons.length,56);
+ assert.equal(new Set(H.lessons.map(l=>l.id)).size,56);
  for(const l of H.lessons){assert.equal(H.isRoute('hdl-'+l.id),true);assert.ok(l.code&&l.solution&&l.answer);assert.ok(l.concept.length>=2);assert.ok(l.correct>=0&&l.correct<l.options.length);}
  for(const r of ['bits','fpga','competition','ultra'])assert.equal(H.isRoute(r),false);
  for(const r of ['home','learning','hdl'])assert.equal(H.isRoute(r),true);
@@ -21,8 +21,8 @@ test('HDL progress preserves drafts, rejects false completion, and bounds import
 
 test('prerequisites are earlier and core path does not depend on optional verification',()=>{
  const ids=H.lessons.map(l=>l.id);
- assert.equal(H.lessons.filter(l=>!l.optional).length,37);
- assert.equal(H.lessons.filter(l=>l.optional).length,5);
+ assert.equal(H.lessons.filter(l=>!l.optional).length,52);
+ assert.equal(H.lessons.filter(l=>l.optional).length,4);
  for(const [i,l] of H.lessons.entries()){
   for(const dep of l.prerequisites){
    assert.ok(ids.indexOf(dep)>=0&&ids.indexOf(dep)<i,l.id+' -> '+dep);
@@ -32,7 +32,7 @@ test('prerequisites are earlier and core path does not depend on optional verifi
   if(l.trace)for(const row of l.trace.rows)assert.equal(row.length,l.trace.heads.length);
  }
  assert.ok(ids.indexOf('capstone')<ids.indexOf('sv-verification'));
- assert.ok(ids.indexOf('sv-handshake')<ids.indexOf('sv-package'));
+ assert.ok(ids.indexOf('sv-package')<ids.indexOf('sv-handshake'));
 });
 test('resume prefers a recent unfinished lesson, preserving older lesson IDs and new prerequisites',()=>{
  const p={hdl:H.normalize({nba:{draft:'old work',choice:1,passed:true,done:false,viewedAt:100},counter:{draft:'later visit',choice:0,passed:true,done:true,viewedAt:80}})};
