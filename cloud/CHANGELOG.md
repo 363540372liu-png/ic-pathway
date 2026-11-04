@@ -1,3 +1,11 @@
+# Unreleased · 交互式RTL教材 P0
+
+- 八阶段42课语言路线、七个语法/设计补缺与六课精讲，保留旧ID和所有既有路线。
+- 可访问的逐行解释、结构图、可回退波形、五级练习与四级学习状态。
+- 明确加载/失败状态、请求超时、脚本恢复、旧客户端活动字段保护。
+- 30项Node、4项Golden、34个完整HDL例子、六模块560次CXXRTL比较及负例检测通过。
+- 完整范围、截图、限制见docs/IMPLEMENTATION_REPORT.md；未经合并或发布。
+
 # v3.1.0 · 2026-09-17
 
 - Added `public/teaching.js`: 14 detailed learning bridges for lessons 11–24, with 79 teaching steps, worked tables, small code fragments, complete counter/testbench examples and reflection checkpoints.
@@ -59,3 +67,18 @@ No browser execution of Python, RTL synthesis, Efinity, programmer or hardware i
 Journal supports 80 entries; FPGA/Image Ultra retain five attempts, original RTL Ultra retains its existing history policy. Export progress for archival. The authenticated preview exercises the actual API with synthetic trusted identity; production ChatGPT authentication is platform-owned. GitHub Pages cannot host the authenticated Worker/D1 edition by itself.
 
 Recommended next task: agree the real board/device and streaming interface contract, then run the guided rgb2gray module against the integer Golden output in the team's installed simulator and Efinity version before advancing to synchronous-RAM line-buffer integration.
+
+## 2026-11-03 — Beginner Verilog / SystemVerilog path
+- Default course map now leads through 28 sequential lessons with prerequisite links, explained code, conceptual checks and saved independent practice.
+- Added timing and circuit SVGs, stepped sampling/pipeline/counter models, and an adjustable setup/hold teaching window.
+- Added syntax search and a clear distinction between complete modules, snippets, testbenches and terminal commands.
+- Preserved legacy courses, FPGA/project progress, and progress compatibility for older clients.
+- Checked core flows in the browser; webpage teaching models do not execute HDL.
+
+## 2026-11-04 — Learning-route audit and reading UI
+- Reordered the course into 30 core lessons and 5 optional verification lessons; added logic gates, setup, loops, arrays, tasks and handshake bridges.
+- Replaced early undeclared-signal snippets with complete modules, removed premature initial/task usage, and added explicit prerequisite links, goals, terms and worked tables.
+- Moved the independent counter exercise before advanced verification. Existing lesson IDs, answers and completion records are preserved.
+- Added a calm workbook layout, searchable stage lists, recent-lesson resume, code highlighting, reading navigation, larger text and focus mode.
+- Added synchronous/asynchronous reset comparison and a visible setup/hold change marker.
+- Browser QA: course search, pipeline stepping, practice persistence, reading modes, 390px layout and menu, reset comparison. HDL simulation binaries are unavailable in this executor, so physical/HDL simulation is not claimed as part of these checks.

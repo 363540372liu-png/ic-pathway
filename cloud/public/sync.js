@@ -3,8 +3,26 @@ let api,user=null,ready=false,busy=false,timer,revision=0,base=null,pending=fals
 const clone=x=>JSON.parse(JSON.stringify(x)),same=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
 const note=t=>{document.querySelector('.local-note').textContent=t;};
 const account=()=>document.querySelector('#account');
+function syncState(state,message){
+ if(document.body)document.body.dataset.syncState=state;
+ if(window.IC_SYNC)window.IC_SYNC.loadState=state;
+ const count=document.querySelector('#overall-count');
+ if(count?.dataset){count.textContent=['loading','error'].includes(state)?'待载入':count.dataset.loadedCount||'本机记录';}
+
+ const status=document.querySelector('#progress-status');
+ if(status){status.textContent=message;status.hidden=state==='ready'||state==='guest';}
+}
+
 function cache(){if(!user||!api)return;try{localStorage.setItem('ic-pathway.account.'+user.id,JSON.stringify({data:api.get(),base,revision,pending,conflict}));}catch{note('本机缓存不可用，请保持联网并及时导出进度');}}
-async function request(path,options){const r=await fetch(path,{credentials:'same-origin',cache:'no-store',...options});let body;try{body=await r.json();}catch{throw Error('云端响应异常，请稍后重试');}return {r,body};}
+async function request(path,options){
+ const controller=typeof AbortController!=='undefined'?new AbortController():null;
+ const timeout=controller?setTimeout(()=>controller.abort(),12000):null;
+ try{
+ const r=await fetch(path,{credentials:'same-origin',cache:'no-store',...options,...(controller?{signal:controller.signal}:{})});
+ let body;try{body=await r.json();}catch{throw Error('云端响应异常，请稍后重试');}
+ return {r,body};
+ }finally{if(timeout)clearTimeout(timeout);}
+}
 // Merge at individual lesson fields, so unrelated edits from two devices coexist.
 function merge(b,l,r,path='',conflicts=[]){
  if(same(l,b))return clone(r??null);if(same(r,b)||same(l,r))return clone(l??null);
@@ -22,9 +40,9 @@ function showConflict(remote){
  document.querySelector('#export-conflict').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify({local:api.get(),remote:conflict.remote},null,2)],{type:'application/json'}));a.download='芯路-冲突备份.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000);};
  document.querySelector('#keep-local').onclick=()=>resolve(conflict.merged);
  document.querySelector('#keep-remote').onclick=()=>{const out=clone(conflict.merged);for(const p of conflicts){const ks=p.slice(1).split('.');let o=out,r=conflict.remote;for(const k of ks.slice(0,-1)){o=o[k];r=r?.[k];}o[ks.at(-1)]=r?.[ks.at(-1)]??null;}resolve(out);};
- note('同步有冲突，请选择要保留的记录');
+ syncState('conflict','学习记录存在冲突，两份内容已保留，请选择要保留的记录。');note('同步有冲突，请选择要保留的记录');
 }
-function resolve(data){document.querySelector('#lesson').inert=false;conflict=null;document.querySelector('#sync-conflict').hidden=true;api.set(data);pending=true;cache();save();}
+function resolve(data){syncState('ready','');document.querySelector('#lesson').inert=false;conflict=null;document.querySelector('#sync-conflict').hidden=true;api.set(data);pending=true;cache();save();}
 async function save(){
  if(!ready||!user||busy||conflict||!pending)return;
  busy=true;let retry=false;const snapshot=clone(api.get());note('正在保存到云端…');
@@ -33,8 +51,8 @@ async function save(){
   if(r.status===409){const conflicts=[],merged=merge(base||{},api.get(),body.data||{},'',conflicts);if(conflicts.length){showConflict(body);return;}base=clone(body.data);revision=body.revision;api.set(merged);pending=true;cache();retry=true;return;}
   if(r.status===401){ready=false;note('登录已过期；本机待同步内容已保留，请重新登录');account().innerHTML='<a href="/signin-with-chatgpt?return_to=%2F" target="_top">重新使用 ChatGPT 登录</a>';return;}
   if(!r.ok)throw Error(body.error||'云端保存失败');
-  revision=body.revision;base=snapshot;pending=!same(api.get(),snapshot);retry=pending;cache();note(pending?'还有新修改等待同步':'已保存到云端 · 换设备登录同一账号即可继续');
- }catch(e){note(e.message+'；解答暂存在本机，可点重试');cache();}
+  syncState('ready','');revision=body.revision;base=snapshot;pending=!same(api.get(),snapshot);retry=pending;cache();note(pending?'还有新修改等待同步':'已保存到云端 · 换设备登录同一账号即可继续');
+ }catch(e){syncState('offline','云端保存失败；解答保留在本机，请重试或导出备份。');note(e.message+'；解答暂存在本机，可点重试');cache();}
  finally{busy=false;if(retry&&ready&&!conflict)timer=setTimeout(save,700);}
 }
 async function refresh(){
@@ -43,11 +61,11 @@ async function refresh(){
 }
 window.IC_SYNC={
  schedule(){if(!ready)return;pending=true;cache();clearTimeout(timer);timer=setTimeout(save,650);},
- async init(callbacks){api=callbacks;document.querySelector('#lesson').inert=true;
+ async init(callbacks){api=callbacks;syncState('loading','正在确认账号与学习记录；完成数尚未载入。');document.querySelector('#lesson').inert=true;
   document.querySelector('#sync-retry').onclick=()=>{if(!ready){this.init(callbacks);}else if(pending)save();else refresh();};
   try{
    const {r,body}=await request('/api/session');if(!r.ok)throw Error('无法确认登录状态');user=body.user;
-   if(!user){account().innerHTML='<a href="/signin-with-chatgpt?return_to=%2F" target="_top">使用 ChatGPT 登录</a>';note('登录后同步进度；未登录时的解答仅暂存在本机');return;}
+   if(!user){syncState('guest','未登录；显示本机暂存记录。');account().innerHTML='<a href="/signin-with-chatgpt?return_to=%2F" target="_top">使用 ChatGPT 登录</a>';note('登录后同步进度；未登录时的解答仅暂存在本机');return;}
    account().textContent=user.email+' · ';const link=document.createElement('a');link.href='/signout-with-chatgpt?return_to=%2F';link.target='_top';link.textContent='退出';link.onclick=e=>{if(pending||busy||conflict){e.preventDefault();note('还有未同步内容，请先同步成功或导出备份，再退出');}else{try{localStorage.removeItem('ic-pathway.progress.v1');}catch{}}};account().append(link);
    let saved=null;try{saved=JSON.parse(localStorage.getItem('ic-pathway.account.'+user.id)||'null');}catch{}
    const {r:pr,body:cloud}=await request('/api/progress');if(!pr.ok)throw Error(cloud.error||'云端读取失败');
@@ -67,7 +85,7 @@ window.IC_SYNC={
       }
       for(const [k,v]of Object.entries(local.acceptance||{}))if(v){next.acceptance||={};next.acceptance[k]=true;}
       // Merge anonymous extension records once; retain explicit conflict resolution.
-      for(const key of ['ultra','fpga','ultraFPGA','competition']){
+      for(const key of ['ultra','fpga','ultraFPGA','competition','hdl']){
        let incoming=local[key];
        if(key==='competition'&&incoming){incoming=clone(incoming);incoming.integration=Object.fromEntries(Object.entries(incoming.integration||{}).filter(([,v])=>v));if(!incoming.reflection)delete incoming.reflection;if(!Object.values(incoming.journalDraft||{}).some(v=>Array.isArray(v)?v.length:!!v))delete incoming.journalDraft;}
        if(key==='fpga'&&incoming){incoming=clone(incoming);incoming.board=Object.fromEntries(Object.entries(incoming.board||{}).filter(([,v])=>v));incoming.lessons=Object.fromEntries(Object.entries(incoming.lessons||{}).filter(([,v])=>v.guided||v.independent||v.evidence||v.completed||v.choices?.some(x=>x!==null)));}
@@ -80,8 +98,8 @@ window.IC_SYNC={
    }
    api.set(next||{schema:1,course:'ic-pathway',last:'bits',lessons:{},acceptance:{},ultra:{}});
    try{localStorage.setItem('ic-pathway.legacy-owner',user.id);}catch{}
-   ready=true;cache();if(pending)save();else note('云端进度已载入 · 使用同一 ChatGPT 账号跨设备继续');
-  }catch(e){ready=false;note(e.message+'；未覆盖本机记录，请点重试');}
+   ready=true;syncState('ready','');cache();if(pending)save();else note('云端进度已载入 · 使用同一 ChatGPT 账号跨设备继续');
+  }catch(e){ready=false;if(!user)account().textContent='账号状态未确认';syncState('error','尚未确认云端学习进度。本机内容已保留，请用目录中的“重试同步”恢复。');note(e.message+'；未覆盖本机记录，请点重试');}
   finally{if(!conflict)document.querySelector('#lesson').inert=false;}
  }
 };
