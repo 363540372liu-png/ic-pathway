@@ -13,10 +13,21 @@ export default {async fetch(request,env){
    const raw=await request.text();if(raw.length>900000)return json({error:'进度过大，请导出备份并缩短解答'},413);
    const body=JSON.parse(raw),data=body.data;
    if(!Number.isSafeInteger(body.revision)||body.revision<0||data?.schema!==1||data?.course!=='ic-pathway'||!data.lessons||typeof data.lessons!=='object'||Array.isArray(data.lessons))return json({error:'无效进度'},400);
-   // Older clients do not know these extensions. Preserve them under the same CAS revision.
-   if(body.revision>0&&(!Object.hasOwn(data,'fpga')||!Object.hasOwn(data,'ultraFPGA')||!Object.hasOwn(data,'competition'))){
+   // Preserve extension records omitted by older clients under the same CAS revision.
+   if(body.revision>0){
     const row=await readProgress(env.DB,id);
-    if(row?.revision===body.revision){const previous=JSON.parse(row.data);for(const key of ['fpga','ultraFPGA','competition'])if(!Object.hasOwn(data,key)&&Object.hasOwn(previous,key))data[key]=previous[key];}
+    if(row?.revision===body.revision){
+     const previous=JSON.parse(row.data);
+     for(const key of ['fpga','ultraFPGA','competition','hdl'])if(!Object.hasOwn(data,key)&&Object.hasOwn(previous,key))data[key]=previous[key];
+     if(data.hdl&&typeof data.hdl==='object'&&!Array.isArray(data.hdl)&&previous.hdl){
+      for(const [lesson,record] of Object.entries(previous.hdl)){
+       if(!Object.hasOwn(data.hdl,lesson))data.hdl[lesson]=record;
+       else if(data.hdl[lesson]&&typeof data.hdl[lesson]==='object'&&!Array.isArray(data.hdl[lesson])&&record&&typeof record==='object'){
+        if(!Object.hasOwn(data.hdl[lesson],'activities')&&Object.hasOwn(record,'activities'))data.hdl[lesson].activities=record.activities;
+       }
+      }
+     }
+    }
    }
    const content=JSON.stringify(data),now=new Date().toISOString();
    let result;

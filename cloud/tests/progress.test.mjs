@@ -5,7 +5,7 @@ import vm from 'node:vm';
 import {DatabaseSync} from 'node:sqlite';
 import worker from '../worker/index.js';
 const context=vm.createContext({window:{}});
-for(const file of ['curriculum','enrichment','ultra','fpga/catalog','fpga/examples','fpga/content','fpga/neutral','fpga/foundation','fpga/progress','fpga/view','project/catalog','project/content','project/engineering','project/model','project/view'])vm.runInContext(fs.readFileSync(`public/${file}.js`,'utf8'),context);
+for(const file of ['curriculum','enrichment','ultra','fpga/catalog','fpga/examples','fpga/content','fpga/neutral','fpga/foundation','fpga/progress','fpga/view','project/catalog','project/content','project/engineering','project/model','project/view','hdl-content','textbook-content','textbook-model','textbook','hdl'])vm.runInContext(fs.readFileSync(`public/${file}.js`,'utf8'),context);
 const {LESSONS}=context.window.IC_COURSE;
 test('24 stable lessons have two added questions and a substantive code task; seven Ultra stages refer to valid lessons',()=>{
  assert.equal(LESSONS.length,24);
@@ -86,4 +86,35 @@ test('old clients preserve competition journal, milestones and independent skill
  assert.equal((await call('legacy-v3','PUT',{revision:0,data:{...data,competition}})).status,200);
  assert.equal((await call('legacy-v3','PUT',{revision:1,data})).status,200);
  assert.deepEqual((await(await call('legacy-v3')).json()).data.competition,competition);
+});
+test('legacy clients preserve new HDL drafts and resume timestamps',async()=>{
+ const hdl={nba:{draft:'old and new values',choice:1,passed:true,done:true,viewedAt:1700000000000}};
+ assert.equal((await call('hdl-backcompat','PUT',{revision:0,data:{...data,hdl}})).status,200);
+ assert.equal((await call('hdl-backcompat','PUT',{revision:1,data:{...data,last:'bits'}})).status,200);
+ assert.deepEqual((await(await call('hdl-backcompat')).json()).data.hdl,hdl);
+});
+test('older HDL clients cannot erase new lesson IDs or structured activities',async()=>{
+ const hdl={nba:{draft:'retained',choice:1,passed:true,done:true,activities:{0:{choice:0,passed:true}}},casts:{draft:'new topic'}};
+ assert.equal((await call('hdl-activities','PUT',{revision:0,data:{...data,hdl}})).status,200);
+ const old={...data,hdl:{nba:{draft:'edited on old client',choice:1,passed:true,done:true}}};
+ assert.equal((await call('hdl-activities','PUT',{revision:1,data:old})).status,200);
+ const stored=(await(await call('hdl-activities')).json()).data.hdl;
+ assert.deepEqual(stored.nba.activities,hdl.nba.activities);assert.deepEqual(stored.casts,hdl.casts);
+ assert.equal(stored.nba.draft,'edited on old client');
+});
+test('pending or failed session shows unknown progress, guest recovery restores local count',async()=>{
+ const elements=new Map(),memory=new Map();const element=()=>({textContent:'',innerHTML:'',append(){},hidden:false,inert:false,dataset:{}});
+ const document={body:{dataset:{}},querySelector(k){if(!elements.has(k))elements.set(k,element());return elements.get(k)},createElement:element,addEventListener(){}};
+ document.querySelector('#overall-count').dataset.loadedCount='3 / 37';
+ let release;const pending=new Promise(resolve=>release=resolve);let fail=true;
+ const ctx=vm.createContext({window:{addEventListener(){}},document,localStorage:{getItem:k=>memory.get(k)||null,setItem:(k,v)=>memory.set(k,v)},setTimeout(){return 1},clearTimeout(){},console,URL,Blob,fetch:async()=>fail?pending:Response.json({user:null})});
+ vm.runInContext(fs.readFileSync('public/sync.js','utf8'),ctx);
+ const task=ctx.window.IC_SYNC.init({get:()=>data,set(){}});
+ assert.equal(document.body.dataset.syncState,'loading');assert.equal(document.querySelector('#overall-count').textContent,'待载入');
+ release(Response.json({error:'test failure'},{status:503}));await task;
+ assert.equal(document.body.dataset.syncState,'error');assert.equal(document.querySelector('#overall-count').textContent,'待载入');
+ assert.equal(document.querySelector('#account').textContent,'账号状态未确认');
+ fail=false;await ctx.window.IC_SYNC.init({get:()=>data,set(){}});
+ assert.equal(document.body.dataset.syncState,'guest');assert.equal(document.querySelector('#overall-count').textContent,'3 / 37');
+ assert.equal(document.querySelector('#lesson').inert,false);
 });
