@@ -70,7 +70,7 @@ fsm:{
 },
 'sv-always':{
  hook:'已会写寄存器和MUX后，用更明确的关键字告诉工具：哪块是组合计算，哪块是触发器。',
- hardware:'dff',kind:'dff',
+ hardware:'dff',kind:'enabled',
  principle:['always_comb描述组合意图，并在仿真开始执行一次；它不会帮你补默认分支。always_ff描述沿触发存储意图，并限制事件控制与写入者，降低多人维护时意外多驱动的风险。','logic是四态类型，不等于有存储。next_q由完整的组合赋值产生；q只有always_ff写入，才是一份沿触发状态。always_latch用来明确声明电平敏感存储意图，不应拿它掩盖无意漏赋值。','always_ff不自动推导使能或复位优先级，也不把阻塞赋值改成非阻塞。保持组合=、时序<=的规范，并检查lint/仿真工具的诊断。'],
  lines:{1:'SV端口用logic表达四态数据，仍要满足单驱动规则。',3:'next_q是组合计算结果，不是额外一拍寄存器。',4:'always_comb运行组合计算；右值变化时重新求值。',5:'en=1选d，en=0选旧q，形成保持反馈选择。',7:'always_ff只在上升沿采样next_q。',8:'同步低有效复位优先。',9:'非阻塞更新q，其他过程不能再写q。'},
  compare:"module enabled_ff_v(input wire clk,rst_n,en,d,output reg q);\n reg next_q;\n always @(*) next_q=en ? d : q;\n always @(posedge clk) begin\n  if(!rst_n) q<=1'b0;\n  else q<=next_q;\n end\nendmodule",

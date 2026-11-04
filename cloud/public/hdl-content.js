@@ -5,7 +5,7 @@ window.HDL_LESSONS=[
   "concept": [
    "这条路线默认你没有写过HDL。先用0和1表达输入输出，再用Verilog描述电路，最后用SystemVerilog把设计意图写清楚。HDL是Hardware Description Language（硬件描述语言）；输入是送进电路的信号，输出是电路给出的结果。",
    "一课分四步：读概念、对照代码、先预测再核对、独立写一遍。第一次先理解代码在描述什么，不必立刻记住所有符号。碰到不认识的词，看本课词条或点前置课。",
-   "核心主线到“独立完成计数器”为止。接口、随机验证和断言是选修，学完基础RTL后再进入。每次完成一课或一个小练习即可；页面上的完成记录只表示学习记录，实际仿真要保留工具结果。"
+   "核心主线先掌握组合与寄存器，再完成SystemVerilog、自检、同步时序及工程项目。高级随机验证、SVA扩展和UVM地图是选修。完成记录表示学习自评；实际工具结果要另行保留。"
   ],
   "code": "// 先用一句规格描述电路：\n// 输入：开关 a、开关 b\n// 规则：两个开关都打开，灯才亮\n// 输出：灯 y（0=灭，1=亮）",
   "notes": [
@@ -40,7 +40,7 @@ window.HDL_LESSONS=[
     "寄存器传输级，描述寄存器之间的数据计算和更新。"
    ]
   ],
-  "minutes": 10,
+  "minutes": 30,
   "context": "先读自然语言规格；这段是注释，不要求编译。",
   "knowledge": [
    {
@@ -49,11 +49,11 @@ window.HDL_LESSONS=[
    },
    {
     "id": "code",
-    "title": "语法与完整示例"
+    "title": "语法、完整示例与错误修正"
    },
    {
     "id": "practice",
-    "title": "练习与常见错误"
+    "title": "分层练习与验证"
    }
   ]
  },
@@ -103,7 +103,7 @@ window.HDL_LESSONS=[
     "按位编号的一组信号，例如[7:0]是8位。"
    ]
   ],
-  "minutes": 9,
+  "minutes": 30,
   "trace": {
    "heads": [
     "写法",
@@ -130,11 +130,11 @@ window.HDL_LESSONS=[
    },
    {
     "id": "code",
-    "title": "语法与完整示例"
+    "title": "语法、完整示例与错误修正"
    },
    {
     "id": "practice",
-    "title": "练习与常见错误"
+    "title": "分层练习与验证"
    }
   ]
  },
@@ -182,7 +182,7 @@ window.HDL_LESSONS=[
     "在理想功能模型中，输出由当前输入决定。"
    ]
   ],
-  "minutes": 10,
+  "minutes": 30,
   "trace": {
    "heads": [
     "a",
@@ -230,11 +230,67 @@ window.HDL_LESSONS=[
    },
    {
     "id": "code",
-    "title": "语法与完整示例"
+    "title": "语法、完整示例与错误修正"
    },
    {
     "id": "practice",
-    "title": "练习与常见错误"
+    "title": "分层练习与验证"
+   }
+  ]
+ },
+ {
+  "id": "boolean-decoder",
+  "title": "布尔代数与译码器：从真值表得到电路",
+  "stage": 0,
+  "prerequisites": [
+   "logic-gates"
+  ],
+  "code": "module decode2(input wire [1:0] a,input wire en,output wire [3:0] y);\n assign y[0]=en & ~a[1] & ~a[0];\n assign y[1]=en & ~a[1] &  a[0];\n assign y[2]=en &  a[1] & ~a[0];\n assign y[3]=en &  a[1] &  a[0];\nendmodule",
+  "concept": [
+   "真值表逐行规定输入和输出，布尔式把使输出为1的条件合起来。两个输入有四种组合，译码器把编号转换成独热选择。",
+   "布尔代数用于证明不同表达式的功能相同，再讨论门数与延迟。德摩根律把与的取反变成各输入取反的或。"
+  ],
+  "notes": [
+   "~是逐位取反，&是逐位与，单比特控制用en门控。",
+   "a从00到11时只有对应y位为1；en=0时全部为0。"
+  ],
+  "trap": "先明确规格、输入边界和验证依据；不要把网页模型的通过当作实际RTL仿真通过。",
+  "goals": [
+   "从真值表写出译码器",
+   "用德摩根律验证等价表达式"
+  ],
+  "q": "完成本课后，什么证据最能支持设计符合规格？",
+  "options": [
+   "完整规格、边界测试和可复现的工具结果",
+   "只看代码长度",
+   "只看波形颜色"
+  ],
+  "correct": 0,
+  "answer": "按规格逐项检查，记录输入、预期和实际结果；一次正常案例不足以证明所有边界。",
+  "task": "按本课练习阶梯实现并记录边界条件。",
+  "solution": "先独立完成阶梯中的设计，再逐项对照参考实现和验收条件。",
+  "terms": [
+   [
+    "规格",
+    "约定输入、输出、时钟、复位和边界行为。"
+   ]
+  ],
+  "context": "完整模块，保存为.v；测试平台与工具命令另外提供。",
+  "minutes": 30,
+  "optional": false,
+  "language": "verilog",
+  "knowledge": [
+   {
+    "id": "concept",
+    "title": "真值表逐行规定输入和输出，布尔式把使输出为1的条件合起来"
+   },
+   {
+    "id": "code",
+    "title": "语法、完整示例与错误修正"
+   },
+   {
+    "id": "practice",
+    "title": "分层练习与验证"
    }
   ]
  },
@@ -289,7 +345,7 @@ window.HDL_LESSONS=[
     "在理想功能模型中，输出由当前输入决定。"
    ]
   ],
-  "minutes": 10,
+  "minutes": 30,
   "knowledge": [
    {
     "id": "concept",
@@ -297,11 +353,11 @@ window.HDL_LESSONS=[
    },
    {
     "id": "code",
-    "title": "语法与完整示例"
+    "title": "语法、完整示例与错误修正"
    },
    {
     "id": "practice",
-    "title": "练习与常见错误"
+    "title": "分层练习与验证"
    }
   ]
  },
@@ -344,7 +400,7 @@ window.HDL_LESSONS=[
     "寄存器传输级；描述组合逻辑与寄存器在时钟沿的更新。"
    ]
   ],
-  "minutes": 20,
+  "minutes": 30,
   "context": "完整单文件教学示例；代码的文件边界及测试用途见讲解。",
   "knowledge": [
    {
@@ -353,11 +409,11 @@ window.HDL_LESSONS=[
    },
    {
     "id": "code",
-    "title": "语法与完整示例"
+    "title": "语法、完整示例与错误修正"
    },
    {
     "id": "practice",
-    "title": "练习与常见错误"
+    "title": "分层练习与验证"
    }
   ]
  },
@@ -407,7 +463,7 @@ window.HDL_LESSONS=[
     "在当前设计中创建并连接的一份子模块电路。"
    ]
   ],
-  "minutes": 10,
+  "minutes": 30,
   "knowledge": [
    {
     "id": "concept",
@@ -415,11 +471,11 @@ window.HDL_LESSONS=[
    },
    {
     "id": "code",
-    "title": "语法与完整示例"
+    "title": "语法、完整示例与错误修正"
    },
    {
     "id": "practice",
-    "title": "练习与常见错误"
+    "title": "分层练习与验证"
    }
   ]
  },
@@ -469,7 +525,7 @@ window.HDL_LESSONS=[
     "仿真环境，产生激励并检查设计输出。"
    ]
   ],
-  "minutes": 12,
+  "minutes": 30,
   "context": "这是讲解用代码片段，不是独立模块；按本课说明放入已有模块或测试台，再补齐接口声明。",
   "knowledge": [
    {
@@ -478,11 +534,11 @@ window.HDL_LESSONS=[
    },
    {
     "id": "code",
-    "title": "语法与完整示例"
+    "title": "语法、完整示例与错误修正"
    },
    {
     "id": "practice",
-    "title": "练习与常见错误"
+    "title": "分层练习与验证"
    }
   ]
  },
@@ -532,7 +588,7 @@ window.HDL_LESSONS=[
     "Verilog过程变量类型；是否形成存储由赋值行为决定。"
    ]
   ],
-  "minutes": 10,
+  "minutes": 30,
   "knowledge": [
    {
     "id": "concept",
@@ -540,11 +596,11 @@ window.HDL_LESSONS=[
    },
    {
     "id": "code",
-    "title": "语法与完整示例"
+    "title": "语法、完整示例与错误修正"
    },
    {
     "id": "practice",
-    "title": "练习与常见错误"
+    "title": "分层练习与验证"
    }
   ]
  },
@@ -595,7 +651,7 @@ window.HDL_LESSONS=[
     "一位二进制信息，逻辑上有0和1两种取值。"
    ]
   ],
-  "minutes": 10,
+  "minutes": 30,
   "trace": {
    "heads": [
     "表达式",
@@ -627,11 +683,11 @@ window.HDL_LESSONS=[
    },
    {
     "id": "code",
-    "title": "语法与完整示例"
+    "title": "语法、完整示例与错误修正"
    },
    {
     "id": "practice",
-    "title": "练习与常见错误"
+    "title": "分层练习与验证"
    }
   ]
  },
@@ -681,7 +737,7 @@ window.HDL_LESSONS=[
     "高阻状态，常见于网络没有主动驱动。"
    ]
   ],
-  "minutes": 9,
+  "minutes": 30,
   "knowledge": [
    {
     "id": "concept",
@@ -689,11 +745,11 @@ window.HDL_LESSONS=[
    },
    {
     "id": "code",
-    "title": "语法与完整示例"
+    "title": "语法、完整示例与错误修正"
    },
    {
     "id": "practice",
-    "title": "练习与常见错误"
+    "title": "分层练习与验证"
    }
   ]
  },
@@ -745,7 +801,7 @@ window.HDL_LESSONS=[
     "仿真未知值，常见于未初始化、冲突或未知传播。"
    ]
   ],
-  "minutes": 10,
+  "minutes": 30,
   "trace": {
    "heads": [
     "表达式",
@@ -777,11 +833,11 @@ window.HDL_LESSONS=[
    },
    {
     "id": "code",
-    "title": "语法与完整示例"
+    "title": "语法、完整示例与错误修正"
    },
    {
     "id": "practice",
-    "title": "练习与常见错误"
+    "title": "分层练习与验证"
    }
   ]
  },
@@ -831,7 +887,7 @@ window.HDL_LESSONS=[
     "按位编号的一组信号，例如[7:0]是8位。"
    ]
   ],
-  "minutes": 9,
+  "minutes": 30,
   "knowledge": [
    {
     "id": "concept",
@@ -839,11 +895,11 @@ window.HDL_LESSONS=[
    },
    {
     "id": "code",
-    "title": "语法与完整示例"
+    "title": "语法、完整示例与错误修正"
    },
    {
     "id": "practice",
-    "title": "练习与常见错误"
+    "title": "分层练习与验证"
    }
   ]
  },
@@ -886,7 +942,7 @@ window.HDL_LESSONS=[
     "寄存器传输级；描述组合逻辑与寄存器在时钟沿的更新。"
    ]
   ],
-  "minutes": 20,
+  "minutes": 30,
   "context": "完整单文件教学示例；代码的文件边界及测试用途见讲解。",
   "knowledge": [
    {
@@ -895,11 +951,11 @@ window.HDL_LESSONS=[
    },
    {
     "id": "code",
-    "title": "语法与完整示例"
+    "title": "语法、完整示例与错误修正"
    },
    {
     "id": "practice",
-    "title": "练习与常见错误"
+    "title": "分层练习与验证"
    }
   ]
  },
@@ -1034,7 +1090,7 @@ window.HDL_LESSONS=[
     "使能有效时透明、无效时保存值的电平敏感存储元件。"
    ]
   ],
-  "minutes": 9,
+  "minutes": 30,
   "trace": {
    "heads": [
     "en",
@@ -1061,11 +1117,11 @@ window.HDL_LESSONS=[
    },
    {
     "id": "code",
-    "title": "语法与完整示例"
+    "title": "语法、完整示例与错误修正"
    },
    {
     "id": "practice",
-    "title": "练习与常见错误"
+    "title": "分层练习与验证"
    }
   ]
  },
@@ -1108,7 +1164,7 @@ window.HDL_LESSONS=[
     "寄存器传输级；描述组合逻辑与寄存器在时钟沿的更新。"
    ]
   ],
-  "minutes": 20,
+  "minutes": 30,
   "context": "完整单文件教学示例；代码的文件边界及测试用途见讲解。",
   "knowledge": [
    {
@@ -1117,11 +1173,11 @@ window.HDL_LESSONS=[
    },
    {
     "id": "code",
-    "title": "语法与完整示例"
+    "title": "语法、完整示例与错误修正"
    },
    {
     "id": "practice",
-    "title": "练习与常见错误"
+    "title": "分层练习与验证"
    }
   ]
  },
@@ -1166,7 +1222,7 @@ window.HDL_LESSONS=[
     "在理想功能模型中，输出由当前输入决定。"
    ]
   ],
-  "minutes": 11,
+  "minutes": 30,
   "trace": {
    "heads": [
     "i",
@@ -1209,11 +1265,11 @@ window.HDL_LESSONS=[
    },
    {
     "id": "code",
-    "title": "语法与完整示例"
+    "title": "语法、完整示例与错误修正"
    },
    {
     "id": "practice",
-    "title": "练习与常见错误"
+    "title": "分层练习与验证"
    }
   ]
  },
@@ -1264,7 +1320,7 @@ window.HDL_LESSONS=[
     "在当前设计中创建并连接的一份子模块电路。"
    ]
   ],
-  "minutes": 10,
+  "minutes": 30,
   "knowledge": [
    {
     "id": "concept",
@@ -1272,11 +1328,11 @@ window.HDL_LESSONS=[
    },
    {
     "id": "code",
-    "title": "语法与完整示例"
+    "title": "语法、完整示例与错误修正"
    },
    {
     "id": "practice",
-    "title": "练习与常见错误"
+    "title": "分层练习与验证"
    }
   ]
  },
@@ -1322,7 +1378,7 @@ window.HDL_LESSONS=[
     "在理想功能模型中，输出由当前输入决定。"
    ]
   ],
-  "minutes": 10,
+  "minutes": 30,
   "knowledge": [
    {
     "id": "concept",
@@ -1330,11 +1386,11 @@ window.HDL_LESSONS=[
    },
    {
     "id": "code",
-    "title": "语法与完整示例"
+    "title": "语法、完整示例与错误修正"
    },
    {
     "id": "practice",
-    "title": "练习与常见错误"
+    "title": "分层练习与验证"
    }
   ]
  },
@@ -1378,7 +1434,7 @@ window.HDL_LESSONS=[
     "寄存器传输级；描述组合逻辑与寄存器在时钟沿的更新。"
    ]
   ],
-  "minutes": 20,
+  "minutes": 30,
   "context": "完整单文件教学示例；代码的文件边界及测试用途见讲解。",
   "knowledge": [
    {
@@ -1387,11 +1443,68 @@ window.HDL_LESSONS=[
    },
    {
     "id": "code",
-    "title": "语法与完整示例"
+    "title": "语法、完整示例与错误修正"
    },
    {
     "id": "practice",
-    "title": "练习与常见错误"
+    "title": "分层练习与验证"
+   }
+  ]
+ },
+ {
+  "id": "hierarchy",
+  "title": "多模块工程、层次与RTL task",
+  "stage": 1,
+  "prerequisites": [
+   "functions",
+   "directives"
+  ],
+  "code": "module nibble_add(input wire [3:0] a,b,output wire [4:0] sum);\n assign sum={1'b0,a}+{1'b0,b};\nendmodule\nmodule pair_add(input wire [7:0] a,b,output wire [9:0] sums);\n nibble_add lo(.a(a[3:0]),.b(b[3:0]),.sum(sums[4:0]));\n nibble_add hi(.a(a[7:4]),.b(b[7:4]),.sum(sums[9:5]));\nendmodule",
+  "concept": [
+   "层次是模块实例组成的树；两个实例同时存在，各有端口和资源。编译文件不是运行顺序，顶层决定展开哪些实例。",
+   "层次引用适合测试台观察内部信号，综合RTL优先通过端口连接，避免依赖跨层内部名字。无延时task可抽取组合操作，带事件等待的task属于测试台。"
+  ],
+  "notes": [
+   "同一个模块可实例化两次，lo和hi不是两次先后调用。",
+   "命名端口.a(信号)把子模块端口接到父模块信号。"
+  ],
+  "trap": "先明确规格、输入边界和验证依据；不要把网页模型的通过当作实际RTL仿真通过。",
+  "goals": [
+   "正确连接多模块工程",
+   "区分实例、层次与任务"
+  ],
+  "q": "完成本课后，什么证据最能支持设计符合规格？",
+  "options": [
+   "完整规格、边界测试和可复现的工具结果",
+   "只看代码长度",
+   "只看波形颜色"
+  ],
+  "correct": 0,
+  "answer": "按规格逐项检查，记录输入、预期和实际结果；一次正常案例不足以证明所有边界。",
+  "task": "按本课练习阶梯实现并记录边界条件。",
+  "solution": "先独立完成阶梯中的设计，再逐项对照参考实现和验收条件。",
+  "terms": [
+   [
+    "规格",
+    "约定输入、输出、时钟、复位和边界行为。"
+   ]
+  ],
+  "context": "完整模块，保存为.v；测试平台与工具命令另外提供。",
+  "minutes": 30,
+  "optional": false,
+  "language": "verilog",
+  "knowledge": [
+   {
+    "id": "concept",
+    "title": "层次是模块实例组成的树；两个实例同时存在，各有端口和资源"
+   },
+   {
+    "id": "code",
+    "title": "语法、完整示例与错误修正"
+   },
+   {
+    "id": "practice",
+    "title": "分层练习与验证"
    }
   ]
  },
@@ -1595,7 +1708,7 @@ window.HDL_LESSONS=[
     "决定在当前有效沿是否执行某项状态更新的条件。"
    ]
   ],
-  "minutes": 10,
+  "minutes": 30,
   "trace": {
    "heads": [
     "条件",
@@ -1627,11 +1740,11 @@ window.HDL_LESSONS=[
    },
    {
     "id": "code",
-    "title": "语法与完整示例"
+    "title": "语法、完整示例与错误修正"
    },
    {
     "id": "practice",
-    "title": "练习与常见错误"
+    "title": "分层练习与验证"
    }
   ]
  },
@@ -1777,7 +1890,7 @@ window.HDL_LESSONS=[
     "寄存器传输级；描述组合逻辑与寄存器在时钟沿的更新。"
    ]
   ],
-  "minutes": 20,
+  "minutes": 30,
   "context": "完整单文件教学示例；代码的文件边界及测试用途见讲解。",
   "knowledge": [
    {
@@ -1786,11 +1899,11 @@ window.HDL_LESSONS=[
    },
    {
     "id": "code",
-    "title": "语法与完整示例"
+    "title": "语法、完整示例与错误修正"
    },
    {
     "id": "practice",
-    "title": "练习与常见错误"
+    "title": "分层练习与验证"
    }
   ]
  },
@@ -1834,7 +1947,7 @@ window.HDL_LESSONS=[
     "寄存器传输级；描述组合逻辑与寄存器在时钟沿的更新。"
    ]
   ],
-  "minutes": 20,
+  "minutes": 30,
   "context": "完整单文件教学示例；代码的文件边界及测试用途见讲解。",
   "knowledge": [
    {
@@ -1843,11 +1956,11 @@ window.HDL_LESSONS=[
    },
    {
     "id": "code",
-    "title": "语法与完整示例"
+    "title": "语法、完整示例与错误修正"
    },
    {
     "id": "practice",
-    "title": "练习与常见错误"
+    "title": "分层练习与验证"
    }
   ]
  },
@@ -1949,6 +2062,62 @@ window.HDL_LESSONS=[
   ]
  },
  {
+  "id": "moore-mealy",
+  "title": "Moore与Mealy：沿间响应和输出寄存",
+  "stage": 2,
+  "prerequisites": [
+   "fsm"
+  ],
+  "code": "module detect11(input wire clk,rst_n,bit_in,output wire mealy,output reg moore);\n reg prev;\n assign mealy=prev & bit_in;\n always @(posedge clk) begin\n  if(!rst_n) begin prev<=0; moore<=0; end\n  else begin prev<=bit_in; moore<=prev & bit_in; end\n end\nendmodule",
+  "concept": [
+   "相同检测条件可以直接作为组合输出，也可以先写进寄存器。组合Mealy输出依赖当前状态和输入，可能在时钟沿之间变化。",
+   "寄存输出等到采样沿后才改变，便于接口时序，但可能引入一拍延迟。设计前先规定输出被谁、在哪个沿接收。"
+  ],
+  "notes": [
+   "prev是上一次采样输入，mealy随当前bit_in变化。",
+   "moore在沿取检测结果，是寄存化输出；把输出寄存等价看作扩展后的Moore状态。"
+  ],
+  "trap": "先明确规格、输入边界和验证依据；不要把网页模型的通过当作实际RTL仿真通过。",
+  "goals": [
+   "区分沿间与沿后输出",
+   "说明寄存输出的延迟代价"
+  ],
+  "q": "完成本课后，什么证据最能支持设计符合规格？",
+  "options": [
+   "完整规格、边界测试和可复现的工具结果",
+   "只看代码长度",
+   "只看波形颜色"
+  ],
+  "correct": 0,
+  "answer": "按规格逐项检查，记录输入、预期和实际结果；一次正常案例不足以证明所有边界。",
+  "task": "按本课练习阶梯实现并记录边界条件。",
+  "solution": "先独立完成阶梯中的设计，再逐项对照参考实现和验收条件。",
+  "terms": [
+   [
+    "规格",
+    "约定输入、输出、时钟、复位和边界行为。"
+   ]
+  ],
+  "context": "完整模块，保存为.v；测试平台与工具命令另外提供。",
+  "minutes": 30,
+  "optional": false,
+  "language": "verilog",
+  "knowledge": [
+   {
+    "id": "concept",
+    "title": "相同检测条件可以直接作为组合输出，也可以先写进寄存器"
+   },
+   {
+    "id": "code",
+    "title": "语法、完整示例与错误修正"
+   },
+   {
+    "id": "practice",
+    "title": "分层练习与验证"
+   }
+  ]
+ },
+ {
   "id": "sv-logic",
   "stage": 3,
   "title": "迈入 SystemVerilog：logic 与 bit",
@@ -1995,7 +2164,7 @@ window.HDL_LESSONS=[
     "仿真未知值，常见于未初始化、冲突或未知传播。"
    ]
   ],
-  "minutes": 9,
+  "minutes": 30,
   "knowledge": [
    {
     "id": "concept",
@@ -2003,11 +2172,11 @@ window.HDL_LESSONS=[
    },
    {
     "id": "code",
-    "title": "语法与完整示例"
+    "title": "语法、完整示例与错误修正"
    },
    {
     "id": "practice",
-    "title": "练习与常见错误"
+    "title": "分层练习与验证"
    }
   ],
   "language": "systemverilog"
@@ -2077,6 +2246,62 @@ window.HDL_LESSONS=[
   "language": "systemverilog"
  },
  {
+  "id": "sv-latch",
+  "title": "always_latch：有意的锁存与意外漏赋值",
+  "stage": 3,
+  "prerequisites": [
+   "sv-always"
+  ],
+  "code": "module latch_example(input logic gate,d,output logic q);\n always_latch begin\n  if(gate) q<=d;\n end\nendmodule",
+  "concept": [
+   "锁存器在gate有效的整个电平区间透明，gate无效时保持；它和只在边沿采样的DFF不同。",
+   "always_latch声明存储意图，不能用来消除组合漏赋值的真实缺陷。基础同步RTL优先使用DFF，锁存器设计需要专门的时序方法。"
+  ],
+  "notes": [
+   "if没有else是这里刻意保留状态，而不是组合逻辑遗漏。",
+   "工具应检查过程是否符合锁存意图；支持和告警强度因工具而异。"
+  ],
+  "trap": "先明确规格、输入边界和验证依据；不要把网页模型的通过当作实际RTL仿真通过。",
+  "goals": [
+   "解释锁存器的透明区间",
+   "区分有意存储与组合漏赋值"
+  ],
+  "q": "完成本课后，什么证据最能支持设计符合规格？",
+  "options": [
+   "完整规格、边界测试和可复现的工具结果",
+   "只看代码长度",
+   "只看波形颜色"
+  ],
+  "correct": 0,
+  "answer": "按规格逐项检查，记录输入、预期和实际结果；一次正常案例不足以证明所有边界。",
+  "task": "按本课练习阶梯实现并记录边界条件。",
+  "solution": "先独立完成阶梯中的设计，再逐项对照参考实现和验收条件。",
+  "terms": [
+   [
+    "规格",
+    "约定输入、输出、时钟、复位和边界行为。"
+   ]
+  ],
+  "context": "完整模块，保存为.sv；测试平台与工具命令另外提供。",
+  "minutes": 30,
+  "optional": false,
+  "language": "systemverilog",
+  "knowledge": [
+   {
+    "id": "concept",
+    "title": "锁存器在gate有效的整个电平区间透明，gate无效时保持；它和只在边沿采样的DFF不同"
+   },
+   {
+    "id": "code",
+    "title": "语法、完整示例与错误修正"
+   },
+   {
+    "id": "practice",
+    "title": "分层练习与验证"
+   }
+  ]
+ },
+ {
   "id": "sv-arrays",
   "title": "SystemVerilog 数组：位和元素要分清",
   "concept": [
@@ -2121,7 +2346,7 @@ window.HDL_LESSONS=[
     "变量名后的元素数组维度。"
    ]
   ],
-  "minutes": 12,
+  "minutes": 30,
   "trace": {
    "heads": [
     "声明/表达式",
@@ -2150,11 +2375,11 @@ window.HDL_LESSONS=[
    },
    {
     "id": "code",
-    "title": "语法与完整示例"
+    "title": "语法、完整示例与错误修正"
    },
    {
     "id": "practice",
-    "title": "练习与常见错误"
+    "title": "分层练习与验证"
    }
   ],
   "language": "systemverilog"
@@ -2206,7 +2431,7 @@ window.HDL_LESSONS=[
     "有限状态机，用状态和条件描述控制转移。"
    ]
   ],
-  "minutes": 11,
+  "minutes": 30,
   "knowledge": [
    {
     "id": "concept",
@@ -2214,11 +2439,75 @@ window.HDL_LESSONS=[
    },
    {
     "id": "code",
-    "title": "语法与完整示例"
+    "title": "语法、完整示例与错误修正"
    },
    {
     "id": "practice",
-    "title": "练习与常见错误"
+    "title": "分层练习与验证"
+   }
+  ],
+  "language": "systemverilog"
+ },
+ {
+  "id": "sv-package",
+  "stage": 3,
+  "title": "package、interface 与 modport：组织RTL接口",
+  "concept": [
+   "package把类型、常量、函数放在共享命名空间，使用import导入；它不会产生一块可连接的模块硬件。编译文件顺序要让使用者先看见包定义。",
+   "interface把一组信号及相关连接约定组织起来，modport声明从某个角色看到的输入输出方向。它解决接口可读性，不自动完成握手，也不保证跨时钟安全。"
+  ],
+  "code": "package types_pkg;\n typedef logic [7:0] byte_t;\nendpackage\ninterface link_if;\n logic valid,ready;\n types_pkg::byte_t data;\n modport source(output valid,data,input ready);\n modport sink(input valid,data,output ready);\nendinterface\nmodule link_source(input logic req,input types_pkg::byte_t payload,link_if.source bus);\n assign bus.valid=req;\n assign bus.data=payload;\nendmodule\nmodule link_sink(link_if.sink bus,output logic [7:0] observed);\n assign bus.ready=1'b1;\n assign observed=bus.data;\nendmodule\nmodule link_demo(input logic req,input logic [7:0] payload,output logic [7:0] observed);\n link_if bus();\n link_source src(.req(req),.payload(payload),.bus(bus));\n link_sink dst(.bus(bus),.observed(observed));\nendmodule",
+  "notes": [
+   "package中的byte_t可用types_pkg::byte_t限定访问。",
+   "valid表示发送方有有效数据，ready表示接收方能接。",
+   "source从发送方视角输出valid/data并读ready。",
+   "同一沿valid&&ready才是一次传输，本例假定同一时钟域。"
+  ],
+  "trap": "ready为0时发送方通常必须保持valid和data，不能每拍随意换数据。",
+  "q": "sink的ready方向是？",
+  "options": [
+   "input",
+   "output",
+   "无法确定"
+  ],
+  "correct": 1,
+  "answer": "接收方通过输出ready告诉发送方自己能否接收。",
+  "task": "valid=1、ready=0连续两拍，是否完成两次传输？",
+  "solution": "没有传输。只有采样沿valid和ready同时为1才完成一次。发送方保持等待中的数据稳定。",
+  "diagram": null,
+  "context": "完整SV编译单元，package必须先于使用者。此例只演示组合接口连接；请求保持规则在Ready/Valid课学习。综合支持需检查目标工具。",
+  "optional": false,
+  "prerequisites": [
+   "sv-types",
+   "hierarchy"
+  ],
+  "goals": [
+   "使用包中的共享类型",
+   "按角色读懂modport方向"
+  ],
+  "terms": [
+   [
+    "端口",
+    "模块与外部连接的信号入口或出口。"
+   ],
+   [
+    "packed",
+    "声明中位于变量名前、打包成连续位的维度或结构。"
+   ]
+  ],
+  "minutes": 30,
+  "knowledge": [
+   {
+    "id": "concept",
+    "title": "使用包中的共享类型"
+   },
+   {
+    "id": "code",
+    "title": "语法、完整示例与错误修正"
+   },
+   {
+    "id": "practice",
+    "title": "分层练习与验证"
    }
   ],
   "language": "systemverilog"
@@ -2272,7 +2561,7 @@ window.HDL_LESSONS=[
     "仿真环境，产生激励并检查设计输出。"
    ]
   ],
-  "minutes": 12,
+  "minutes": 30,
   "trace": {
    "heads": [
     "时刻",
@@ -2309,11 +2598,11 @@ window.HDL_LESSONS=[
    },
    {
     "id": "code",
-    "title": "语法与完整示例"
+    "title": "语法、完整示例与错误修正"
    },
    {
     "id": "practice",
-    "title": "练习与常见错误"
+    "title": "分层练习与验证"
    }
   ]
  },
@@ -2358,7 +2647,7 @@ window.HDL_LESSONS=[
     "寄存器传输级；描述组合逻辑与寄存器在时钟沿的更新。"
    ]
   ],
-  "minutes": 20,
+  "minutes": 30,
   "context": "完整单文件教学示例；代码的文件边界及测试用途见讲解。",
   "knowledge": [
    {
@@ -2367,11 +2656,11 @@ window.HDL_LESSONS=[
    },
    {
     "id": "code",
-    "title": "语法与完整示例"
+    "title": "语法、完整示例与错误修正"
    },
    {
     "id": "practice",
-    "title": "练习与常见错误"
+    "title": "分层练习与验证"
    }
   ]
  },
@@ -2422,7 +2711,7 @@ window.HDL_LESSONS=[
     "仿真环境，产生激励并检查设计输出。"
    ]
   ],
-  "minutes": 11,
+  "minutes": 30,
   "knowledge": [
    {
     "id": "concept",
@@ -2430,11 +2719,11 @@ window.HDL_LESSONS=[
    },
    {
     "id": "code",
-    "title": "语法与完整示例"
+    "title": "语法、完整示例与错误修正"
    },
    {
     "id": "practice",
-    "title": "练习与常见错误"
+    "title": "分层练习与验证"
    }
   ]
  },
@@ -2485,7 +2774,7 @@ window.HDL_LESSONS=[
     "保持时间，数据在采样沿之后仍需稳定的时间要求。"
    ]
   ],
-  "minutes": 9,
+  "minutes": 30,
   "knowledge": [
    {
     "id": "concept",
@@ -2493,11 +2782,11 @@ window.HDL_LESSONS=[
    },
    {
     "id": "code",
-    "title": "语法与完整示例"
+    "title": "语法、完整示例与错误修正"
    },
    {
     "id": "practice",
-    "title": "练习与常见错误"
+    "title": "分层练习与验证"
    }
   ]
  },
@@ -2549,7 +2838,7 @@ window.HDL_LESSONS=[
     "相邻两个同类有效时钟沿之间的时间。"
    ]
   ],
-  "minutes": 9,
+  "minutes": 30,
   "trace": {
    "heads": [
     "量",
@@ -2591,11 +2880,238 @@ window.HDL_LESSONS=[
    },
    {
     "id": "code",
-    "title": "语法与完整示例"
+    "title": "语法、完整示例与错误修正"
    },
    {
     "id": "practice",
-    "title": "练习与常见错误"
+    "title": "分层练习与验证"
+   }
+  ]
+ },
+ {
+  "id": "clock-skew",
+  "title": "Clock-to-Q、偏斜与Setup/Hold预算",
+  "stage": 5,
+  "prerequisites": [
+   "setup-hold",
+   "timing-path"
+  ],
+  "code": "// SDC示意：对象名必须替换为实际顶层端口\n// create_clock -name core_clk -period 10 [get_ports clk]\n// set_clock_uncertainty -setup 0.2 [get_clocks core_clk]\n// set_clock_uncertainty -hold 0.1 [get_clocks core_clk]\n// report_timing -delay_type max\n// report_timing -delay_type min",
+  "concept": [
+   "数据从发射寄存器的Q经组合路径到捕获寄存器D。最大延迟约束建立时间，最小延迟约束保持时间，两者必须分别检查。",
+   "定义偏斜s为捕获时钟到达时间减发射时钟到达时间。正偏斜给setup更多时间，却让hold更困难；降低频率通常不能修复同沿hold违例。"
+  ],
+  "notes": [
+   "setup slack=T+s-tCQmax-tcombmax-tsetup-Usetup。",
+   "hold slack=tCQmin+tcombmin-s-thold-Uhold。只用于本课同频、同相、单周期简化模型。"
+  ],
+  "trap": "先明确规格、输入边界和验证依据；不要把网页模型的通过当作实际RTL仿真通过。",
+  "goals": [
+   "分别计算Setup与Hold裕量",
+   "解释正偏斜的两种作用"
+  ],
+  "q": "完成本课后，什么证据最能支持设计符合规格？",
+  "options": [
+   "完整规格、边界测试和可复现的工具结果",
+   "只看代码长度",
+   "只看波形颜色"
+  ],
+  "correct": 0,
+  "answer": "按规格逐项检查，记录输入、预期和实际结果；一次正常案例不足以证明所有边界。",
+  "task": "按本课练习阶梯实现并记录边界条件。",
+  "solution": "先独立完成阶梯中的设计，再逐项对照参考实现和验收条件。",
+  "terms": [
+   [
+    "规格",
+    "约定输入、输出、时钟、复位和边界行为。"
+   ]
+  ],
+  "context": "完整模块，保存为.v；测试平台与工具命令另外提供。",
+  "minutes": 30,
+  "optional": false,
+  "language": "terminal",
+  "knowledge": [
+   {
+    "id": "concept",
+    "title": "数据从发射寄存器的Q经组合路径到捕获寄存器D"
+   },
+   {
+    "id": "code",
+    "title": "语法、完整示例与错误修正"
+   },
+   {
+    "id": "practice",
+    "title": "分层练习与验证"
+   }
+  ]
+ },
+ {
+  "id": "multicycle",
+  "title": "多周期路径：先证明使能，再写例外",
+  "stage": 5,
+  "prerequisites": [
+   "clock-skew"
+  ],
+  "code": "module slow_capture(input wire clk,rst_n,en3,\n input wire [7:0] d,output reg [7:0] q);\n always @(posedge clk) begin\n  if(!rst_n) q<=0;\n  else if(en3) q<=d;\n end\nendmodule",
+  "concept": [
+   "多周期不是组合逻辑真的变快，而是规格允许捕获寄存器隔几个周期才接收一次。必须证明源数据在窗口内稳定、捕获使能符合约定。",
+   "对相同周期同相时钟的常见末端使能场景，setup N和hold N-1经常成对使用。不同相位、-start/-end及不同频率关系要用实际报告确认，不能盲套。"
+  ],
+  "notes": [
+   "en3只控制捕获，不单独证明源数据稳定。",
+   "set_multicycle_path不能修复协议，错误例外可能隐藏真正的失败。"
+  ],
+  "trap": "先明确规格、输入边界和验证依据；不要把网页模型的通过当作实际RTL仿真通过。",
+  "goals": [
+   "证明多周期的功能前提",
+   "核对捕获边沿与Hold关系"
+  ],
+  "q": "完成本课后，什么证据最能支持设计符合规格？",
+  "options": [
+   "完整规格、边界测试和可复现的工具结果",
+   "只看代码长度",
+   "只看波形颜色"
+  ],
+  "correct": 0,
+  "answer": "按规格逐项检查，记录输入、预期和实际结果；一次正常案例不足以证明所有边界。",
+  "task": "按本课练习阶梯实现并记录边界条件。",
+  "solution": "先独立完成阶梯中的设计，再逐项对照参考实现和验收条件。",
+  "terms": [
+   [
+    "规格",
+    "约定输入、输出、时钟、复位和边界行为。"
+   ]
+  ],
+  "context": "完整模块，保存为.v；测试平台与工具命令另外提供。",
+  "minutes": 30,
+  "optional": false,
+  "language": "verilog",
+  "knowledge": [
+   {
+    "id": "concept",
+    "title": "多周期不是组合逻辑真的变快，而是规格允许捕获寄存器隔几个周期才接收一次"
+   },
+   {
+    "id": "code",
+    "title": "语法、完整示例与错误修正"
+   },
+   {
+    "id": "practice",
+    "title": "分层练习与验证"
+   }
+  ]
+ },
+ {
+  "id": "cdc",
+  "title": "亚稳态与CDC：双触发器能做什么",
+  "stage": 5,
+  "prerequisites": [
+   "clock-skew",
+   "nba"
+  ],
+  "code": "module sync_bit(input wire dst_clk,rst_n,async_level,output wire synced);\n (* ASYNC_REG=\"TRUE\" *) reg meta,stable;\n always @(posedge dst_clk) begin\n  if(!rst_n) begin meta<=0;stable<=0;end\n  else begin meta<=async_level;stable<=meta;end\n end\n assign synced=stable;\nendmodule",
+  "concept": [
+   "异步输入可能在目的时钟采样窗口内变化，使第一级进入亚稳态。第二级给第一级更多恢复时间，降低失败概率，但不保证绝对不会失败。",
+   "该结构适合慢变化单比特电平。窄脉冲可能漏采，多位总线逐位同步可能组合出不存在的数值；事件用握手或toggle协议，多位数据用稳定数据握手或异步FIFO。"
+  ],
+  "notes": [
+   "ASYNC_REG是工具相关属性，仍要遵循目标器件的布局和CDC规则。",
+   "第一级meta不能扇出到功能逻辑；目的逻辑使用stable。复位释放也要满足目的域要求。"
+  ],
+  "trap": "先明确规格、输入边界和验证依据；不要把网页模型的通过当作实际RTL仿真通过。",
+  "goals": [
+   "判断双FF的适用边界",
+   "为脉冲与多位数据选择协议"
+  ],
+  "q": "完成本课后，什么证据最能支持设计符合规格？",
+  "options": [
+   "完整规格、边界测试和可复现的工具结果",
+   "只看代码长度",
+   "只看波形颜色"
+  ],
+  "correct": 0,
+  "answer": "按规格逐项检查，记录输入、预期和实际结果；一次正常案例不足以证明所有边界。",
+  "task": "按本课练习阶梯实现并记录边界条件。",
+  "solution": "先独立完成阶梯中的设计，再逐项对照参考实现和验收条件。",
+  "terms": [
+   [
+    "规格",
+    "约定输入、输出、时钟、复位和边界行为。"
+   ]
+  ],
+  "context": "完整模块，保存为.v；测试平台与工具命令另外提供。",
+  "minutes": 30,
+  "optional": false,
+  "language": "verilog",
+  "knowledge": [
+   {
+    "id": "concept",
+    "title": "异步输入可能在目的时钟采样窗口内变化，使第一级进入亚稳态"
+   },
+   {
+    "id": "code",
+    "title": "语法、完整示例与错误修正"
+   },
+   {
+    "id": "practice",
+    "title": "分层练习与验证"
+   }
+  ]
+ },
+ {
+  "id": "async-fifo",
+  "title": "异步FIFO：数据留在RAM，指针跨域",
+  "stage": 5,
+  "prerequisites": [
+   "cdc",
+   "sv-arrays"
+  ],
+  "code": "module gray_step #(parameter A=3)(input wire [A:0] binary,output wire [A:0] gray);\n assign gray=(binary>>1)^binary;\nendmodule",
+  "concept": [
+   "异步FIFO有独立写时钟和读时钟。数据通过真正支持双时钟的存储结构传递；跨域传递的是指针状态，不是每一位数据各过两级。",
+   "本地二进制指针用于地址，额外一位用于区分回绕；对应Gray指针经同步链到对端。Empty比较本地读指针与同步写指针，Full需要考虑一圈距离；标志保守延迟是正常现象。"
+  ],
+  "notes": [
+   "Gray=(binary>>1)^binary，相邻计数只变一位；这不取消同步链或位间偏差约束。",
+   "这段只实现Gray编码，不是完整异步FIFO。真实工程应使用经过验证的IP并检查CDC、复位及约束。"
+  ],
+  "trap": "先明确规格、输入边界和验证依据；不要把网页模型的通过当作实际RTL仿真通过。",
+  "goals": [
+   "解释数据与指针跨域路径",
+   "计算Gray并说明约束边界"
+  ],
+  "q": "完成本课后，什么证据最能支持设计符合规格？",
+  "options": [
+   "完整规格、边界测试和可复现的工具结果",
+   "只看代码长度",
+   "只看波形颜色"
+  ],
+  "correct": 0,
+  "answer": "按规格逐项检查，记录输入、预期和实际结果；一次正常案例不足以证明所有边界。",
+  "task": "按本课练习阶梯实现并记录边界条件。",
+  "solution": "先独立完成阶梯中的设计，再逐项对照参考实现和验收条件。",
+  "terms": [
+   [
+    "规格",
+    "约定输入、输出、时钟、复位和边界行为。"
+   ]
+  ],
+  "context": "完整模块，保存为.v；测试平台与工具命令另外提供。",
+  "minutes": 30,
+  "optional": false,
+  "language": "verilog",
+  "knowledge": [
+   {
+    "id": "concept",
+    "title": "异步FIFO有独立写时钟和读时钟"
+   },
+   {
+    "id": "code",
+    "title": "语法、完整示例与错误修正"
+   },
+   {
+    "id": "practice",
+    "title": "分层练习与验证"
    }
   ]
  },
@@ -2648,7 +3164,7 @@ window.HDL_LESSONS=[
     "Design Under Test，被测试的设计模块。"
    ]
   ],
-  "minutes": 11,
+  "minutes": 30,
   "knowledge": [
    {
     "id": "concept",
@@ -2656,14 +3172,394 @@ window.HDL_LESSONS=[
    },
    {
     "id": "code",
-    "title": "语法与完整示例"
+    "title": "语法、完整示例与错误修正"
    },
    {
     "id": "practice",
-    "title": "练习与常见错误"
+    "title": "分层练习与验证"
    }
   ],
   "language": "systemverilog"
+ },
+ {
+  "id": "synthesis-lab",
+  "title": "从RTL到门级：Lint、资源与约束闭环",
+  "stage": 6,
+  "prerequisites": [
+   "checking",
+   "capstone"
+  ],
+  "code": "module shared_add(input wire [7:0] a,b,c,input wire sel,output wire [8:0] y);\n wire [7:0] chosen=sel?b:c;\n assign y={1'b0,a}+{1'b0,chosen};\nendmodule",
+  "concept": [
+   "综合把可综合RTL转换为目标库或器件资源，不执行测试台的时间脚本。组合完整赋值、时钟过程、数组读写方式决定推断出的硬件。",
+   "先用lint发现位宽、锁存和多驱动，再综合检查资源和时序。共享加法器可能减少面积，但选择器也会改变路径；PPA要依据同约束下的报告比较。"
+  ],
+  "notes": [
+   "选择操作数再加法，表达共享意图。是否共享及映射结果以综合报告为准。",
+   "无标准单元库时可看通用单元统计，不能冒充实际工艺面积或签核时序。"
+  ],
+  "trap": "先明确规格、输入边界和验证依据；不要把网页模型的通过当作实际RTL仿真通过。",
+  "goals": [
+   "从RTL推断资源并检查报告",
+   "完成Lint到综合的回归闭环"
+  ],
+  "q": "完成本课后，什么证据最能支持设计符合规格？",
+  "options": [
+   "完整规格、边界测试和可复现的工具结果",
+   "只看代码长度",
+   "只看波形颜色"
+  ],
+  "correct": 0,
+  "answer": "按规格逐项检查，记录输入、预期和实际结果；一次正常案例不足以证明所有边界。",
+  "task": "按本课练习阶梯实现并记录边界条件。",
+  "solution": "先独立完成阶梯中的设计，再逐项对照参考实现和验收条件。",
+  "terms": [
+   [
+    "规格",
+    "约定输入、输出、时钟、复位和边界行为。"
+   ]
+  ],
+  "context": "完整模块，保存为.v；测试平台与工具命令另外提供。",
+  "minutes": 30,
+  "optional": false,
+  "language": "verilog",
+  "knowledge": [
+   {
+    "id": "concept",
+    "title": "综合把可综合RTL转换为目标库或器件资源，不执行测试台的时间脚本"
+   },
+   {
+    "id": "code",
+    "title": "语法、完整示例与错误修正"
+   },
+   {
+    "id": "practice",
+    "title": "分层练习与验证"
+   }
+  ]
+ },
+ {
+  "id": "memory",
+  "title": "RAM/ROM：读延迟与读写冲突",
+  "stage": 6,
+  "prerequisites": [
+   "sv-arrays",
+   "sv-always"
+  ],
+  "code": "module ram16(input logic clk,we,input logic [3:0] addr,\n input logic [7:0] wdata,output logic [7:0] rdata);\n logic [7:0] mem[0:15];\n always_ff @(posedge clk) begin\n  if(we) mem[addr]<=wdata;\n  rdata<=mem[addr];\n end\nendmodule",
+  "concept": [
+   "16×8表示16个8位元素，不是16位总宽。写端在沿采样we、地址、数据；同步读把选中元素送到输出寄存器。",
+   "同一沿对同一地址写入并读取时，本例非阻塞语义使rdata取得旧内容。器件RAM有read-first/write-first/no-change等模式，必须检查推断报告与仿真模型是否一致。"
+  ],
+  "notes": [
+   "没有复位或初始化的mem在四态仿真中可能为X，测试应先写再读。",
+   "不要用一个大复位循环强行清RAM而又假定一定推导块RAM；通常复位有效位或控制状态。"
+  ],
+  "trap": "先明确规格、输入边界和验证依据；不要把网页模型的通过当作实际RTL仿真通过。",
+  "goals": [
+   "预测同步读与同址冲突",
+   "核对RAM推断的工具边界"
+  ],
+  "q": "完成本课后，什么证据最能支持设计符合规格？",
+  "options": [
+   "完整规格、边界测试和可复现的工具结果",
+   "只看代码长度",
+   "只看波形颜色"
+  ],
+  "correct": 0,
+  "answer": "按规格逐项检查，记录输入、预期和实际结果；一次正常案例不足以证明所有边界。",
+  "task": "按本课练习阶梯实现并记录边界条件。",
+  "solution": "先独立完成阶梯中的设计，再逐项对照参考实现和验收条件。",
+  "terms": [
+   [
+    "规格",
+    "约定输入、输出、时钟、复位和边界行为。"
+   ]
+  ],
+  "context": "完整模块，保存为.sv；测试平台与工具命令另外提供。",
+  "minutes": 30,
+  "optional": false,
+  "language": "systemverilog",
+  "knowledge": [
+   {
+    "id": "concept",
+    "title": "16×8表示16个8位元素，不是16位总宽"
+   },
+   {
+    "id": "code",
+    "title": "语法、完整示例与错误修正"
+   },
+   {
+    "id": "practice",
+    "title": "分层练习与验证"
+   }
+  ]
+ },
+ {
+  "id": "fifo-project",
+  "title": "项目一：可回归的同步FIFO",
+  "stage": 6,
+  "prerequisites": [
+   "memory",
+   "counter",
+   "checking"
+  ],
+  "code": "module fifo4(input logic clk,rst_n,push,pop,input logic [7:0] din,\n output logic [7:0] dout,output logic full,empty);\n logic [7:0] mem[0:3];\n logic [1:0] wp,rp;\n logic [2:0] count;\n wire wr=push && !full, rd=pop && !empty;\n assign full=(count==4);\n assign empty=(count==0);\n assign dout=mem[rp];\n always_ff @(posedge clk) begin\n  if(!rst_n) begin wp<=0;rp<=0;count<=0;end\n  else begin\n   if(wr) begin mem[wp]<=din;wp<=wp+2'd1;end\n   if(rd) rp<=rp+2'd1;\n   case({wr,rd})\n    2'b10: count<=count+3'd1;\n    2'b01: count<=count-3'd1;\n    default: count<=count;\n   endcase\n  end\n end\nendmodule",
+  "concept": [
+   "规格固定深度4、8位数据、单时钟、同步低有效复位；dout为首字直通，只在非空时有效。push/pop仅在沿前非满/非空时接受。",
+   "本例在full且同时push/pop时只接受pop；empty且同时push/pop时只接受push，没有旁路。先明确这种边界策略，再与队列参考模型比较，不混用其他FIFO的吞吐规则。"
+  ],
+  "notes": [
+   "count范围0到4，需要3位，读写指针各2位自动回绕。",
+   "count由一个case统一更新；有效读写同时发生时保持。dout空时未定义，不能检查其有效内容。"
+  ],
+  "trap": "先明确规格、输入边界和验证依据；不要把网页模型的通过当作实际RTL仿真通过。",
+  "goals": [
+   "按规格实现深度4同步FIFO",
+   "验证满空、并发与回绕"
+  ],
+  "q": "完成本课后，什么证据最能支持设计符合规格？",
+  "options": [
+   "完整规格、边界测试和可复现的工具结果",
+   "只看代码长度",
+   "只看波形颜色"
+  ],
+  "correct": 0,
+  "answer": "按规格逐项检查，记录输入、预期和实际结果；一次正常案例不足以证明所有边界。",
+  "task": "按本课练习阶梯实现并记录边界条件。",
+  "solution": "先独立完成阶梯中的设计，再逐项对照参考实现和验收条件。",
+  "terms": [
+   [
+    "规格",
+    "约定输入、输出、时钟、复位和边界行为。"
+   ]
+  ],
+  "context": "完整模块，保存为.sv；测试平台与工具命令另外提供。",
+  "minutes": 30,
+  "optional": false,
+  "language": "systemverilog",
+  "knowledge": [
+   {
+    "id": "concept",
+    "title": "规格固定深度4、8位数据、单时钟、同步低有效复位；dout为首字直通，只在非空时有效"
+   },
+   {
+    "id": "code",
+    "title": "语法、完整示例与错误修正"
+   },
+   {
+    "id": "practice",
+    "title": "分层练习与验证"
+   }
+  ]
+ },
+ {
+  "id": "uart-project",
+  "title": "项目二：UART 8N1发送与自检",
+  "stage": 6,
+  "prerequisites": [
+   "fsm",
+   "counter",
+   "checking"
+  ],
+  "code": "module uart_tx #(parameter CLKS_PER_BIT=4)(\n input logic clk,rst_n,start,input logic [7:0] data,output logic tx,busy);\n logic [9:0] frame;\n integer tick,bitno;\n always_ff @(posedge clk) begin\n  if(!rst_n) begin tx<=1;busy<=0;tick<=0;bitno<=0;frame<=10'h3ff;end\n  else if(!busy) begin\n   tx<=1;\n   if(start) begin frame<={1'b1,data,1'b0};tx<=0;busy<=1;tick<=0;bitno<=0;end\n  end else if(tick==CLKS_PER_BIT-1) begin\n   tick<=0;\n   if(bitno==9) begin tx<=1;busy<=0;end\n   else begin bitno<=bitno+1;tx<=frame[bitno+1];end\n  end else tick<=tick+1;\n end\nendmodule",
+  "concept": [
+   "UART 8N1线空闲为1，一帧依次是起始0、8个数据位低位先发、停止1。发送器在空闲且start=1的沿锁存整字节，busy期间忽略start。",
+   "CLKS_PER_BIT必须为正整数；波特率约为时钟频率除以该值。每个位保持恰好N个时钟周期；波特率误差、外部电平标准和接收过采样是额外工程约束。"
+  ],
+  "notes": [
+   "frame[0]是起始，frame[1]是data[0]，frame[9]是停止。",
+   "发送期间不读取外部data，保证外部数据变化不会破坏当前帧。start持续高会在下次空闲沿再发一帧，调用方需产生脉冲。"
+  ],
+  "trap": "先明确规格、输入边界和验证依据；不要把网页模型的通过当作实际RTL仿真通过。",
+  "goals": [
+   "实现8N1低位先发发送器",
+   "验证帧位序和每位持续周期"
+  ],
+  "q": "完成本课后，什么证据最能支持设计符合规格？",
+  "options": [
+   "完整规格、边界测试和可复现的工具结果",
+   "只看代码长度",
+   "只看波形颜色"
+  ],
+  "correct": 0,
+  "answer": "按规格逐项检查，记录输入、预期和实际结果；一次正常案例不足以证明所有边界。",
+  "task": "按本课练习阶梯实现并记录边界条件。",
+  "solution": "先独立完成阶梯中的设计，再逐项对照参考实现和验收条件。",
+  "terms": [
+   [
+    "规格",
+    "约定输入、输出、时钟、复位和边界行为。"
+   ]
+  ],
+  "context": "完整模块，保存为.sv；测试平台与工具命令另外提供。",
+  "minutes": 30,
+  "optional": false,
+  "language": "systemverilog",
+  "knowledge": [
+   {
+    "id": "concept",
+    "title": "UART 8N1线空闲为1，一帧依次是起始0、8个数据位低位先发、停止1"
+   },
+   {
+    "id": "code",
+    "title": "语法、完整示例与错误修正"
+   },
+   {
+    "id": "practice",
+    "title": "分层练习与验证"
+   }
+  ]
+ },
+ {
+  "id": "sv-handshake",
+  "title": "Ready / Valid：传输、背压与保持",
+  "concept": [
+   "流接口用valid表示发送方当前有有效数据，用ready表示接收方愿意接收。双方使用同一个时钟时，只有某个采样沿valid与ready都为1，才完成一次传输。",
+   "发送方一旦给出valid=1，若ready=0，应保持valid和data等待；接收成功后才可以换下一份数据。接口只是把信号组织起来，协议规则仍需实现和检查。这一课先读协议，再到下一课学interface/modport。"
+  ],
+  "code": "// 同一时钟域中的传输计数示意\nalways_ff @(posedge clk) begin\n if(!rst_n) transfers <= 8'd0;\n else if(valid && ready) transfers <= transfers + 8'd1;\nend\n// valid=1, ready=0：没有接收，发送方保持data\n// valid=1, ready=1：在该上升沿接收一次",
+  "notes": [
+   "&&是单比特握手条件，表示两边同时为真。",
+   "ready在两沿之间拉高不是一次传输，必须等有效采样沿。",
+   "transfers是已成功传输次数，8位计数会回绕。",
+   "此处假设同域；跨时钟传输要使用专门CDC结构。"
+  ],
+  "trap": "不能看到valid持续三拍就认定收了三次，还要逐沿检查ready。",
+  "q": "三个沿valid均为1，ready依次0、1、1，接收几次？",
+  "options": [
+   "1",
+   "2",
+   "3"
+  ],
+  "correct": 1,
+  "answer": "第二、第三个沿满足valid&&ready，共两次。",
+  "task": "ready=0时为什么不能继续换data？",
+  "solution": "接收方还没有接收当前这份数据；继续换会丢掉待发送的数据。",
+  "optional": false,
+  "stage": 6,
+  "prerequisites": [
+   "checking",
+   "sv-always"
+  ],
+  "goals": [
+   "逐沿判断一次有效传输",
+   "解释背压时为何必须保持数据"
+  ],
+  "terms": [
+   [
+    "使能",
+    "决定在当前有效沿是否执行某项状态更新的条件。"
+   ],
+   [
+    "时钟周期",
+    "相邻两个同类有效时钟沿之间的时间。"
+   ]
+  ],
+  "minutes": 30,
+  "trace": {
+   "heads": [
+    "沿",
+    "valid",
+    "ready",
+    "是否传输"
+   ],
+   "rows": [
+    [
+     "1",
+     "1",
+     "0",
+     "否，保持当前data"
+    ],
+    [
+     "2",
+     "1",
+     "1",
+     "是，接收第1份"
+    ],
+    [
+     "3",
+     "1",
+     "1",
+     "是，可接收下一份"
+    ]
+   ]
+  },
+  "context": "这是讲解用代码片段，不是独立模块；按本课说明放入已有模块或测试台，再补齐接口声明。",
+  "knowledge": [
+   {
+    "id": "concept",
+    "title": "逐沿判断一次有效传输"
+   },
+   {
+    "id": "code",
+    "title": "语法、完整示例与错误修正"
+   },
+   {
+    "id": "practice",
+    "title": "分层练习与验证"
+   }
+  ],
+  "language": "systemverilog"
+ },
+ {
+  "id": "integration",
+  "title": "Ready/Valid集成：背压、交付与工程验收",
+  "stage": 6,
+  "prerequisites": [
+   "fifo-project",
+   "uart-project",
+   "sv-handshake",
+   "synthesis-lab"
+  ],
+  "code": "module rv_register(input logic clk,rst_n,s_valid,m_ready,input logic [7:0] s_data,\n output logic s_ready,m_valid,output logic [7:0] m_data);\n assign s_ready=!m_valid || m_ready;\n always_ff @(posedge clk) begin\n  if(!rst_n) begin m_valid<=0;m_data<=0;end\n  else if(s_ready) begin m_valid<=s_valid; if(s_valid) m_data<=s_data;end\n end\nendmodule",
+  "concept": [
+   "一拍弹性寄存器在下游停顿时保存valid和data，下游接收旧数据的同时可以装入新数据。接口transfer仅在同沿valid&&ready成立。",
+   "集成FIFO到UART时要明确一次握手消费一个字节、busy期间不能丢数据、复位清空有效性。工程交付包括规格、结构、文件列表、约束、测试结果、失败日志和版本。"
+  ],
+  "notes": [
+   "s_ready在本级为空或下游接收时为1，允许替换旧拍。",
+   "下游背压时m_valid=1,m_ready=0，此时s_ready=0，m_data保持；注意长ready组合链的时序。"
+  ],
+  "trap": "先明确规格、输入边界和验证依据；不要把网页模型的通过当作实际RTL仿真通过。",
+  "goals": [
+   "实现背压下保持的弹性寄存器",
+   "用事务检查证明集成不丢不重"
+  ],
+  "q": "完成本课后，什么证据最能支持设计符合规格？",
+  "options": [
+   "完整规格、边界测试和可复现的工具结果",
+   "只看代码长度",
+   "只看波形颜色"
+  ],
+  "correct": 0,
+  "answer": "按规格逐项检查，记录输入、预期和实际结果；一次正常案例不足以证明所有边界。",
+  "task": "按本课练习阶梯实现并记录边界条件。",
+  "solution": "先独立完成阶梯中的设计，再逐项对照参考实现和验收条件。",
+  "terms": [
+   [
+    "规格",
+    "约定输入、输出、时钟、复位和边界行为。"
+   ]
+  ],
+  "context": "完整模块，保存为.sv；测试平台与工具命令另外提供。",
+  "minutes": 30,
+  "optional": false,
+  "language": "systemverilog",
+  "knowledge": [
+   {
+    "id": "concept",
+    "title": "一拍弹性寄存器在下游停顿时保存valid和data，下游接收旧数据的同时可以装入新数据"
+   },
+   {
+    "id": "code",
+    "title": "语法、完整示例与错误修正"
+   },
+   {
+    "id": "practice",
+    "title": "分层练习与验证"
+   }
+  ]
  },
  {
   "id": "sv-tasks",
@@ -2705,7 +3601,7 @@ window.HDL_LESSONS=[
     "仿真环境，产生激励并检查设计输出。"
    ]
   ],
-  "minutes": 11,
+  "minutes": 30,
   "context": "这是讲解用代码片段，不是独立模块；按本课说明放入已有模块或测试台，再补齐接口声明。",
   "knowledge": [
    {
@@ -2714,166 +3610,11 @@ window.HDL_LESSONS=[
    },
    {
     "id": "code",
-    "title": "语法与完整示例"
+    "title": "语法、完整示例与错误修正"
    },
    {
     "id": "practice",
-    "title": "练习与常见错误"
-   }
-  ],
-  "language": "systemverilog"
- },
- {
-  "id": "sv-handshake",
-  "title": "选修：valid / ready 到底何时传一次？",
-  "concept": [
-   "流接口用valid表示发送方当前有有效数据，用ready表示接收方愿意接收。双方使用同一个时钟时，只有某个采样沿valid与ready都为1，才完成一次传输。",
-   "发送方一旦给出valid=1，若ready=0，应保持valid和data等待；接收成功后才可以换下一份数据。接口只是把信号组织起来，协议规则仍需实现和检查。这一课先读协议，再到下一课学interface/modport。"
-  ],
-  "code": "// 同一时钟域中的传输计数示意\nalways_ff @(posedge clk) begin\n if(!rst_n) transfers <= 8'd0;\n else if(valid && ready) transfers <= transfers + 8'd1;\nend\n// valid=1, ready=0：没有接收，发送方保持data\n// valid=1, ready=1：在该上升沿接收一次",
-  "notes": [
-   "&&是单比特握手条件，表示两边同时为真。",
-   "ready在两沿之间拉高不是一次传输，必须等有效采样沿。",
-   "transfers是已成功传输次数，8位计数会回绕。",
-   "此处假设同域；跨时钟传输要使用专门CDC结构。"
-  ],
-  "trap": "不能看到valid持续三拍就认定收了三次，还要逐沿检查ready。",
-  "q": "三个沿valid均为1，ready依次0、1、1，接收几次？",
-  "options": [
-   "1",
-   "2",
-   "3"
-  ],
-  "correct": 1,
-  "answer": "第二、第三个沿满足valid&&ready，共两次。",
-  "task": "ready=0时为什么不能继续换data？",
-  "solution": "接收方还没有接收当前这份数据；继续换会丢掉待发送的数据。",
-  "optional": true,
-  "stage": 7,
-  "prerequisites": [
-   "sv-always",
-   "counter"
-  ],
-  "goals": [
-   "逐沿判断一次有效传输",
-   "解释背压时为何必须保持数据"
-  ],
-  "terms": [
-   [
-    "使能",
-    "决定在当前有效沿是否执行某项状态更新的条件。"
-   ],
-   [
-    "时钟周期",
-    "相邻两个同类有效时钟沿之间的时间。"
-   ]
-  ],
-  "minutes": 11,
-  "trace": {
-   "heads": [
-    "沿",
-    "valid",
-    "ready",
-    "是否传输"
-   ],
-   "rows": [
-    [
-     "1",
-     "1",
-     "0",
-     "否，保持当前data"
-    ],
-    [
-     "2",
-     "1",
-     "1",
-     "是，接收第1份"
-    ],
-    [
-     "3",
-     "1",
-     "1",
-     "是，可接收下一份"
-    ]
-   ]
-  },
-  "context": "这是讲解用代码片段，不是独立模块；按本课说明放入已有模块或测试台，再补齐接口声明。",
-  "knowledge": [
-   {
-    "id": "concept",
-    "title": "逐沿判断一次有效传输"
-   },
-   {
-    "id": "code",
-    "title": "语法与完整示例"
-   },
-   {
-    "id": "practice",
-    "title": "练习与常见错误"
-   }
-  ],
-  "language": "systemverilog"
- },
- {
-  "id": "sv-package",
-  "stage": 7,
-  "title": "选修：package、interface 与 modport",
-  "concept": [
-   "package把类型、常量、函数放在共享命名空间，使用import导入；它不会产生一块可连接的模块硬件。编译文件顺序要让使用者先看见包定义。",
-   "interface把一组信号及相关连接约定组织起来，modport声明从某个角色看到的输入输出方向。它解决接口可读性，不自动完成握手，也不保证跨时钟安全。"
-  ],
-  "code": "package types_pkg;\n typedef logic [7:0] byte_t;\nendpackage\ninterface link_if;\n logic valid, ready;\n logic [7:0] data;\n modport source(output valid,data, input ready);\n modport sink(input valid,data, output ready);\nendinterface",
-  "notes": [
-   "package中的byte_t可用types_pkg::byte_t限定访问。",
-   "valid表示发送方有有效数据，ready表示接收方能接。",
-   "source从发送方视角输出valid/data并读ready。",
-   "同一沿valid&&ready才是一次传输，本例假定同一时钟域。"
-  ],
-  "trap": "ready为0时发送方通常必须保持valid和data，不能每拍随意换数据。",
-  "q": "sink的ready方向是？",
-  "options": [
-   "input",
-   "output",
-   "无法确定"
-  ],
-  "correct": 1,
-  "answer": "接收方通过输出ready告诉发送方自己能否接收。",
-  "task": "valid=1、ready=0连续两拍，是否完成两次传输？",
-  "solution": "没有传输。只有采样沿valid和ready同时为1才完成一次。发送方保持等待中的数据稳定。",
-  "diagram": null,
-  "context": "package与interface均是独立的顶层声明，放在.sv文件中，不能包在module内部。先编译此文件，再编译使用它的模块。",
-  "optional": true,
-  "prerequisites": [
-   "sv-handshake",
-   "sv-types"
-  ],
-  "goals": [
-   "使用包中的共享类型",
-   "按角色读懂modport方向"
-  ],
-  "terms": [
-   [
-    "端口",
-    "模块与外部连接的信号入口或出口。"
-   ],
-   [
-    "packed",
-    "声明中位于变量名前、打包成连续位的维度或结构。"
-   ]
-  ],
-  "minutes": 11,
-  "knowledge": [
-   {
-    "id": "concept",
-    "title": "使用包中的共享类型"
-   },
-   {
-    "id": "code",
-    "title": "语法与完整示例"
-   },
-   {
-    "id": "practice",
-    "title": "练习与常见错误"
+    "title": "分层练习与验证"
    }
   ],
   "language": "systemverilog"
@@ -2921,7 +3662,7 @@ window.HDL_LESSONS=[
     "验证程序中对象的模板，可包含数据与方法。"
    ]
   ],
-  "minutes": 12,
+  "minutes": 30,
   "knowledge": [
    {
     "id": "concept",
@@ -2929,11 +3670,11 @@ window.HDL_LESSONS=[
    },
    {
     "id": "code",
-    "title": "语法与完整示例"
+    "title": "语法、完整示例与错误修正"
    },
    {
     "id": "practice",
-    "title": "练习与常见错误"
+    "title": "分层练习与验证"
    }
   ],
   "language": "systemverilog"
@@ -2981,7 +3722,7 @@ window.HDL_LESSONS=[
     "SystemVerilog Assertions，用采样时序描述并检查性质。"
    ]
   ],
-  "minutes": 10,
+  "minutes": 30,
   "knowledge": [
    {
     "id": "concept",
@@ -2989,13 +3730,71 @@ window.HDL_LESSONS=[
    },
    {
     "id": "code",
-    "title": "语法与完整示例"
+    "title": "语法、完整示例与错误修正"
    },
    {
     "id": "practice",
-    "title": "练习与常见错误"
+    "title": "分层练习与验证"
    }
   ],
   "language": "systemverilog"
+ },
+ {
+  "id": "advanced-map",
+  "title": "进阶地图：SVA、覆盖率、总线、ASIC与PPA",
+  "stage": 7,
+  "prerequisites": [
+   "sv-assert",
+   "sv-verification",
+   "integration"
+  ],
+  "code": "// 工程检查计划片段，不是可直接编译的模块\n// 规格：每个accepted请求最终完成，复位取消未完成事务\n// 断言：背压时valid和data保持\n// 覆盖：空/满/回绕/背压/复位组合\n// 总线：先确定握手，再研究地址、响应和突发\n// PPA：同一功能、约束和工艺下比较面积/功耗/性能",
+  "concept": [
+   "高级验证把规格转成检查器、激励约束和覆盖计划。随机测试不等于覆盖完整，覆盖命中也不等于功能正确，三者必须互相核对。",
+   "UVM提供组件、事务、序列和scoreboard组织方式，是工程规模化方法，不是学习RTL的前置。ASIC流程在逻辑综合后还包括DFT、布局布线、时钟树、寄生提取、STA和物理验证。"
+  ],
+  "notes": [
+   "总线学习从单次事务与背压开始，再加入多笔在途、排序和错误响应。",
+   "功耗近似关系Pdynamic≈αCV²f只能解释趋势；必须考虑实际活动率、库、布局与时序后比较。"
+  ],
+  "trap": "先明确规格、输入边界和验证依据；不要把网页模型的通过当作实际RTL仿真通过。",
+  "goals": [
+   "建立规格到覆盖的验证计划",
+   "说明UVM、ASIC与PPA学习边界"
+  ],
+  "q": "完成本课后，什么证据最能支持设计符合规格？",
+  "options": [
+   "完整规格、边界测试和可复现的工具结果",
+   "只看代码长度",
+   "只看波形颜色"
+  ],
+  "correct": 0,
+  "answer": "按规格逐项检查，记录输入、预期和实际结果；一次正常案例不足以证明所有边界。",
+  "task": "按本课练习阶梯实现并记录边界条件。",
+  "solution": "先独立完成阶梯中的设计，再逐项对照参考实现和验收条件。",
+  "terms": [
+   [
+    "规格",
+    "约定输入、输出、时钟、复位和边界行为。"
+   ]
+  ],
+  "context": "完整模块，保存为.v；测试平台与工具命令另外提供。",
+  "minutes": 30,
+  "optional": true,
+  "language": "verilog",
+  "knowledge": [
+   {
+    "id": "concept",
+    "title": "高级验证把规格转成检查器、激励约束和覆盖计划"
+   },
+   {
+    "id": "code",
+    "title": "语法、完整示例与错误修正"
+   },
+   {
+    "id": "practice",
+    "title": "分层练习与验证"
+   }
+  ]
  }
 ];

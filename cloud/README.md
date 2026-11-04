@@ -25,17 +25,17 @@
 
 - `npm install` 后 `npm run dev -- --host 0.0.0.0 --port 4173` 启动本地预览。
 - `/__qa` 仅在开发服务器提供合成账号与响应式测试入口，不进入正式构建。
-- `npm test` 运行30项Node回归；`python -m unittest discover -s tests -p test_golden.py` 运行4项算法测试。
+- `npm test` 运行33项Node回归；`python -m unittest discover -s tests -p test_golden.py` 运行4项算法测试。
 - `python tools/check-hdl.py` 需要 pyslang、yowasp-yosys 和 C++ 编译器，检查教学RTL。
 - `public/project/kit/README.md` 说明如何运行Golden模型与逐像素比较。
 
-## 交互式教材 P0（开发分支）
+## v4.0 · 连续RTL交互教材
 
-新增八阶段、42课语言路线（37核心+5选修），六个精讲课提供逐行代码解释、硬件映射、受控波形回放与五级练习。保留原24课、FPGA/项目路线与旧学习进度。网页不编译任意RTL。
+八阶段56课（52主线+4选修），每课原理、语法/代码解释、错误诊断与5级练习。新增时序预算/窗口、CDC/Gray教学、RAM/FIFO/UART/握手工程与自检下载包。保留原24课、FPGA/项目路线及旧学习进度；网站不编译任意RTL。
 
-- [审计与覆盖矩阵](docs/TEACHING_AUDIT.md)
-- [完整课程路线与前置知识](docs/COURSE_ROUTE.md)
-- [实际实现、截图、测试和未完成事项](docs/IMPLEMENTATION_REPORT.md)
-- `npm run lint` 检查JS语法；`npm run check:hdl` 检查教材HDL展开及六模块CXXRTL功能。
-- HDL依赖：`python -m pip install pyslang yowasp-yosys`，另需g++。CXXRTL验证不能替代事件仿真或STA。
-- 本轮不改D1表结构；旧客户端上传会保留新课程和结构化练习。
+- [完整交付与验证边界](docs/IMPLEMENTATION_REPORT.md)
+- [课程路线与依赖](docs/COURSE_ROUTE.md)
+- [审计矩阵](docs/TEACHING_AUDIT.md)
+- `npm test`：33项Node回归；`npm run lint`：JS语法；`npm run check:hdl`：解析/展开、六基础模块与四工程模块CXXRTL及错误注入。
+- HDL依赖：`python -m pip install pyslang yowasp-yosys`，另需g++；这不是事件模拟器或STA。
+- `python tools/package-rtl-lab.py`刷新[学习者工程包](public/rtl-lab/README.md)。

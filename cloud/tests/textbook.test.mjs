@@ -1,5 +1,5 @@
 import {test} from 'node:test';import assert from 'node:assert/strict';import fs from 'node:fs';import vm from 'node:vm';
-const c=vm.createContext({window:{}});for(const f of ['hdl-content','textbook-content','textbook-model','textbook','hdl'])vm.runInContext(fs.readFileSync('public/'+f+'.js','utf8'),c);
+const c=vm.createContext({window:{}});for(const f of ['hdl-content','textbook-content','textbook-depth','textbook-model','timing','textbook','hdl'])vm.runInContext(fs.readFileSync('public/'+f+'.js','utf8'),c);
 const M=c.window.IC_TEXTBOOK_MODEL,L=c.window.HDL_LESSONS;
 test('nonblocking pipeline captures old a while blocking comparison collapses stages',()=>{
  const s=M.initial();let n=M.step('pipeline',s,{d:1});assert.equal(n.after.a,1);assert.equal(n.after.b,0);assert.equal(s.a,0);
@@ -28,4 +28,31 @@ test('six deep lessons provide real scoped practices and complete mastery requir
 });
 test('all published knowledge points map to real reading sections',()=>{
  for(const l of L){assert.ok(l.knowledge.length>=3);for(const k of l.knowledge)assert.ok(['concept','code','practice'].includes(k.id));}
+});
+test('every lesson has authored principles, syntax analysis, five scoped practices and valid answer keys',()=>{
+ for(const l of L){
+  assert.ok(l.lab,l.id);assert.ok(l.lab.hook.length>12,l.id);
+  assert.ok(l.lab.principle.length>=2,l.id);
+  assert.equal(l.lab.exercises.length,5,l.id);
+  assert.ok(Object.keys(l.lab.lines).length>=3,l.id);
+  for(const x of l.lab.exercises){
+   assert.ok(x.prompt.trim().length>0,l.id);
+   if(x.options){assert.ok(x.correct>=0&&x.correct<x.options.length,l.id);assert.ok(x.explain.trim().length>0,l.id);}
+   else {assert.ok(x.starter&&x.solution,l.id);}
+  }
+ }
+ const ids=L.map(l=>l.id);for(const id of ['cdc','async-fifo','multicycle','clock-skew','memory','fifo-project','uart-project','integration'])assert.ok(ids.includes(id));
+});
+test('timing budget checks max/min independently, positive skew helps setup and hurts hold',()=>{
+ const T=c.window.IC_TIMING,p={period:10,skew:0.5,cqMax:1,cqMin:.2,delayMax:6,delayMin:.4,setup:1,hold:.2,uSetup:.2,uHold:.1};
+ const b=T.budget(p);assert.ok(Math.abs(b.setup-2.3)<1e-9);assert.ok(Math.abs(b.hold+.2)<1e-9);
+ assert.equal(T.budget({...p,period:20}).hold,b.hold);
+ assert.ok(T.budget({...p,skew:1}).setup>b.setup);assert.ok(T.budget({...p,skew:1}).hold<b.hold);
+ assert.ok(T.budget({...p,cqMin:2}).error);assert.ok(T.budget({...p,period:0}).error);
+ assert.equal(T.windowCheck(9),'setup');assert.equal(T.windowCheck(10.5),'hold');assert.equal(T.windowCheck(10),'edge');assert.equal(T.windowCheck(8),'safe');
+ for(let i=0;i<16;i++){const d=T.gray(i)^T.gray((i+1)&15);assert.equal(d&(d-1),0);assert.notEqual(d,0);}
+});
+test('downloadable project RTL exactly matches canonical teaching modules',()=>{
+ for(const id of ['memory','fifo-project','uart-project','integration','capstone'])assert.equal(fs.readFileSync('public/rtl-lab/'+id+'.sv','utf8').trim(),L.find(l=>l.id===id).code.trim());
+ assert.ok(fs.existsSync('public/rtl-lab/rtl-projects.zip'));
 });

@@ -1,6 +1,6 @@
 'use strict';
 (() => {
-if(window.IC_BOOT_FAILED||!window.IC_COURSE||!window.IC_HDL||!window.IC_TEXTBOOK_MODEL||!window.IC_TEXTBOOK||!window.IC_SYNC||!window.IC_PROJECT_MODEL||!window.IC_FPGA_PROGRESS||!window.IC_ULTRA){
+if(window.IC_BOOT_FAILED||!window.IC_COURSE||!window.IC_HDL||!window.IC_TEXTBOOK_DEPTH||!window.IC_TIMING||!window.IC_TEXTBOOK_MODEL||!window.IC_TEXTBOOK||!window.IC_SYNC||!window.IC_PROJECT_MODEL||!window.IC_FPGA_PROGRESS||!window.IC_ULTRA){
  window.IC_BOOT?.fail('必要课程文件尚未载入，未读取或覆盖本机进度。请检查网络后重新载入。');
  return;
 }

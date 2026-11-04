@@ -11,15 +11,19 @@ function hardware(kind){
  else if(kind==='pipeline')b=box(150,65,100,75,'DFF a')+box(385,65,100,75,'DFF b')+'<path d="M50 100H150 M250 100H385 M485 100H585 M200 185V140 M435 185V140 M200 185H435"/><text x="25" y="105">D</text><text x="300" y="85">旧 a →</text><text x="550" y="85">b</text><text x="295" y="210">共用 clk ↑</text>';
  else if(kind==='counter')b=box(100,65,110,65,'+ 1')+box(270,65,105,65,'选择器')+box(450,65,110,65,'4位寄存器')+'<path d="M210 95H270 M375 95H450 M560 95H590V175H55V95H100 M320 30V65 M500 205V130"/><text x="270" y="23">复位 / en</text><text x="485" y="225">clk ↑</text><text x="565" y="85">Q</text>';
  else if(kind==='fsm')b=box(65,65,170,80,'下一状态逻辑')+box(345,65,145,80,'state寄存器')+'<path d="M235 105H345 M490 105H580V185H30V105H65 M420 215V145"/><text x="260" y="85">next</text><text x="495" y="90">state</text><text x="395" y="238">clk ↑</text><text x="35" y="40">start / finish → 逻辑</text>';
+ else if(kind==='gates')b=box(220,45,160,60,'逻辑门 & / |')+box(220,140,160,60,'输出布尔关系')+'<path d="M60 75H220 M380 75H560 M300 105V140"/><text x="35" y="65">a,b</text><text x="570" y="80">y</text>';
+ else if(kind==='fifo')b=box(185,40,260,145,'FIFO 存储')+box(20,65,130,60,'写指针')+box(480,65,130,60,'读指针')+'<path d="M150 95H185 M445 95H480"/><text x="210" y="220">本域控制 → full / empty</text>';
+ else if(kind==='memory')b=box(190,35,260,150,'16 × 8 RAM')+'<path d="M30 80H190 M450 100H600 M320 225V185"/><text x="30" y="65">addr / data / we</text><text x="470" y="80">rdata 寄存输出</text><text x="280" y="245">clk ↑</text>';
  else b=box(245,60,130,100,'DFF / Q')+'<path d="M60 110H245 M375 110H555 M310 205V160"/><text x="35" y="115">D</text><text x="560" y="115">Q</text><text x="280" y="230">clk ↑</text>';
- return '<figure class="hardware-map"><svg viewBox="0 0 640 255" role="img" aria-label="'+e({mux:'a与b经sel控制的MUX到y',dff:'D接触发器输入，clk上升沿采样，Q保持',pipeline:'D经a、b两个触发器，同一沿b采旧a',counter:'Q反馈到加法器与控制选择器，再接寄存器D',fsm:'组合下一状态经state寄存器，当前状态反馈到组合逻辑'}[kind]||'触发器数据路径')+'">'+b+'</svg><figcaption>结构图表示逻辑映射；不按门级数量、布线或真实延迟绘制。</figcaption></figure>';
+ return '<figure class="hardware-map"><svg viewBox="0 0 640 255" role="img" aria-label="'+e({mux:'a与b经sel控制的MUX到y',dff:'D接触发器输入，clk上升沿采样，Q保持',pipeline:'D经a、b两个触发器，同一沿b采旧a',counter:'Q反馈到加法器与控制选择器，再接寄存器D',fsm:'组合下一状态经state寄存器，当前状态反馈到组合逻辑'}[kind]||({gates:'组合逻辑门关系',fifo:'存储与独立读写指针及数量控制',memory:'地址选择存储元素，沿后读出'}[kind]||'触发器数据路径'))+'">'+b+'</svg><figcaption>结构图表示逻辑映射；不按门级数量、布线或真实延迟绘制。</figcaption></figure>';
 }
 function enhance(api,l){
  cleanup();cleanup=()=>{};
  const lab=l.lab,host=document.querySelector('#lesson'),st=api.progress.hdl[l.id];
  if(!lab)return;
- const principle=document.createElement('div');principle.className='textbook-principle';principle.innerHTML='<p class="teaching-hook">'+e(lab.hook)+'</p>'+lab.principle.map(p=>'<p>'+e(p)+'</p>').join('')+hardware(lab.hardware);
+ const principle=document.createElement('div');principle.className='textbook-principle';principle.innerHTML='<p class="teaching-hook">'+e(lab.hook)+'</p>'+lab.principle.map(p=>'<p>'+e(p)+'</p>').join('')+(lab.hardware?hardware(lab.hardware):'');
  document.querySelector('#study-concept').append(principle);
+ if(lab.syntax){const syntax=document.createElement('div');syntax.className='teaching-table syntax-breakdown';syntax.innerHTML='<table><caption>语法与电路含义对照</caption><thead><tr><th>语法/概念</th><th>含义</th><th>使用边界</th></tr></thead><tbody>'+lab.syntax.map(row=>'<tr>'+row.map(v=>'<td>'+e(v)+'</td>').join('')+'</tr>').join('')+'</tbody></table>';document.querySelector('#study-code .code-explanations').before(syntax);}
  const code=host.querySelector('.code-workbench'),rows=[...code.querySelectorAll('.code-line')];
  code.classList.add('explainable-code');
  const rowpanel=document.createElement('div');rowpanel.className='code-explanation';rowpanel.setAttribute('role','status');rowpanel.setAttribute('aria-live','polite');
@@ -27,6 +31,7 @@ function enhance(api,l){
  code.after(rowpanel);
  const codeLayout=document.createElement('div');codeLayout.className='code-explain-layout';code.before(codeLayout);codeLayout.append(code,rowpanel);
  function selectLine(n,message){
+  if(n>rows.length)n=rows.length;
   rows.forEach((r,i)=>{r.classList.toggle('selected',i+1===n);r.setAttribute('aria-pressed',String(i+1===n))});
   rowpanel.innerHTML='<strong>第 '+n+' 行</strong><p>'+e(message||lab.lines[n]||'这一行用于组织模块或语句块，结合相邻关键行阅读。')+'</p>';
  }
@@ -51,7 +56,7 @@ function enhance(api,l){
  const old=host.querySelector('#hdl-demo');if(old)old.hidden=true;
  const waveHost=document.createElement('div');waveHost.className='timeline-workbench';waveHost.id='textbook-timeline';
  (host.querySelector('#study-example')||host.querySelector('#study-concept')).append(waveHost);
- cleanup=mountTimeline(waveHost,lab,selectLine);
+ if(lab.kind)cleanup=mountTimeline(waveHost,lab,selectLine);else if(lab.timing)cleanup=window.IC_TIMING.mount(waveHost,lab.timing);else waveHost.remove();
 }
 function mountExercises(api,l,st){
  st.activities||={};
