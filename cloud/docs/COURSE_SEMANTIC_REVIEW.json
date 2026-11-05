@@ -1,0 +1,4978 @@
+{
+  "method": "逐课阅读目标、正文、代码、练习后进行静态语义复核；不代表真实学生试学，更不由测试通过自动推导",
+  "courses": [
+    {
+      "id": "orientation",
+      "status": "已通过（编辑语义复核）",
+      "goalCheck": {
+        "result": "已通过",
+        "evidence": "按输入规则推导输出",
+        "source": "public/hdl-content.js: goals, concept"
+      },
+      "prerequisiteCheck": {
+        "result": "已通过",
+        "priorConcepts": [],
+        "repair": "两个开关的四行真值表",
+        "source": "public/hdl-content.js: conceptDependencies, concept"
+      },
+      "workedExampleCheck": {
+        "result": "已通过",
+        "evidence": {
+          "completeCode": "// 先用一句规格描述电路：\n// 输入：开关 a、开关 b\n// 规则：两个开关都打开，灯才亮\n// 输出：灯 y（0=灭，1=亮）",
+          "keyLines": {
+            "2": "a和b是两个可以分别改变的开关；先列00、01、10、11四种输入，避免只试灯亮的情况。",
+            "3": "“都”要求a=1且b=1。只打开a时仍不满足，输出必须为0。",
+            "4": "y记录灯的逻辑状态，0/1是本题约定，不要求先理解LED引脚电压。"
+          },
+          "sequence": []
+        },
+        "source": "public/textbook-depth.js"
+      },
+      "assessmentCheck": {
+        "result": "已通过",
+        "mappings": [
+          {
+            "id": "orientation-task-1",
+            "description": "知道输入、规则、输出是什么",
+            "activities": [
+              0
+            ]
+          },
+          {
+            "id": "orientation-task-2",
+            "description": "知道每课怎样学，核心主线在哪里结束",
+            "activities": [
+              1
+            ]
+          }
+        ],
+        "transferBugDistinct": false,
+        "source": "public/textbook-depth.js: exercises"
+      },
+      "independentCheck": {
+        "result": "已通过（按明确规格和课堂示范作静态推演）",
+        "task": "把开关规则写成四行输出：a/b=00、01、10、11。",
+        "conditions": [],
+        "limit": "尚未通过真实零基础学生试学；开放代码不自动验证"
+      },
+      "beforeIssue": "工程术语先于电路经验",
+      "repair": "两个开关的四行真值表"
+    },
+    {
+      "id": "numbers",
+      "status": "已通过（编辑语义复核）",
+      "goalCheck": {
+        "result": "已通过",
+        "evidence": "从位权计算定宽数值",
+        "source": "public/hdl-content.js: goals, concept"
+      },
+      "prerequisiteCheck": {
+        "result": "已通过",
+        "priorConcepts": [
+          {
+            "concept": "位与输入输出",
+            "taughtIn": "orientation"
+          }
+        ],
+        "repair": "位权相加与截断对照",
+        "source": "public/hdl-content.js: conceptDependencies, concept"
+      },
+      "workedExampleCheck": {
+        "result": "已通过",
+        "evidence": {
+          "completeCode": "// 4位数的位权，从左到右：8、4、2、1\n// 1010 = 8 + 0 + 2 + 0 = 10\n// 4'b1010、4'd10、4'hA 表示同一个4位数\n// 1111 = 15；10000需要5位才能保留",
+          "keyLines": {
+            "1": "最高位代表8，随后是4、2、1；位的位置决定权重，不是每个1都只算一。",
+            "2": "1010中只有8和2的位为1，因此相加为10；中间的0占位但不增加数值。",
+            "3": "4表示保留4位，b/d/h分别选择二、十、十六进制。A代表十进制10，不是变量名。",
+            "4": "4位最大为8+4+2+1=15。16的二进制10000需要第5位；丢掉高位会留下0000。"
+          },
+          "sequence": []
+        },
+        "source": "public/textbook-depth.js"
+      },
+      "assessmentCheck": {
+        "result": "已通过",
+        "mappings": [
+          {
+            "id": "numbers-task-1",
+            "description": "读懂定宽二/十/十六进制常量",
+            "activities": [
+              0
+            ]
+          },
+          {
+            "id": "numbers-task-2",
+            "description": "手算位权、最大值与截断",
+            "activities": [
+              1
+            ]
+          }
+        ],
+        "transferBugDistinct": false,
+        "source": "public/textbook-depth.js: exercises"
+      },
+      "independentCheck": {
+        "result": "已通过（按明确规格和课堂示范作静态推演）",
+        "task": "把十进制13写成四位二进制，不加进制前缀。",
+        "conditions": [],
+        "limit": "尚未通过真实零基础学生试学；开放代码不自动验证"
+      },
+      "beforeIssue": "示例提前要求module/assign",
+      "repair": "位权相加与截断对照"
+    },
+    {
+      "id": "logic-gates",
+      "status": "已通过（编辑语义复核）",
+      "goalCheck": {
+        "result": "已通过",
+        "evidence": "独立填写AND/OR/XOR真值表",
+        "source": "public/hdl-content.js: goals, concept"
+      },
+      "prerequisiteCheck": {
+        "result": "已通过",
+        "priorConcepts": [
+          {
+            "concept": "二进制0/1",
+            "taughtIn": "numbers"
+          }
+        ],
+        "repair": "同为1与恰一为1的反例",
+        "source": "public/hdl-content.js: conceptDependencies, concept"
+      },
+      "workedExampleCheck": {
+        "result": "已通过",
+        "evidence": {
+          "completeCode": "// a b | 与 AND | 或 OR | 异或 XOR\n// 0 0 |   0    |  0    |    0\n// 0 1 |   0    |  1    |    1\n// 1 0 |   0    |  1    |    1\n// 1 1 |   1    |  1    |    0\n// Verilog对应符号：&、|、^；单比特取反用 ~",
+          "keyLines": {
+            "2": "两个输入都是0：没有任何条件成立，与、或、异或都输出0。",
+            "3": "只有b为1：与要求两者都为1所以为0；或与异或都为1。",
+            "5": "两个输入都是1：与、或为1，但异或要求两者不同，所以为0。"
+          },
+          "sequence": []
+        },
+        "source": "public/textbook-depth.js"
+      },
+      "assessmentCheck": {
+        "result": "已通过",
+        "mappings": [
+          {
+            "id": "logic-gates-task-1",
+            "description": "列全两个输入的四种组合",
+            "activities": [
+              0
+            ]
+          },
+          {
+            "id": "logic-gates-task-2",
+            "description": "区分与、或、非和异或",
+            "activities": [
+              1
+            ]
+          }
+        ],
+        "transferBugDistinct": false,
+        "source": "public/textbook-depth.js: exercises"
+      },
+      "independentCheck": {
+        "result": "已通过（按明确规格和课堂示范作静态推演）",
+        "task": "依次输入00、01、10、11，填写异或的四个输出。",
+        "conditions": [],
+        "limit": "尚未通过真实零基础学生试学；开放代码不自动验证"
+      },
+      "beforeIssue": "代码前必须先形成逻辑关系",
+      "repair": "同为1与恰一为1的反例"
+    },
+    {
+      "id": "boolean-decoder",
+      "status": "已通过（编辑语义复核）",
+      "goalCheck": {
+        "result": "已通过",
+        "evidence": "用最小项得到独热输出",
+        "source": "public/hdl-content.js: goals, concept"
+      },
+      "prerequisiteCheck": {
+        "result": "已通过",
+        "priorConcepts": [
+          {
+            "concept": "与、非与真值表",
+            "taughtIn": "logic-gates"
+          },
+          {
+            "concept": "二位地址与位权",
+            "taughtIn": "numbers"
+          }
+        ],
+        "repair": "先讲两位地址并改为逻辑规格",
+        "source": "public/hdl-content.js: conceptDependencies, concept"
+      },
+      "workedExampleCheck": {
+        "result": "已通过",
+        "evidence": {
+          "completeCode": "// 输入：使能en，以及两位地址a1、a0\n// en=0：y3 y2 y1 y0 = 0000\n// en=1，地址00：0001；01：0010\n// en=1，地址10：0100；11：1000\n// y0 = en 与 非a1 与 非a0\n// y3 = en 与 a1 与 a0",
+          "keyLines": {
+            "1": "a1是两位地址中的高位，a0是低位；二进制10选编号2，不是编号10。",
+            "2": "使能关闭时，任何地址都不应点亮输出。四个0覆盖四根输出线。",
+            "4": "地址10时只有y2为1，地址11时只有y3为1；输出不是地址值本身。",
+            "5": "选中00要同时满足en为1、a1为0、a0为0。把三个条件相与得到y0。"
+          },
+          "sequence": []
+        },
+        "source": "public/textbook-depth.js"
+      },
+      "assessmentCheck": {
+        "result": "已通过",
+        "mappings": [
+          {
+            "id": "boolean-decoder-task-1",
+            "description": "从真值表写出译码器",
+            "activities": [
+              0
+            ]
+          },
+          {
+            "id": "boolean-decoder-task-2",
+            "description": "用德摩根律验证等价表达式",
+            "activities": [
+              1
+            ]
+          }
+        ],
+        "transferBugDistinct": false,
+        "source": "public/textbook-depth.js: exercises"
+      },
+      "independentCheck": {
+        "result": "已通过（按明确规格和课堂示范作静态推演）",
+        "task": "en=1，地址依次00、01、10、11，填写4位译码输出。",
+        "conditions": [],
+        "limit": "尚未通过真实零基础学生试学；开放代码不自动验证"
+      },
+      "beforeIssue": "总线下标先于向量课",
+      "repair": "先讲两位地址并改为逻辑规格"
+    },
+    {
+      "id": "mindset",
+      "status": "已通过（编辑语义复核）",
+      "goalCheck": {
+        "result": "已通过",
+        "evidence": "理解两条组合关系并存",
+        "source": "public/hdl-content.js: goals, concept"
+      },
+      "prerequisiteCheck": {
+        "result": "已通过",
+        "priorConcepts": [
+          {
+            "concept": "门的输入输出关系",
+            "taughtIn": "logic-gates"
+          }
+        ],
+        "repair": "只推信号关系，语法留到模块课",
+        "source": "public/hdl-content.js: conceptDependencies, concept"
+      },
+      "workedExampleCheck": {
+        "result": "已通过",
+        "evidence": {
+          "completeCode": "// 两个输入：a、b；两个独立输出：y、z\n// y = a 与 b\n// z = a 或 b\n// a=1、b=0：y=0，同时z=1\n// 改变书写顺序，不改变这两条关系",
+          "keyLines": {
+            "2": "y只要求两个输入都为1，不读取z。两条关系不存在软件变量更新的先后依赖。",
+            "3": "z在任意一个输入为1时为1，它和y使用同一组输入，但走不同的逻辑门。",
+            "4": "a=1,b=0时两条电路关系同时成立：y灭、z亮。写在下面的z不需要等y算完。"
+          },
+          "sequence": []
+        },
+        "source": "public/textbook-depth.js"
+      },
+      "assessmentCheck": {
+        "result": "已通过",
+        "mappings": [
+          {
+            "id": "mindset-task-1",
+            "description": "把两条assign理解成并行电路",
+            "activities": [
+              0
+            ]
+          },
+          {
+            "id": "mindset-task-2",
+            "description": "区分组合关系和保存状态",
+            "activities": [
+              1
+            ]
+          },
+          {
+            "id": "mindset-task-3",
+            "description": "区分组合关系和保存状态",
+            "activities": [
+              2
+            ]
+          },
+          {
+            "id": "mindset-task-4",
+            "description": "区分组合关系和保存状态",
+            "activities": [
+              3
+            ]
+          }
+        ],
+        "transferBugDistinct": false,
+        "source": "public/textbook-depth.js: exercises"
+      },
+      "independentCheck": {
+        "result": "已通过（按明确规格和课堂示范作静态推演）",
+        "task": "画出 a、b 到两个输出的连线，说明是否需要时钟。",
+        "conditions": [
+          [
+            "按00、01、10、11枚举；(与,或)分别为(0,0)、(0,1)、(0,1)、(1,1)。"
+          ]
+        ],
+        "limit": "尚未通过真实零基础学生试学；开放代码不自动验证"
+      },
+      "beforeIssue": "assign早于语言教学",
+      "repair": "只推信号关系，语法留到模块课"
+    },
+    {
+      "id": "storage",
+      "status": "已通过（编辑语义复核）",
+      "goalCheck": {
+        "result": "已通过",
+        "evidence": "区分透明、边沿与保持",
+        "source": "public/hdl-content.js: goals, concept"
+      },
+      "prerequisiteCheck": {
+        "result": "已通过",
+        "priorConcepts": [
+          {
+            "concept": "当前输入决定组合输出",
+            "taughtIn": "mindset"
+          }
+        ],
+        "repair": "沿间改变D的反例",
+        "source": "public/hdl-content.js: conceptDependencies, concept"
+      },
+      "workedExampleCheck": {
+        "result": "已通过",
+        "evidence": {
+          "completeCode": "// 不需编译的电路规格\n// 组合MUX：en=1选d，否则选固定0\n// 锁存器：en=1跟随d，否则保存上次值\n// DFF：仅在clk上升沿保存d\n// 8位寄存器：8份DFF，共用时钟",
+          "keyLines": {
+            "2": "en=0时MUX仍有明确输入0可选择；它不必记忆之前的d。",
+            "3": "en=1的整个区间内d变化会影响q；en变0后，q才保留关闭前的值。",
+            "4": "clk从0到1的那一瞬间采d，时钟持续为1时不继续跟随。这正是触发器与锁存器的区别。"
+          },
+          "sequence": []
+        },
+        "source": "public/textbook-depth.js"
+      },
+      "assessmentCheck": {
+        "result": "已通过",
+        "mappings": [
+          {
+            "id": "storage-task-1",
+            "description": "比较锁存器与DFF采样的时间条件。",
+            "activities": [
+              0
+            ]
+          },
+          {
+            "id": "storage-task-2",
+            "description": "先判断有没有“保持过去”的要求。",
+            "activities": [
+              1
+            ]
+          }
+        ],
+        "transferBugDistinct": false,
+        "source": "public/textbook-depth.js: exercises"
+      },
+      "independentCheck": {
+        "result": "已通过（按明确规格和课堂示范作静态推演）",
+        "task": "DFF初Q=0，第一上升沿D=1，沿后D改0但没有新沿。填“沿后Q、D改后Q”。",
+        "conditions": [],
+        "limit": "尚未通过真实零基础学生试学；开放代码不自动验证"
+      },
+      "beforeIssue": "需避免借if解释未学概念",
+      "repair": "沿间改变D的反例"
+    },
+    {
+      "id": "module",
+      "status": "已通过（编辑语义复核）",
+      "goalCheck": {
+        "result": "已通过",
+        "evidence": "独立写模块并连接两个实例",
+        "source": "public/hdl-content.js: goals, concept"
+      },
+      "prerequisiteCheck": {
+        "result": "已通过",
+        "priorConcepts": [
+          {
+            "concept": "并行电路",
+            "taughtIn": "mindset"
+          },
+          {
+            "concept": "位与位宽",
+            "taughtIn": "numbers"
+          }
+        ],
+        "repair": "先完整AND，再改OR/XOR，最后两级AND",
+        "source": "public/hdl-content.js: conceptDependencies, concept"
+      },
+      "workedExampleCheck": {
+        "result": "已通过",
+        "evidence": {
+          "completeCode": "module and2(input wire a, input wire b, output wire y);\n  assign y = a & b;\nendmodule\nmodule top(input wire x, z, enable, output wire result);\n  wire pair;\n  and2 u_pair(.a(x), .b(z), .y(pair));\n  and2 u_mask(.a(pair), .b(enable), .y(result));\nendmodule",
+          "keyLines": {
+            "1": "and2给这份电路定义命名。a、b从外面进入，y向外输出；每个wire是一位连接。括号后分号结束接口声明。",
+            "2": "&把a、b做按位与；本例都是一位。assign持续驱动y，所以a从0变1时就会重新求值，不必等时钟。",
+            "3": "endmodule结束and2的定义。后面的top是另一个模块，不是and2内部的顺序程序。",
+            "4": "top是父模块，enable是第三个输入。我们要把两份and2放入其中，得到三输入与关系。",
+            "5": "pair是父模块内部连接，不是外部端口。第一份子模块驱动它，第二份读取它；不要再用另一个assign重复驱动。",
+            "6": "and2是类型，u_pair是实例名称。.a(x)把子模块a接父层x；.y(pair)把输出引到内部线。命名连接顺序可以改变。",
+            "7": "u_mask是另一份and2实例。它读取pair和enable，驱动result。enable=0时即便pair=1，result仍为0。"
+          },
+          "sequence": [
+            {
+              "title": "先遮住答案：写出一个与门",
+              "text": "输入a、b都是一位，输出y为一位。先写模块边界，再写端口，最后把已经会的与关系放到assign中。",
+              "code": "module and2(input wire a, b, output wire y);\n  assign y = a & b;\nendmodule"
+            },
+            {
+              "title": "只改规则，不改接口",
+              "text": "把模块名改成or2，&改成|；再写xor2，使用^。两种新电路在a=b=1时分别输出1和0。端口方向、wire和分号都沿用刚才的结构。",
+              "code": "module xor2(input wire a, b, output wire y);\n  assign y = a ^ b;\nendmodule"
+            },
+            {
+              "title": "只放一个实例",
+              "text": "top输入x、z，输出result；它不需要再写assign。子模块输出本身就是result的驱动源。先画a接x、b接z、y接result三根线，再写实例。",
+              "code": "module one_gate(input wire x,z,output wire result);\n  and2 u1(.a(x), .b(z), .y(result));\nendmodule"
+            }
+          ]
+        },
+        "source": "public/textbook-depth.js"
+      },
+      "assessmentCheck": {
+        "result": "已通过",
+        "mappings": [
+          {
+            "id": "module-task-1",
+            "description": "区分模块类型与实例名",
+            "activities": [
+              0
+            ]
+          },
+          {
+            "id": "module-task-2",
+            "description": "独立补齐与门的定义与连续赋值",
+            "activities": [
+              1
+            ]
+          },
+          {
+            "id": "module-task-3",
+            "description": "按命名端口修复父子信号连接",
+            "activities": [
+              2
+            ]
+          },
+          {
+            "id": "module-task-4",
+            "description": "独立编写逻辑并连接多个实例",
+            "activities": [
+              3
+            ]
+          },
+          {
+            "id": "module-task-5",
+            "description": "逐输入推导多级组合输出",
+            "activities": [
+              4
+            ]
+          }
+        ],
+        "transferBugDistinct": true,
+        "source": "public/textbook-depth.js: exercises"
+      },
+      "independentCheck": {
+        "result": "已通过（按明确规格和课堂示范作静态推演）",
+        "task": "先独立写or2并列出四组真值表；再用两个and2实现result=x & z & enable。解释内部pair由谁驱动、由谁读取。",
+        "conditions": [
+          [
+            "or2枚举00/01/10/11，预期0/1/1/1",
+            "top枚举000..111，仅111输出1",
+            "x=z=1时只改变enable，应观察pair保持1而result跟随enable"
+          ]
+        ],
+        "limit": "尚未通过真实零基础学生试学；开放代码不自动验证"
+      },
+      "beforeIssue": "wire/assign未教就要求多实例，严重断层",
+      "repair": "先完整AND，再改OR/XOR，最后两级AND"
+    },
+    {
+      "id": "tool-start",
+      "status": "已通过（编辑语义复核）",
+      "goalCheck": {
+        "result": "已通过",
+        "evidence": "编译并运行最小组合仿真",
+        "source": "public/hdl-content.js: goals, concept"
+      },
+      "prerequisiteCheck": {
+        "result": "已通过",
+        "priorConcepts": [
+          {
+            "concept": "模块名与顶层",
+            "taughtIn": "module"
+          }
+        ],
+        "repair": "提供四组合自检TB及完整命令",
+        "source": "public/hdl-content.js: conceptDependencies, concept"
+      },
+      "workedExampleCheck": {
+        "result": "已通过",
+        "evidence": {
+          "completeCode": "# 以下在终端执行，不要粘进 .v 文件\niverilog -V\niverilog -g2005 -s and2 -tnull and2.v\n# -g2005：Verilog语言模式\n# -s and2：选择顶层模块\n# -tnull：只检查，不输出仿真程序",
+          "keyLines": {
+            "2": "-V询问已安装的Icarus版本。它不读取and2.v，也不证明电路功能。",
+            "3": "-g2005指定Verilog语言，-s and2选择本次展开的顶层，-tnull只检查，不产生可运行的仿真程序。",
+            "5": "选择顶层要写module后的定义名and2，不是文件名and2.v，也不是内部实例名u_pair。"
+          },
+          "sequence": [
+            {
+              "title": "保存为tb_and2.v：先把它当四次实验来读",
+              "text": "reg保存由实验人员改变的输入；wire y接收and2输出。initial把这一组实验执行一次。每个#1在1ns时间单位下等待1ns，让组合关系求值后再检查；!==要求输出确定等于预期，出错由$fatal结束。这里先理解每组“给输入、等更新、查结果”，更复杂的测试台在验证阶段展开。",
+              "code": "`timescale 1ns/1ps\nmodule tb_and2;\n  reg a,b;\n  wire y;\n  and2 dut(.a(a),.b(b),.y(y));\n  initial begin\n    a=0; b=0; #1; if(y !== 1'b0) $fatal(1,\"00\");\n    a=0; b=1; #1; if(y !== 1'b0) $fatal(1,\"01\");\n    a=1; b=0; #1; if(y !== 1'b0) $fatal(1,\"10\");\n    a=1; b=1; #1; if(y !== 1'b1) $fatal(1,\"11\");\n    $display(\"PASS: four AND inputs\");\n    $finish;\n  end\nendmodule"
+            },
+            {
+              "title": "从检查语法到实际运行",
+              "text": "and2.v使用上一课的单个与门定义；仿真顶层改选tb_and2。第一条命令生成gate_sim，第二条才执行。把与门故意改成或门，再运行应该在01处失败；如果没有失败，先查是否重新编译了修改后的文件。网页未执行这些终端命令。",
+              "code": "iverilog -g2012 -s tb_and2 -o gate_sim and2.v tb_and2.v\nvvp gate_sim"
+            }
+          ]
+        },
+        "source": "public/textbook-depth.js"
+      },
+      "assessmentCheck": {
+        "result": "已通过",
+        "mappings": [
+          {
+            "id": "tool-start-task-1",
+            "description": "找到工具版本信息",
+            "activities": [
+              0
+            ]
+          },
+          {
+            "id": "tool-start-task-2",
+            "description": "完成一次语法编译并区分功能验证",
+            "activities": [
+              1
+            ]
+          },
+          {
+            "id": "tool-start-task-3",
+            "description": "完成一次语法编译并区分功能验证",
+            "activities": [
+              2
+            ]
+          },
+          {
+            "id": "tool-start-task-4",
+            "description": "完成一次语法编译并区分功能验证",
+            "activities": [
+              3
+            ]
+          }
+        ],
+        "transferBugDistinct": false,
+        "source": "public/textbook-depth.js: exercises"
+      },
+      "independentCheck": {
+        "result": "已通过（按明确规格和课堂示范作静态推演）",
+        "task": "记录你的系统、版本和第一条编译结果；还没安装时写下待办。",
+        "conditions": [
+          [
+            "保存实际工具版本及命令；错误版应返回编译错误，修正后应成功。编译成功不替代功能真值表。"
+          ]
+        ],
+        "limit": "尚未通过真实零基础学生试学；开放代码不自动验证"
+      },
+      "beforeIssue": "只检查语法，不能观察功能",
+      "repair": "提供四组合自检TB及完整命令"
+    },
+    {
+      "id": "net-var",
+      "status": "已通过（编辑语义复核）",
+      "goalCheck": {
+        "result": "已通过",
+        "evidence": "按驱动方式选择wire/reg",
+        "source": "public/hdl-content.js: goals, concept"
+      },
+      "prerequisiteCheck": {
+        "result": "已通过",
+        "priorConcepts": [
+          {
+            "concept": "端口与模块",
+            "taughtIn": "module"
+          },
+          {
+            "concept": "组合关系",
+            "taughtIn": "mindset"
+          }
+        ],
+        "repair": "同一与门两种写法逐输入对照",
+        "source": "public/hdl-content.js: conceptDependencies, concept"
+      },
+      "workedExampleCheck": {
+        "result": "已通过",
+        "evidence": {
+          "completeCode": "module gate_styles(input wire a,b,\n output wire y1, output reg y2);\n assign y1 = a & b;\n always @(*) begin\n  y2 = a & b;\n end\nendmodule",
+          "keyLines": {
+            "2": "y1由assign驱动，声明wire；y2在always过程里被赋值，传统Verilog声明reg。两者在这个例子中都不保存历史。",
+            "3": "连续与关系直接驱动y1，a或b改变就重新计算，不能再在always里给y1赋值。",
+            "4": "@(*)等待此过程读取的a、b变化；begin/end把本次要算的语句放进一组，不产生时钟。",
+            "5": "每次进入过程都用当前a、b覆盖y2。所有输入情况下都有赋值，所以不需要锁存旧值。"
+          },
+          "sequence": []
+        },
+        "source": "public/textbook-depth.js"
+      },
+      "assessmentCheck": {
+        "result": "已通过",
+        "mappings": [
+          {
+            "id": "net-var-task-1",
+            "description": "知道连续赋值和过程赋值用在哪里",
+            "activities": [
+              0
+            ]
+          },
+          {
+            "id": "net-var-task-2",
+            "description": "解释reg不一定产生寄存器",
+            "activities": [
+              1
+            ]
+          },
+          {
+            "id": "net-var-task-3",
+            "description": "根据赋值过程选择输出变量类型",
+            "activities": [
+              2
+            ]
+          },
+          {
+            "id": "net-var-task-4",
+            "description": "解释reg不一定产生寄存器",
+            "activities": [
+              3
+            ]
+          },
+          {
+            "id": "net-var-task-5",
+            "description": "解释reg不一定产生寄存器",
+            "activities": [
+              4
+            ]
+          }
+        ],
+        "transferBugDistinct": true,
+        "source": "public/textbook-depth.js: exercises"
+      },
+      "independentCheck": {
+        "result": "已通过（按明确规格和课堂示范作静态推演）",
+        "task": "把与门改成或门，分别用assign和always写。",
+        "conditions": [
+          [
+            "00/01/10/11时y1、y2都应为0/1/1/0",
+            "a不变只改变b，两输出都更新"
+          ]
+        ],
+        "limit": "尚未通过真实零基础学生试学；开放代码不自动验证"
+      },
+      "beforeIssue": "首次always缺过程与事件解释",
+      "repair": "同一与门两种写法逐输入对照"
+    },
+    {
+      "id": "vectors",
+      "status": "已通过（编辑语义复核）",
+      "goalCheck": {
+        "result": "已通过",
+        "evidence": "读写位选、切片与拼接",
+        "source": "public/hdl-content.js: goals, concept"
+      },
+      "prerequisiteCheck": {
+        "result": "已通过",
+        "priorConcepts": [
+          {
+            "concept": "声明位宽",
+            "taughtIn": "net-var"
+          },
+          {
+            "concept": "二进制位权",
+            "taughtIn": "numbers"
+          }
+        ],
+        "repair": "A5切片与半字节交换",
+        "source": "public/hdl-content.js: conceptDependencies, concept"
+      },
+      "workedExampleCheck": {
+        "result": "已通过",
+        "evidence": {
+          "completeCode": "module slices(output wire low,\n output wire [3:0] hi,ones, output wire [7:0] swap);\n wire [7:0] bus;\n assign bus = 8'hA5;\n assign low = bus[0];\n assign hi = bus[7:4];\n assign swap = {bus[3:0],bus[7:4]};\n assign ones = {4{1'b1}};\nendmodule",
+          "keyLines": {
+            "3": "[7:0]有8位，bus[7]是最高位、bus[0]是最低位。两端都计入，所以是7-0+1位。",
+            "5": "A5是10100101，bus[0]取最右边的1；不是取整个数的第0个字节。",
+            "6": "bus[7:4]取左四位1010，宽度4位，数值A。",
+            "7": "拼接左项成为结果高位：低半字节5放到高位，高半字节A放到低位，得到5A。",
+            "8": "{4{1'b1}}把一位1复制四次，得到1111；外层大括号表示复制，不是乘法。"
+          },
+          "sequence": []
+        },
+        "source": "public/textbook-depth.js"
+      },
+      "assessmentCheck": {
+        "result": "已通过",
+        "mappings": [
+          {
+            "id": "vectors-task-1",
+            "description": "计算位宽并做位选/切片",
+            "activities": [
+              0
+            ]
+          },
+          {
+            "id": "vectors-task-2",
+            "description": "用拼接和复制构造新向量",
+            "activities": [
+              1
+            ]
+          },
+          {
+            "id": "vectors-task-3",
+            "description": "调整拼接顺序完成半字节交换",
+            "activities": [
+              2
+            ]
+          },
+          {
+            "id": "vectors-task-4",
+            "description": "用拼接和复制构造新向量",
+            "activities": [
+              3
+            ]
+          },
+          {
+            "id": "vectors-task-5",
+            "description": "用拼接和复制构造新向量",
+            "activities": [
+              4
+            ]
+          }
+        ],
+        "transferBugDistinct": true,
+        "source": "public/textbook-depth.js: exercises"
+      },
+      "independentCheck": {
+        "result": "已通过（按明确规格和课堂示范作静态推演）",
+        "task": "将一个4位无符号数a零扩展为8位。",
+        "conditions": [
+          [
+            "a=16'h1234时，交换字节为3412，a[11:8]=2；再检查0000与FFFF。"
+          ]
+        ],
+        "limit": "尚未通过真实零基础学生试学；开放代码不自动验证"
+      },
+      "beforeIssue": "位编号和数值权重需对应",
+      "repair": "A5切片与半字节交换"
+    },
+    {
+      "id": "four-state",
+      "status": "已通过（编辑语义复核）",
+      "goalCheck": {
+        "result": "已通过",
+        "evidence": "区分未知与断线",
+        "source": "public/hdl-content.js: goals, concept"
+      },
+      "prerequisiteCheck": {
+        "result": "已通过",
+        "priorConcepts": [
+          {
+            "concept": "网络驱动与过程变量",
+            "taughtIn": "net-var"
+          }
+        ],
+        "repair": "本课只算四态逻辑，检查代码移到checking",
+        "source": "public/hdl-content.js: conceptDependencies, concept"
+      },
+      "workedExampleCheck": {
+        "result": "已通过",
+        "evidence": {
+          "completeCode": "module unknown_demo(output wire undriven);\n reg q; // 尚未给初值的过程变量\n // undriven没有驱动源，四态仿真通常为Z\n // q尚未赋值，四态仿真通常为X\nendmodule",
+          "keyLines": {
+            "1": "undriven声明为wire输出却没有驱动源，四态模型显示Z。把名字叫输出并不能产生有效电平。",
+            "2": "q是尚未赋值的reg，仿真初始为X；没有初值不等于自动得到0。",
+            "4": "X是无法确定0/1的仿真状态，真实上电值要看器件和复位；不能拿X作实际逻辑电平设计。"
+          },
+          "sequence": []
+        },
+        "source": "public/textbook-depth.js"
+      },
+      "assessmentCheck": {
+        "result": "已通过",
+        "mappings": [
+          {
+            "id": "four-state-task-1",
+            "description": "解释X和Z的常见来源",
+            "activities": [
+              0
+            ]
+          },
+          {
+            "id": "four-state-task-2",
+            "description": "知道未知值不能随意当作0",
+            "activities": [
+              1
+            ]
+          },
+          {
+            "id": "four-state-task-3",
+            "description": "知道未知值不能随意当作0",
+            "activities": [
+              2
+            ]
+          },
+          {
+            "id": "four-state-task-4",
+            "description": "知道未知值不能随意当作0",
+            "activities": [
+              3
+            ]
+          },
+          {
+            "id": "four-state-task-5",
+            "description": "知道未知值不能随意当作0",
+            "activities": [
+              4
+            ]
+          }
+        ],
+        "transferBugDistinct": false,
+        "source": "public/textbook-depth.js: exercises"
+      },
+      "independentCheck": {
+        "result": "已通过（按明确规格和课堂示范作静态推演）",
+        "task": "解释为何计数器没有复位时可能一直是X。",
+        "conditions": [
+          [
+            "输出依次0、X、1、X；对不能确定的项，必须指出未知位取0与1时结果不同。"
+          ]
+        ],
+        "limit": "尚未通过真实零基础学生试学；开放代码不自动验证"
+      },
+      "beforeIssue": "首次if/$fatal早于分支课",
+      "repair": "本课只算四态逻辑，检查代码移到checking"
+    },
+    {
+      "id": "operators",
+      "status": "已通过（编辑语义复核）",
+      "goalCheck": {
+        "result": "已通过",
+        "evidence": "区分按位、逻辑与归约",
+        "source": "public/hdl-content.js: goals, concept"
+      },
+      "prerequisiteCheck": {
+        "result": "已通过",
+        "priorConcepts": [
+          {
+            "concept": "向量与单比特",
+            "taughtIn": "vectors"
+          },
+          {
+            "concept": "门逻辑",
+            "taughtIn": "logic-gates"
+          }
+        ],
+        "repair": "1010/0101预测，括号反例",
+        "source": "public/hdl-content.js: conceptDependencies, concept"
+      },
+      "workedExampleCheck": {
+        "result": "已通过",
+        "evidence": {
+          "completeCode": "module choose_max(input wire [3:0] a,b,\n output wire [3:0] y);\n // a=1010,b=0101时：\n // a&b=0000，a&&b=1，&a=0\n assign y = (a > b) ? a : b;\nendmodule",
+          "keyLines": {
+            "1": "a和b各4位。按位运算逐个位置配对；逻辑运算先看整个向量是否非零。",
+            "4": "1010与0101逐位没有共同的1，所以a&b=0000；两个数都非零，所以a&&b=1。&a把a自身所有位相与，有0则为0。",
+            "5": "先比较a>b，再由?选择a或b。例如a=10,b=5选a=10。括号把比较整体写清，避免误读运算分组。"
+          },
+          "sequence": []
+        },
+        "source": "public/textbook-depth.js"
+      },
+      "assessmentCheck": {
+        "result": "已通过",
+        "mappings": [
+          {
+            "id": "operators-task-1",
+            "description": "区分按位、逻辑与归约",
+            "activities": [
+              0
+            ]
+          },
+          {
+            "id": "operators-task-2",
+            "description": "根据类型解释比较和移位",
+            "activities": [
+              1
+            ]
+          },
+          {
+            "id": "operators-task-3",
+            "description": "用归约或判断任意请求有效",
+            "activities": [
+              2
+            ]
+          },
+          {
+            "id": "operators-task-4",
+            "description": "根据类型解释比较和移位",
+            "activities": [
+              3
+            ]
+          },
+          {
+            "id": "operators-task-5",
+            "description": "根据类型解释比较和移位",
+            "activities": [
+              4
+            ]
+          }
+        ],
+        "transferBugDistinct": true,
+        "source": "public/textbook-depth.js: exercises"
+      },
+      "independentCheck": {
+        "result": "已通过（按明确规格和课堂示范作静态推演）",
+        "task": "计算 a|b、a^b、!a，并注明位宽。",
+        "conditions": [
+          [
+            "a=4'h9时零检测0、奇偶0、左移低4位2；a=0时零检测1。"
+          ]
+        ],
+        "limit": "尚未通过真实零基础学生试学；开放代码不自动验证"
+      },
+      "beforeIssue": "同输入对照不够突出",
+      "repair": "1010/0101预测，括号反例"
+    },
+    {
+      "id": "width-sign",
+      "status": "已通过（编辑语义复核）",
+      "goalCheck": {
+        "result": "已通过",
+        "evidence": "保存进位并正确符号扩展",
+        "source": "public/hdl-content.js: goals, concept"
+      },
+      "prerequisiteCheck": {
+        "result": "已通过",
+        "priorConcepts": [
+          {
+            "concept": "运算符结果",
+            "taughtIn": "operators"
+          },
+          {
+            "concept": "位选与拼接",
+            "taughtIn": "vectors"
+          }
+        ],
+        "repair": "显式扩宽和负数补位",
+        "source": "public/hdl-content.js: conceptDependencies, concept"
+      },
+      "workedExampleCheck": {
+        "result": "已通过",
+        "evidence": {
+          "completeCode": "module extend_demo(input wire [3:0] a,b,\n input wire signed [3:0] s,\n output wire [4:0] sum,\n output wire signed [7:0] extended);\n assign sum = {1'b0,a} + {1'b0,b};\n assign extended = {{4{s[3]}},s};\nendmodule",
+          "keyLines": {
+            "2": "s被声明为4位signed，最高位s[3]是符号位；1000解释为-8而非无符号8。",
+            "5": "两个4位输入各前补0变5位，再相加。15+1得到10000，sum[4]保留进位，不在4位输出中截掉。",
+            "6": "s[3]复制4次再拼上原4位。s=1000时得到11111000，8位补码仍是-8；补0会变成+8。"
+          },
+          "sequence": []
+        },
+        "source": "public/textbook-depth.js"
+      },
+      "assessmentCheck": {
+        "result": "已通过",
+        "mappings": [
+          {
+            "id": "width-sign-task-1",
+            "description": "区分无符号与补码范围",
+            "activities": [
+              0
+            ]
+          },
+          {
+            "id": "width-sign-task-2",
+            "description": "显式扩展并保留进位",
+            "activities": [
+              1
+            ]
+          },
+          {
+            "id": "width-sign-task-3",
+            "description": "复制符号位保留补码数值",
+            "activities": [
+              2
+            ]
+          },
+          {
+            "id": "width-sign-task-4",
+            "description": "显式扩展并保留进位",
+            "activities": [
+              3
+            ]
+          },
+          {
+            "id": "width-sign-task-5",
+            "description": "显式扩展并保留进位",
+            "activities": [
+              4
+            ]
+          }
+        ],
+        "transferBugDistinct": true,
+        "source": "public/textbook-depth.js: exercises"
+      },
+      "independentCheck": {
+        "result": "已通过（按明确规格和课堂示范作静态推演）",
+        "task": "两个8位无符号数最大和多少，结果需几位？",
+        "conditions": [
+          [
+            "15+15=5'b11110；4位signed -8扩成8位为11111000；同时检查0和+7。"
+          ]
+        ],
+        "limit": "尚未通过真实零基础学生试学；开放代码不自动验证"
+      },
+      "beforeIssue": "左值宽度规则不可简单泛化",
+      "repair": "显式扩宽和负数补位"
+    },
+    {
+      "id": "casts",
+      "status": "已通过（编辑语义复核）",
+      "goalCheck": {
+        "result": "已通过",
+        "evidence": "区分解释类型与改变位串",
+        "source": "public/hdl-content.js: goals, concept"
+      },
+      "prerequisiteCheck": {
+        "result": "已通过",
+        "priorConcepts": [
+          {
+            "concept": "补码、符号扩展与位宽",
+            "taughtIn": "width-sign"
+          }
+        ],
+        "repair": "1000扩展为F8或08",
+        "source": "public/hdl-content.js: conceptDependencies, concept"
+      },
+      "workedExampleCheck": {
+        "result": "已通过",
+        "evidence": {
+          "completeCode": "module cast_demo(input wire [3:0] raw,\n output wire signed [7:0] sx,\n output wire [7:0] zx,\n output wire negative);\n assign sx=$signed(raw);\n assign zx=$unsigned(raw);\n assign negative=($signed(raw) < 4'sd0);\nendmodule",
+          "keyLines": {
+            "5": "$signed(raw)保留raw的4个位但赋予有符号解释；赋给8位sx时按符号扩展。raw=1000时sx=11111000。",
+            "6": "$unsigned同样不先改变4个位；赋给8位zx时补零，得到00001000。",
+            "7": "比较的两侧都明确为有符号4位，因此1000小于4'sd0。不要与不明确位宽和符号的常量随意混算。"
+          },
+          "sequence": []
+        },
+        "source": "public/textbook-depth.js"
+      },
+      "assessmentCheck": {
+        "result": "已通过",
+        "mappings": [
+          {
+            "id": "casts-task-1",
+            "description": "给raw=1000写出sx和zx的十进制。",
+            "activities": [
+              0
+            ]
+          },
+          {
+            "id": "casts-task-2",
+            "description": "$signed(raw)仍是4位表达式，赋给8位signed输出时符号扩展。",
+            "activities": [
+              1
+            ]
+          },
+          {
+            "id": "casts-task-3",
+            "description": "选择无符号解释进行零扩展",
+            "activities": [
+              2
+            ]
+          },
+          {
+            "id": "casts-task-4",
+            "description": "$signed(raw)仍是4位表达式，赋给8位signed输出时符号扩展。",
+            "activities": [
+              3
+            ]
+          },
+          {
+            "id": "casts-task-5",
+            "description": "$signed(raw)仍是4位表达式，赋给8位signed输出时符号扩展。",
+            "activities": [
+              4
+            ]
+          }
+        ],
+        "transferBugDistinct": true,
+        "source": "public/textbook-depth.js: exercises"
+      },
+      "independentCheck": {
+        "result": "已通过（按明确规格和课堂示范作静态推演）",
+        "task": "给raw=1000写出sx和zx的十进制。",
+        "conditions": [
+          [
+            "raw=7：sx=07,zx=07,negative=0；8：sx=F8,zx=08,negative=1；F：sx=FF,zx=0F,negative=1。"
+          ]
+        ],
+        "limit": "尚未通过真实零基础学生试学；开放代码不自动验证"
+      },
+      "beforeIssue": "转换前后宽度容易混为一谈",
+      "repair": "1000扩展为F8或08"
+    },
+    {
+      "id": "branches",
+      "status": "已通过（编辑语义复核）",
+      "goalCheck": {
+        "result": "已通过",
+        "evidence": "写全组合MUX路径",
+        "source": "public/hdl-content.js: goals, concept"
+      },
+      "prerequisiteCheck": {
+        "result": "已通过",
+        "priorConcepts": [
+          {
+            "concept": "过程变量",
+            "taughtIn": "net-var"
+          },
+          {
+            "concept": "条件表达式",
+            "taughtIn": "operators"
+          },
+          {
+            "concept": "组合与保持",
+            "taughtIn": "storage"
+          }
+        ],
+        "repair": "新双输出路径练习",
+        "source": "public/hdl-content.js: conceptDependencies, concept"
+      },
+      "workedExampleCheck": {
+        "result": "已通过",
+        "evidence": {
+          "completeCode": "module mux_proc(input wire [3:0] a,b,\n input wire sel, output reg [3:0] y);\n always @(*) begin\n  y = a;\n  if(sel) begin\n   y = b;\n  end\n end\nendmodule",
+          "keyLines": {
+            "3": "@(*)监听本过程读到的a、b、sel，任何一个变化都重算y。没有posedge，所以不是寄存器。",
+            "4": "先给y=a，使sel=0路径也有值；这次过程不需要引用上一次y。",
+            "6": "sel=1时用b覆盖本次默认a。阻塞=使本过程后续语句看见新y，但不引入一个时钟周期。"
+          },
+          "sequence": []
+        },
+        "source": "public/textbook-content.js"
+      },
+      "assessmentCheck": {
+        "result": "已通过",
+        "mappings": [
+          {
+            "id": "branches-task-1",
+            "description": "读懂begin/end和if/else",
+            "activities": [
+              0
+            ]
+          },
+          {
+            "id": "branches-task-2",
+            "description": "为组合输出覆盖所有路径",
+            "activities": [
+              1
+            ]
+          },
+          {
+            "id": "branches-task-3",
+            "description": "分别覆盖组合逻辑的每个输出路径",
+            "activities": [
+              2
+            ]
+          },
+          {
+            "id": "branches-task-4",
+            "description": "为组合输出覆盖所有路径",
+            "activities": [
+              3
+            ]
+          },
+          {
+            "id": "branches-task-5",
+            "description": "为组合输出覆盖所有路径",
+            "activities": [
+              4
+            ]
+          }
+        ],
+        "transferBugDistinct": true,
+        "source": "public/textbook-content.js: exercises"
+      },
+      "independentCheck": {
+        "result": "已通过（按明确规格和课堂示范作静态推演）",
+        "task": "添加使能en：en=0时y=0，否则按sel选择。",
+        "conditions": [
+          [
+            "en/sel=00、01时y均0；10时y=a；11时y=b。再在固定控制下改变所选数据，输出不等待时钟。"
+          ]
+        ],
+        "limit": "尚未通过真实零基础学生试学；开放代码不自动验证"
+      },
+      "beforeIssue": "Bug题照抄课堂漏else",
+      "repair": "新双输出路径练习"
+    },
+    {
+      "id": "case-latch",
+      "status": "已通过（编辑语义复核）",
+      "goalCheck": {
+        "result": "已通过",
+        "evidence": "覆盖所有选择输入",
+        "source": "public/hdl-content.js: goals, concept"
+      },
+      "prerequisiteCheck": {
+        "result": "已通过",
+        "priorConcepts": [
+          {
+            "concept": "默认赋值与漏分支",
+            "taughtIn": "branches"
+          }
+        ],
+        "repair": "新告警译码的遗漏输出",
+        "source": "public/hdl-content.js: conceptDependencies, concept"
+      },
+      "workedExampleCheck": {
+        "result": "已通过",
+        "evidence": {
+          "completeCode": "module select3(input wire [3:0] a,b,c,\n input wire [1:0] sel, output reg [3:0] y);\n always @(*) begin\n  case(sel)\n   2'b00: y = a;\n   2'b01: y = b;\n   2'b10: y = c;\n   default: y = 4'b0000;\n  endcase\n end\nendmodule",
+          "keyLines": {
+            "4": "case按sel的完整位串逐项匹配，普通case不会把X自动当0或任意位。",
+            "7": "sel=10时给y=c。若这里漏掉赋值，从01切到10就可能保持旧b而不是选择c。",
+            "8": "未匹配前三项就给0000，包含sel=11。default必须真的给输出赋值；只写空default不能防锁存。"
+          },
+          "sequence": []
+        },
+        "source": "public/textbook-depth.js"
+      },
+      "assessmentCheck": {
+        "result": "已通过",
+        "mappings": [
+          {
+            "id": "case-latch-task-1",
+            "description": "用case写选择规则",
+            "activities": [
+              0
+            ]
+          },
+          {
+            "id": "case-latch-task-2",
+            "description": "发现漏赋值导致的意外存储",
+            "activities": [
+              1
+            ]
+          },
+          {
+            "id": "case-latch-task-3",
+            "description": "按选择规格校正两个输出",
+            "activities": [
+              2
+            ]
+          },
+          {
+            "id": "case-latch-task-4",
+            "description": "发现漏赋值导致的意外存储",
+            "activities": [
+              3
+            ]
+          },
+          {
+            "id": "case-latch-task-5",
+            "description": "发现漏赋值导致的意外存储",
+            "activities": [
+              4
+            ]
+          }
+        ],
+        "transferBugDistinct": true,
+        "source": "public/textbook-depth.js: exercises"
+      },
+      "independentCheck": {
+        "result": "已通过（按明确规格和课堂示范作静态推演）",
+        "task": "给出无存储的修复：en=0时输出0。",
+        "conditions": [
+          [
+            "令四个数据互不相同，sel=00/01/10/11逐项选择；定义未知选择时default为0，并在TB中使用四态比较。测试台写法可在后续仿真课补做。"
+          ]
+        ],
+        "limit": "尚未通过真实零基础学生试学；开放代码不自动验证"
+      },
+      "beforeIssue": "错误题与示范相同",
+      "repair": "新告警译码的遗漏输出"
+    },
+    {
+      "id": "casez",
+      "status": "已通过（编辑语义复核）",
+      "goalCheck": {
+        "result": "已通过",
+        "evidence": "理解优先级与通配风险",
+        "source": "public/hdl-content.js: goals, concept"
+      },
+      "prerequisiteCheck": {
+        "result": "已通过",
+        "priorConcepts": [
+          {
+            "concept": "case匹配",
+            "taughtIn": "case-latch"
+          },
+          {
+            "concept": "X/Z的含义",
+            "taughtIn": "four-state"
+          }
+        ],
+        "repair": "标为进阶，重叠项优先级",
+        "source": "public/hdl-content.js: conceptDependencies, concept"
+      },
+      "workedExampleCheck": {
+        "result": "已通过",
+        "evidence": {
+          "completeCode": "module priority4(input wire [3:0] req,output reg valid,\n output reg [1:0] index);\n always @(*) begin\n  valid=1'b1; index=2'd0;\n  casez(req)\n   4'b1???: index=2'd3;\n   4'b01??: index=2'd2;\n   4'b001?: index=2'd1;\n   4'b0001: index=2'd0;\n   default: valid=1'b0;\n  endcase\n end\nendmodule",
+          "keyLines": {
+            "4": "本次先假定有请求且编号0；后续分支可以覆盖编号，default负责撤销valid。",
+            "6": "1???匹配最高位为1的请求，低三位不参与这一项比较。1001仍选3。输入Z也会被casez当通配，需另查未知。",
+            "7": "01??把最高位限定为0，再选第2位。写成?1??会与上一项重叠，结果将依赖谁写在前面。"
+          },
+          "sequence": []
+        },
+        "source": "public/textbook-depth.js"
+      },
+      "assessmentCheck": {
+        "result": "已通过",
+        "mappings": [
+          {
+            "id": "casez-task-1",
+            "description": "给req=0000写出valid和index。",
+            "activities": [
+              0
+            ]
+          },
+          {
+            "id": "casez-task-2",
+            "description": "?只在casez模式中表示通配。",
+            "activities": [
+              1
+            ]
+          },
+          {
+            "id": "casez-task-3",
+            "description": "按casez首个匹配规则安排优先级",
+            "activities": [
+              2
+            ]
+          },
+          {
+            "id": "casez-task-4",
+            "description": "?只在casez模式中表示通配。",
+            "activities": [
+              3
+            ]
+          },
+          {
+            "id": "casez-task-5",
+            "description": "?只在casez模式中表示通配。",
+            "activities": [
+              4
+            ]
+          }
+        ],
+        "transferBugDistinct": true,
+        "source": "public/textbook-depth.js: exercises"
+      },
+      "independentCheck": {
+        "result": "已通过（按明确规格和课堂示范作静态推演）",
+        "task": "给req=0000写出valid和index。",
+        "conditions": [
+          [
+            "低位优先：0000应valid=0；0001、0101、1001都选index0；1010选index1。"
+          ]
+        ],
+        "limit": "尚未通过真实零基础学生试学；开放代码不自动验证"
+      },
+      "beforeIssue": "高级语法不应打断初学主线",
+      "repair": "标为进阶，重叠项优先级"
+    },
+    {
+      "id": "loops",
+      "status": "已通过（编辑语义复核）",
+      "goalCheck": {
+        "result": "已通过",
+        "evidence": "把循环展开成组合计算",
+        "source": "public/hdl-content.js: goals, concept"
+      },
+      "prerequisiteCheck": {
+        "result": "已通过",
+        "priorConcepts": [
+          {
+            "concept": "过程内语句顺序",
+            "taughtIn": "branches"
+          },
+          {
+            "concept": "异或与归约",
+            "taughtIn": "operators"
+          }
+        ],
+        "repair": "新的四位或归约修复",
+        "source": "public/hdl-content.js: conceptDependencies, concept"
+      },
+      "workedExampleCheck": {
+        "result": "已通过",
+        "evidence": {
+          "completeCode": "module parity4(input wire [3:0] data, output reg parity);\n integer i;\n always @(*) begin\n  parity = 1'b0;\n  for(i=0; i<4; i=i+1) begin\n   parity = parity ^ data[i];\n  end\n end\nendmodule",
+          "keyLines": {
+            "2": "i是展开时索引的整数描述，不是一个每拍自动加一的硬件计数器。",
+            "4": "本轮先把parity置0，让结果只取决于本次data。漏掉它会把旧结果带回计算。",
+            "5": "循环四次组合计算，不等待四个时钟。固定上界允许工具形成四位异或关系。",
+            "6": "每次把一位并入当前parity。data=1011时依次得到1、0、0、1，最终奇数个1使输出1。"
+          },
+          "sequence": []
+        },
+        "source": "public/textbook-depth.js"
+      },
+      "assessmentCheck": {
+        "result": "已通过",
+        "mappings": [
+          {
+            "id": "loops-task-1",
+            "description": "手工展开固定for循环",
+            "activities": [
+              0
+            ]
+          },
+          {
+            "id": "loops-task-2",
+            "description": "分清循环次数与时钟拍数",
+            "activities": [
+              1
+            ]
+          },
+          {
+            "id": "loops-task-3",
+            "description": "选择组合归约的正确初值",
+            "activities": [
+              2
+            ]
+          },
+          {
+            "id": "loops-task-4",
+            "description": "分清循环次数与时钟拍数",
+            "activities": [
+              3
+            ]
+          },
+          {
+            "id": "loops-task-5",
+            "description": "分清循环次数与时钟拍数",
+            "activities": [
+              4
+            ]
+          }
+        ],
+        "transferBugDistinct": true,
+        "source": "public/textbook-depth.js: exercises"
+      },
+      "independentCheck": {
+        "result": "已通过（按明确规格和课堂示范作静态推演）",
+        "task": "data=1011时写出i=0到3各轮parity。",
+        "conditions": [
+          [
+            "对data=00、01、03、FF手算奇偶0、1、0、0；完整256值自动比对在后面的TB课补做。"
+          ]
+        ],
+        "limit": "尚未通过真实零基础学生试学；开放代码不自动验证"
+      },
+      "beforeIssue": "不能把累加步骤当时钟周期",
+      "repair": "新的四位或归约修复"
+    },
+    {
+      "id": "parameters",
+      "status": "已通过（编辑语义复核）",
+      "goalCheck": {
+        "result": "已通过",
+        "evidence": "用参数确定硬件规模",
+        "source": "public/hdl-content.js: goals, concept"
+      },
+      "prerequisiteCheck": {
+        "result": "已通过",
+        "priorConcepts": [
+          {
+            "concept": "常量与位宽",
+            "taughtIn": "width-sign"
+          },
+          {
+            "concept": "循环展开",
+            "taughtIn": "loops"
+          }
+        ],
+        "repair": "先参数宽度，再进阶展开",
+        "source": "public/hdl-content.js: conceptDependencies, concept"
+      },
+      "workedExampleCheck": {
+        "result": "已通过",
+        "evidence": {
+          "completeCode": "module invert #(parameter W=8)(\n input wire [W-1:0] a, output wire [W-1:0] y);\n genvar i;\n generate for(i=0;i<W;i=i+1) begin: g\n   assign y[i] = ~a[i];\n end endgenerate\nendmodule",
+          "keyLines": {
+            "1": "W默认8，是建立电路时确定的宽度配置；输入a变化不会改变W。",
+            "3": "genvar仅用于generate展开索引，不是运行时寄存器i。",
+            "4": "W=4时生成g[0]到g[3]四份连接结构，它们并行工作，不轮流占用一个反相器。",
+            "5": "每个生成项将a对应位取反接到y对应位；位之间没有状态传递。"
+          },
+          "sequence": []
+        },
+        "source": "public/textbook-depth.js"
+      },
+      "assessmentCheck": {
+        "result": "已通过",
+        "mappings": [
+          {
+            "id": "parameters-task-1",
+            "description": "用参数配置硬件位宽",
+            "activities": [
+              0
+            ]
+          },
+          {
+            "id": "parameters-task-2",
+            "description": "解释generate在展开时复制硬件",
+            "activities": [
+              1
+            ]
+          },
+          {
+            "id": "parameters-task-3",
+            "description": "从配置参数推导内部边界",
+            "activities": [
+              2
+            ]
+          },
+          {
+            "id": "parameters-task-4",
+            "description": "解释generate在展开时复制硬件",
+            "activities": [
+              3
+            ]
+          },
+          {
+            "id": "parameters-task-5",
+            "description": "解释generate在展开时复制硬件",
+            "activities": [
+              4
+            ]
+          }
+        ],
+        "transferBugDistinct": true,
+        "source": "public/textbook-depth.js: exercises"
+      },
+      "independentCheck": {
+        "result": "已通过（按明确规格和课堂示范作静态推演）",
+        "task": "实例化一个4位invert模块。",
+        "conditions": [
+          [
+            "W=1取0/1输入；W=8取00/FF/AA；逐位异或结果与^两个输入的对应位一致；W=0不在规格内。"
+          ]
+        ],
+        "limit": "尚未通过真实零基础学生试学；开放代码不自动验证"
+      },
+      "beforeIssue": "generate与运行循环混淆",
+      "repair": "先参数宽度，再进阶展开"
+    },
+    {
+      "id": "functions",
+      "status": "已通过（编辑语义复核）",
+      "goalCheck": {
+        "result": "已通过",
+        "evidence": "给组合表达式命名",
+        "source": "public/hdl-content.js: goals, concept"
+      },
+      "prerequisiteCheck": {
+        "result": "已通过",
+        "priorConcepts": [
+          {
+            "concept": "组合过程与分支",
+            "taughtIn": "branches"
+          },
+          {
+            "concept": "运算位宽",
+            "taughtIn": "width-sign"
+          }
+        ],
+        "repair": "减一函数返回值修复",
+        "source": "public/hdl-content.js: conceptDependencies, concept"
+      },
+      "workedExampleCheck": {
+        "result": "已通过",
+        "evidence": {
+          "completeCode": "module use_function(input wire [3:0] a,\n output wire [3:0] y);\n function [3:0] inc;\n  input [3:0] x;\n  begin inc = x + 4'd1; end\n endfunction\n assign y = inc(a);\nendmodule",
+          "keyLines": {
+            "3": "inc声明返回4位的组合函数，调用时输入x会用调用实参替代；没有等待事件。",
+            "5": "传统Verilog用函数名inc接收返回值。15+1最终只保留4位，返回0。",
+            "7": "a作为实参交给inc，结果持续驱动y；不是在时钟到来时才调用一次的软件流程。"
+          },
+          "sequence": []
+        },
+        "source": "public/textbook-depth.js"
+      },
+      "assessmentCheck": {
+        "result": "已通过",
+        "mappings": [
+          {
+            "id": "functions-task-1",
+            "description": "声明函数的输入与返回值",
+            "activities": [
+              0
+            ]
+          },
+          {
+            "id": "functions-task-2",
+            "description": "解释函数调用的位宽和硬件含义",
+            "activities": [
+              1
+            ]
+          },
+          {
+            "id": "functions-task-3",
+            "description": "定义并测试返回减一结果的函数",
+            "activities": [
+              2
+            ]
+          },
+          {
+            "id": "functions-task-4",
+            "description": "解释函数调用的位宽和硬件含义",
+            "activities": [
+              3
+            ]
+          },
+          {
+            "id": "functions-task-5",
+            "description": "解释函数调用的位宽和硬件含义",
+            "activities": [
+              4
+            ]
+          }
+        ],
+        "transferBugDistinct": true,
+        "source": "public/textbook-depth.js: exercises"
+      },
+      "independentCheck": {
+        "result": "已通过（按明确规格和课堂示范作静态推演）",
+        "task": "解释函数里把返回宽度改成5位还需检查什么。",
+        "conditions": [
+          [
+            "输入0→1，254→255，255→255；返回8位，不在255回绕。"
+          ]
+        ],
+        "limit": "尚未通过真实零基础学生试学；开放代码不自动验证"
+      },
+      "beforeIssue": "函数返回名和调用关系不清",
+      "repair": "减一函数返回值修复"
+    },
+    {
+      "id": "directives",
+      "status": "已通过（编辑语义复核）",
+      "goalCheck": {
+        "result": "已通过",
+        "evidence": "区分文本选择与运行条件",
+        "source": "public/hdl-content.js: goals, concept"
+      },
+      "prerequisiteCheck": {
+        "result": "已通过",
+        "priorConcepts": [
+          {
+            "concept": "模块编译",
+            "taughtIn": "tool-start"
+          },
+          {
+            "concept": "构建常量与运行信号",
+            "taughtIn": "parameters"
+          }
+        ],
+        "repair": "保护宏与#undef的作用",
+        "source": "public/hdl-content.js: conceptDependencies, concept"
+      },
+      "workedExampleCheck": {
+        "result": "已通过",
+        "evidence": {
+          "completeCode": "`define WIDTH 4\nmodule macro_demo(input wire [`WIDTH-1:0] a,\n output wire [`WIDTH-1:0] y);\n`ifdef INVERT\n assign y=~a;\n`else\n assign y=a;\n`endif\nendmodule\n`undef WIDTH",
+          "keyLines": {
+            "1": "预处理器把后续`WIDTH文本展开为4；它不是电路输入，不能运行时改变。",
+            "4": "编译时定义了INVERT才保留下面的取反assign；未定义时选`else那条，不会综合成可选MUX。",
+            "7": "未定义INVERT时，a直接驱动y；与取反关系只会保留其一。",
+            "10": "撤销WIDTH宏，避免之后文件意外沿用4这一文本定义；跨文件作用域仍应核对编译顺序。"
+          },
+          "sequence": []
+        },
+        "source": "public/textbook-depth.js"
+      },
+      "assessmentCheck": {
+        "result": "已通过",
+        "mappings": [
+          {
+            "id": "directives-task-1",
+            "description": "解释include与实例化的区别。",
+            "activities": [
+              0
+            ]
+          },
+          {
+            "id": "directives-task-2",
+            "description": "宏是文本替换，使用时同样有反引号。",
+            "activities": [
+              1
+            ]
+          },
+          {
+            "id": "directives-task-3",
+            "description": "宏是文本替换，使用时同样有反引号。",
+            "activities": [
+              2
+            ]
+          },
+          {
+            "id": "directives-task-4",
+            "description": "宏是文本替换，使用时同样有反引号。",
+            "activities": [
+              3
+            ]
+          },
+          {
+            "id": "directives-task-5",
+            "description": "宏是文本替换，使用时同样有反引号。",
+            "activities": [
+              4
+            ]
+          }
+        ],
+        "transferBugDistinct": false,
+        "source": "public/textbook-depth.js: exercises"
+      },
+      "independentCheck": {
+        "result": "已通过（按明确规格和课堂示范作静态推演）",
+        "task": "解释include与实例化的区别。",
+        "conditions": [
+          [
+            "同一个头文件include两次仍只保留一份定义；源文件列表中每个模块定义只出现一次。"
+          ],
+          [
+            "同一个头文件include两次仍只保留一份定义；源文件列表中每个模块定义只出现一次。"
+          ]
+        ],
+        "limit": "尚未通过真实零基础学生试学；开放代码不自动验证"
+      },
+      "beforeIssue": "宏污染作用域未被具体解释",
+      "repair": "保护宏与#undef的作用"
+    },
+    {
+      "id": "hierarchy",
+      "status": "已通过（编辑语义复核）",
+      "goalCheck": {
+        "result": "已通过",
+        "evidence": "理解子实例结果与整字运算",
+        "source": "public/hdl-content.js: goals, concept"
+      },
+      "prerequisiteCheck": {
+        "result": "已通过",
+        "priorConcepts": [
+          {
+            "concept": "实例端口",
+            "taughtIn": "module"
+          },
+          {
+            "concept": "函数与无时间计算",
+            "taughtIn": "functions"
+          },
+          {
+            "concept": "跨位进位",
+            "taughtIn": "width-sign"
+          }
+        ],
+        "repair": "0F+01的反例",
+        "source": "public/hdl-content.js: conceptDependencies, concept"
+      },
+      "workedExampleCheck": {
+        "result": "已通过",
+        "evidence": {
+          "completeCode": "module nibble_add(input wire [3:0] a,b,output wire [4:0] sum);\n assign sum={1'b0,a}+{1'b0,b};\nendmodule\nmodule pair_add(input wire [7:0] a,b,output wire [9:0] sums);\n nibble_add lo(.a(a[3:0]),.b(b[3:0]),.sum(sums[4:0]));\n nibble_add hi(.a(a[7:4]),.b(b[7:4]),.sum(sums[9:5]));\nendmodule",
+          "keyLines": {
+            "2": "两个半字节先各补0，再相加得到5位，保留各自的进位。",
+            "5": "lo只计算低半字节和，sums[4:0]接收其完整5位结果，不会自动把进位送入hi。",
+            "6": "hi独立计算高半字节和。因此0F+01得到低组10000、高组00000，这不是完整8位加法的010。"
+          },
+          "sequence": []
+        },
+        "source": "public/textbook-depth.js"
+      },
+      "assessmentCheck": {
+        "result": "已通过",
+        "mappings": [
+          {
+            "id": "hierarchy-task-1",
+            "description": "正确连接多模块工程",
+            "activities": [
+              0
+            ]
+          },
+          {
+            "id": "hierarchy-task-2",
+            "description": "区分实例、层次与任务",
+            "activities": [
+              1
+            ]
+          },
+          {
+            "id": "hierarchy-task-3",
+            "description": "区分实例、层次与任务",
+            "activities": [
+              2
+            ]
+          },
+          {
+            "id": "hierarchy-task-4",
+            "description": "区分实例、层次与任务",
+            "activities": [
+              3
+            ]
+          },
+          {
+            "id": "hierarchy-task-5",
+            "description": "区分实例、层次与任务",
+            "activities": [
+              4
+            ]
+          }
+        ],
+        "transferBugDistinct": false,
+        "source": "public/textbook-depth.js: exercises"
+      },
+      "independentCheck": {
+        "result": "已通过（按明确规格和课堂示范作静态推演）",
+        "task": "在“多模块工程、层次与RTL task”中检查这个错误方案： 把sums直接当a+b。写出具体修改办法与核对步骤。",
+        "conditions": [
+          [
+            "a=0F,b=01应9位010；a=FF,b=01应100；a=b=FF应1FE。"
+          ],
+          [
+            "a=0F,b=01应9位010；a=FF,b=01应100；a=b=FF应1FE。"
+          ]
+        ],
+        "limit": "尚未通过真实零基础学生试学；开放代码不自动验证"
+      },
+      "beforeIssue": "拆字节加法漏跨半字节进位",
+      "repair": "0F+01的反例"
+    },
+    {
+      "id": "edges",
+      "status": "已通过（编辑语义复核）",
+      "goalCheck": {
+        "result": "已通过",
+        "evidence": "按上升沿推导DFF",
+        "source": "public/hdl-content.js: goals, concept"
+      },
+      "prerequisiteCheck": {
+        "result": "已通过",
+        "priorConcepts": [
+          {
+            "concept": "DFF与有效边沿",
+            "taughtIn": "storage"
+          },
+          {
+            "concept": "过程语法",
+            "taughtIn": "branches"
+          }
+        ],
+        "repair": "本课先教采样后更新的最小语义",
+        "source": "public/hdl-content.js: conceptDependencies, concept"
+      },
+      "workedExampleCheck": {
+        "result": "已通过",
+        "evidence": {
+          "completeCode": "module dff(input wire clk,d, output reg q);\n always @(posedge clk) begin\n  q <= d;\n end\nendmodule",
+          "keyLines": {
+            "1": "clk控制何时采样，d是数据，q是在过程里更新的输出reg。端口列表没有自动产生时钟源。",
+            "2": "posedge clk只在0→1的有效边沿触发此过程；时钟保持高电平不会重复采样。",
+            "3": "<=读取沿前d，安排随后更新q；沿后d再变不影响已采的q，要等下一个有效沿。"
+          },
+          "sequence": []
+        },
+        "source": "public/textbook-content.js"
+      },
+      "assessmentCheck": {
+        "result": "已通过",
+        "mappings": [
+          {
+            "id": "edges-task-1",
+            "description": "指出上升沿与一个完整周期",
+            "activities": [
+              0
+            ]
+          },
+          {
+            "id": "edges-task-2",
+            "description": "预测D变化后Q何时更新",
+            "activities": [
+              1
+            ]
+          },
+          {
+            "id": "edges-task-3",
+            "description": "把采样时钟与被采数据分开",
+            "activities": [
+              2
+            ]
+          },
+          {
+            "id": "edges-task-4",
+            "description": "预测D变化后Q何时更新",
+            "activities": [
+              3
+            ]
+          },
+          {
+            "id": "edges-task-5",
+            "description": "预测D变化后Q何时更新",
+            "activities": [
+              4
+            ]
+          }
+        ],
+        "transferBugDistinct": true,
+        "source": "public/textbook-content.js: exercises"
+      },
+      "independentCheck": {
+        "result": "已通过（按明确规格和课堂示范作静态推演）",
+        "task": "D在第1个边沿前是1，第2个边沿前是0，写出Q变化。",
+        "conditions": [
+          [
+            "给定初Q=0，D按上升沿依次1/0，沿后Q依次1/0；沿间改D不会改变Q。"
+          ]
+        ],
+        "limit": "尚未通过真实零基础学生试学；开放代码不自动验证"
+      },
+      "beforeIssue": "<=在NBA课前出现",
+      "repair": "本课先教采样后更新的最小语义"
+    },
+    {
+      "id": "nba",
+      "status": "已通过（编辑语义复核）",
+      "goalCheck": {
+        "result": "已通过",
+        "evidence": "推导两级寄存器旧值传递",
+        "source": "public/hdl-content.js: goals, concept"
+      },
+      "prerequisiteCheck": {
+        "result": "已通过",
+        "priorConcepts": [
+          {
+            "concept": "边沿采样与保持",
+            "taughtIn": "edges"
+          }
+        ],
+        "repair": "三位移位寄存器方向错误",
+        "source": "public/hdl-content.js: conceptDependencies, concept"
+      },
+      "workedExampleCheck": {
+        "result": "已通过",
+        "evidence": {
+          "completeCode": "module pipeline2(input wire clk,d,\n output reg a,b);\n always @(posedge clk) begin\n  a <= d;\n  b <= a;\n end\nendmodule",
+          "keyLines": {
+            "3": "a与b共享同一个上升沿，不存在先给a一个沿、再给b一个沿。",
+            "4": "此沿计算d并排队给a，尚未让下一条语句读到新a；旧a=0、d=1时安排a变1。",
+            "5": "此时a仍是旧0，所以b安排变0。NBA提交后a=1、b=0；下一沿b才取得1。用=先改a会改变后续读取。"
+          },
+          "sequence": []
+        },
+        "source": "public/textbook-content.js"
+      },
+      "assessmentCheck": {
+        "result": "已通过",
+        "mappings": [
+          {
+            "id": "nba-task-1",
+            "description": "读出同一沿各寄存器采到的旧值",
+            "activities": [
+              0
+            ]
+          },
+          {
+            "id": "nba-task-2",
+            "description": "区分=和<=在例子中的结果",
+            "activities": [
+              1
+            ]
+          },
+          {
+            "id": "nba-task-3",
+            "description": "用旧寄存器位实现正确移位方向",
+            "activities": [
+              2
+            ]
+          },
+          {
+            "id": "nba-task-4",
+            "description": "区分=和<=在例子中的结果",
+            "activities": [
+              3
+            ]
+          },
+          {
+            "id": "nba-task-5",
+            "description": "区分=和<=在例子中的结果",
+            "activities": [
+              4
+            ]
+          }
+        ],
+        "transferBugDistinct": true,
+        "source": "public/textbook-content.js: exercises"
+      },
+      "independentCheck": {
+        "result": "已通过（按明确规格和课堂示范作静态推演）",
+        "task": "保持d=1再给一沿，a和b是多少？",
+        "conditions": [
+          [
+            "假定a=b=c=0，D保持1；前三个上升沿后a/b/c依次100、110、111；沿间Q保持。初态只是本题预测条件，不代表无复位模块会自行清0。"
+          ]
+        ],
+        "limit": "尚未通过真实零基础学生试学；开放代码不自动验证"
+      },
+      "beforeIssue": "修复题照抄两级赋值示例",
+      "repair": "三位移位寄存器方向错误"
+    },
+    {
+      "id": "reset",
+      "status": "已通过（编辑语义复核）",
+      "goalCheck": {
+        "result": "已通过",
+        "evidence": "复位优先，释放后按使能加载",
+        "source": "public/hdl-content.js: goals, concept"
+      },
+      "prerequisiteCheck": {
+        "result": "已通过",
+        "priorConcepts": [
+          {
+            "concept": "非阻塞旧值采样",
+            "taughtIn": "nba"
+          },
+          {
+            "concept": "分支优先级",
+            "taughtIn": "branches"
+          }
+        ],
+        "repair": "同步计数使能的新优先级场景",
+        "source": "public/hdl-content.js: conceptDependencies, concept"
+      },
+      "workedExampleCheck": {
+        "result": "已通过",
+        "evidence": {
+          "completeCode": "module enabled_reg(input wire clk,rst_n,en,\n input wire [3:0] d, output reg [3:0] q);\n always @(posedge clk) begin\n  if(!rst_n) q <= 4'd0;\n  else if(en) q <= d;\n end\n // 异步版只替换上面的事件表达式为：\n // @(posedge clk or negedge rst_n)\nendmodule",
+          "keyLines": {
+            "3": "敏感事件只有posedge clk，所以rst_n拉低本身不会立即改q。这是同步复位。",
+            "4": "!rst_n为真说明低有效复位被请求，q安排清零；即便en同时为1也不执行else。",
+            "5": "非复位且en为1才装入d；en为0没有赋值，寄存器保持旧q。保持在时序过程里是正确需求。",
+            "8": "把negedge rst_n加入事件列表后才成为异步置零。释放仍需核对恢复/移除时序，不能只换名字。"
+          },
+          "sequence": []
+        },
+        "source": "public/textbook-depth.js"
+      },
+      "assessmentCheck": {
+        "result": "已通过",
+        "mappings": [
+          {
+            "id": "reset-task-1",
+            "description": "区分同步与异步复位",
+            "activities": [
+              0
+            ]
+          },
+          {
+            "id": "reset-task-2",
+            "description": "解释复位、使能、保持的优先级",
+            "activities": [
+              1
+            ]
+          },
+          {
+            "id": "reset-task-3",
+            "description": "按同步复位规格选择事件列表",
+            "activities": [
+              2
+            ]
+          },
+          {
+            "id": "reset-task-4",
+            "description": "解释复位、使能、保持的优先级",
+            "activities": [
+              3
+            ]
+          },
+          {
+            "id": "reset-task-5",
+            "description": "解释复位、使能、保持的优先级",
+            "activities": [
+              4
+            ]
+          }
+        ],
+        "transferBugDistinct": true,
+        "source": "public/textbook-depth.js: exercises"
+      },
+      "independentCheck": {
+        "result": "已通过（按明确规格和课堂示范作静态推演）",
+        "task": "rst_n=0且en=1时下一沿Q是什么？",
+        "conditions": [
+          [
+            "rst_n=0时不论en为何值，采样沿后Q=0；rst_n=1,en=0保持；rst_n=1,en=1加载d。"
+          ]
+        ],
+        "limit": "尚未通过真实零基础学生试学；开放代码不自动验证"
+      },
+      "beforeIssue": "异步复位声明与同步规格混用风险",
+      "repair": "同步计数使能的新优先级场景"
+    },
+    {
+      "id": "counter",
+      "status": "已通过（编辑语义复核）",
+      "goalCheck": {
+        "result": "已通过",
+        "evidence": "独立设计模计数与保持",
+        "source": "public/hdl-content.js: goals, concept"
+      },
+      "prerequisiteCheck": {
+        "result": "已通过",
+        "priorConcepts": [
+          {
+            "concept": "复位与使能",
+            "taughtIn": "reset"
+          },
+          {
+            "concept": "有限位宽回绕",
+            "taughtIn": "width-sign"
+          }
+        ],
+        "repair": "新模6终值比较错误",
+        "source": "public/hdl-content.js: conceptDependencies, concept"
+      },
+      "workedExampleCheck": {
+        "result": "已通过",
+        "evidence": {
+          "completeCode": "module counter(input wire clk, rst_n, en,\n output reg [3:0] q);\n always @(posedge clk) begin\n  if (!rst_n) q <= 4'd0;\n  else if (en) q <= q + 4'd1;\n end\nendmodule",
+          "keyLines": {
+            "2": "q是4位，能保留0到15。加法若产生第5位，写回q时会截去。",
+            "4": "低有效同步复位优先，无论en和旧q为何，在此上升沿后得到0。",
+            "5": "右侧q是沿前值；en=1时新q为旧q+1，en=0时保持。旧15加1只留4位成为0，反馈形成计数。"
+          },
+          "sequence": []
+        },
+        "source": "public/textbook-content.js"
+      },
+      "assessmentCheck": {
+        "result": "已通过",
+        "mappings": [
+          {
+            "id": "counter-task-1",
+            "description": "从自然语言规格写完整RTL",
+            "activities": [
+              0
+            ]
+          },
+          {
+            "id": "counter-task-2",
+            "description": "预测复位、暂停和回绕",
+            "activities": [
+              1
+            ]
+          },
+          {
+            "id": "counter-task-3",
+            "description": "在模6终值处回绕且保留使能",
+            "activities": [
+              2
+            ]
+          },
+          {
+            "id": "counter-task-4",
+            "description": "预测复位、暂停和回绕",
+            "activities": [
+              3
+            ]
+          },
+          {
+            "id": "counter-task-5",
+            "description": "预测复位、暂停和回绕",
+            "activities": [
+              4
+            ]
+          }
+        ],
+        "transferBugDistinct": true,
+        "source": "public/textbook-content.js: exercises"
+      },
+      "independentCheck": {
+        "result": "已通过（按明确规格和课堂示范作静态推演）",
+        "task": "写出复位、计数2拍、暂停1拍、继续1拍的结果。",
+        "conditions": [
+          [
+            "3位Q=7且en=1时下一沿为0；en=0保持；rst_n=0与en=1同时有效时应清0。"
+          ]
+        ],
+        "limit": "尚未通过真实零基础学生试学；开放代码不自动验证"
+      },
+      "beforeIssue": "课堂和考题均为两个if",
+      "repair": "新模6终值比较错误"
+    },
+    {
+      "id": "shift-pulse",
+      "status": "已通过（编辑语义复核）",
+      "goalCheck": {
+        "result": "已通过",
+        "evidence": "用旧prev识别输入变化",
+        "source": "public/hdl-content.js: goals, concept"
+      },
+      "prerequisiteCheck": {
+        "result": "已通过",
+        "priorConcepts": [
+          {
+            "concept": "旧状态与新输入",
+            "taughtIn": "nba"
+          },
+          {
+            "concept": "移位和拼接",
+            "taughtIn": "vectors"
+          }
+        ],
+        "repair": "下降沿检测迁移",
+        "source": "public/hdl-content.js: conceptDependencies, concept"
+      },
+      "workedExampleCheck": {
+        "result": "已通过",
+        "evidence": {
+          "completeCode": "module rise_pulse(input wire clk,rst_n,sig,\n output reg pulse,output reg [3:0] history);\n reg prev;\n always @(posedge clk) begin\n  if(!rst_n) begin\n   prev<=1'b0; pulse<=1'b0; history<=4'd0;\n  end else begin\n   prev<=sig;\n   pulse<=sig & ~prev;\n   history<={history[2:0],sig};\n  end\n end\nendmodule",
+          "keyLines": {
+            "8": "prev安排保存本沿sig，但这行没有立刻改变后面的prev读取值。",
+            "9": "pulse比较本沿sig与上一沿保存的prev；从0到1的第一个采样沿输出1，连续高电平只输出一次。sig应已属于本时钟域。",
+            "10": "旧history低3位左移，最新sig接最低位。history=1010,sig=1后为0101，最高旧位被丢弃。"
+          },
+          "sequence": []
+        },
+        "source": "public/textbook-depth.js"
+      },
+      "assessmentCheck": {
+        "result": "已通过",
+        "mappings": [
+          {
+            "id": "shift-pulse-task-1",
+            "description": "画出sig依次0、1、1、0时pulse序列。",
+            "activities": [
+              0
+            ]
+          },
+          {
+            "id": "shift-pulse-task-2",
+            "description": "非阻塞赋值让pulse读到旧prev，而不是刚安排的新值。",
+            "activities": [
+              1
+            ]
+          },
+          {
+            "id": "shift-pulse-task-3",
+            "description": "将变化检测迁移为下降沿检测",
+            "activities": [
+              2
+            ]
+          },
+          {
+            "id": "shift-pulse-task-4",
+            "description": "非阻塞赋值让pulse读到旧prev，而不是刚安排的新值。",
+            "activities": [
+              3
+            ]
+          },
+          {
+            "id": "shift-pulse-task-5",
+            "description": "非阻塞赋值让pulse读到旧prev，而不是刚安排的新值。",
+            "activities": [
+              4
+            ]
+          }
+        ],
+        "transferBugDistinct": true,
+        "source": "public/textbook-depth.js: exercises"
+      },
+      "independentCheck": {
+        "result": "已通过（按明确规格和课堂示范作静态推演）",
+        "task": "画出sig依次0、1、1、0时pulse序列。",
+        "conditions": [
+          [
+            "初prev=1，sig按沿1、1、0、0、1，下降沿脉冲应0、0、1、0、0；输入必须已在本时钟域同步。"
+          ]
+        ],
+        "limit": "尚未通过真实零基础学生试学；开放代码不自动验证"
+      },
+      "beforeIssue": "脉冲方向和同步前提需清楚",
+      "repair": "下降沿检测迁移"
+    },
+    {
+      "id": "alu",
+      "status": "已通过（编辑语义复核）",
+      "goalCheck": {
+        "result": "已通过",
+        "evidence": "分别处理数据输出和进位",
+        "source": "public/hdl-content.js: goals, concept"
+      },
+      "prerequisiteCheck": {
+        "result": "已通过",
+        "priorConcepts": [
+          {
+            "concept": "case默认分支",
+            "taughtIn": "case-latch"
+          },
+          {
+            "concept": "扩位与进位",
+            "taughtIn": "width-sign"
+          }
+        ],
+        "repair": "新XOR分支错误运算",
+        "source": "public/hdl-content.js: conceptDependencies, concept"
+      },
+      "workedExampleCheck": {
+        "result": "已通过",
+        "evidence": {
+          "completeCode": "module alu4(input wire [3:0] a,b,input wire [1:0] op,\n output reg [3:0] y,output reg carry);\n reg [4:0] sum;\n always @(*) begin\n  sum={1'b0,a}+{1'b0,b};\n  y=4'd0; carry=1'b0;\n  case(op)\n   2'd0: begin y=sum[3:0]; carry=sum[4]; end\n   2'd1: y=a & b;\n   2'd2: y=a ^ b;\n   default: y=4'd0;\n  endcase\n end\nendmodule",
+          "keyLines": {
+            "5": "sum宽5位，保存两个4位数之和及进位；使用阻塞赋值让下面case读本次sum。",
+            "6": "每次重算都先清y、carry，所以切换到AND/XOR操作不会留住加法的旧进位。",
+            "8": "op=0取sum低4位为y，第4位为无符号进位。例如F+1得到y=0,carry=1。",
+            "10": "op=2每位异或，不能用逻辑||替换；carry沿用本次默认0。"
+          },
+          "sequence": []
+        },
+        "source": "public/textbook-depth.js"
+      },
+      "assessmentCheck": {
+        "result": "已通过",
+        "mappings": [
+          {
+            "id": "alu-task-1",
+            "description": "给每个op至少设计一组测试，并加上全0和最大值边界。",
+            "activities": [
+              0
+            ]
+          },
+          {
+            "id": "alu-task-2",
+            "description": "先扩展输入再加，保留第5位。",
+            "activities": [
+              1
+            ]
+          },
+          {
+            "id": "alu-task-3",
+            "description": "用反例区分异或与或",
+            "activities": [
+              2
+            ]
+          },
+          {
+            "id": "alu-task-4",
+            "description": "先扩展输入再加，保留第5位。",
+            "activities": [
+              3
+            ]
+          },
+          {
+            "id": "alu-task-5",
+            "description": "先扩展输入再加，保留第5位。",
+            "activities": [
+              4
+            ]
+          }
+        ],
+        "transferBugDistinct": true,
+        "source": "public/textbook-depth.js: exercises"
+      },
+      "independentCheck": {
+        "result": "已通过（按明确规格和课堂示范作静态推演）",
+        "task": "给每个op至少设计一组测试，并加上全0和最大值边界。",
+        "conditions": [
+          [
+            "a=F,b=1：加法进位1、结果0；OR结果F；减法E且无借位；a=0,b=1减法借位1、低4位F。先在规格中约定借位含义。"
+          ]
+        ],
+        "limit": "尚未通过真实零基础学生试学；开放代码不自动验证"
+      },
+      "beforeIssue": "复用课堂缺carry默认值",
+      "repair": "新XOR分支错误运算"
+    },
+    {
+      "id": "fsm",
+      "status": "已通过（编辑语义复核）",
+      "goalCheck": {
+        "result": "已通过",
+        "evidence": "当前状态经沿更新，next组合计算",
+        "source": "public/hdl-content.js: goals, concept"
+      },
+      "prerequisiteCheck": {
+        "result": "已通过",
+        "priorConcepts": [
+          {
+            "concept": "状态寄存器与复位",
+            "taughtIn": "reset"
+          },
+          {
+            "concept": "组合默认值",
+            "taughtIn": "case-latch"
+          }
+        ],
+        "repair": "RUN未等finish就退出的新错误",
+        "source": "public/hdl-content.js: conceptDependencies, concept"
+      },
+      "workedExampleCheck": {
+        "result": "已通过",
+        "evidence": {
+          "completeCode": "module controller(input wire clk,rst_n,start,finish,\n output wire busy);\n localparam IDLE=1'b0, RUN=1'b1;\n reg state,next_state;\n always @(*) begin\n  next_state = state;\n  case(state)\n   IDLE: if(start) next_state = RUN;\n   RUN: if(finish) next_state = IDLE;\n   default: next_state = IDLE;\n  endcase\n end\n always @(posedge clk) begin\n  if(!rst_n) state <= IDLE;\n  else state <= next_state;\n end\n assign busy = (state == RUN);\nendmodule",
+          "keyLines": {
+            "6": "先令next_state等于当前state。没有转移条件时，下一沿应继续原状态，不需要保存旧next_state。",
+            "8": "仅当当前为IDLE且start=1，组合候选值才变RUN；state尚未更新。",
+            "9": "RUN必须等finish才返回IDLE。start在RUN中不影响这条转移。",
+            "15": "有效沿把已算好的next_state装入state，状态寄存器在沿间保持。",
+            "17": "busy只由当前state译码；IDLE中start刚拉高但还没时钟时，busy仍为0。"
+          },
+          "sequence": []
+        },
+        "source": "public/textbook-content.js"
+      },
+      "assessmentCheck": {
+        "result": "已通过",
+        "mappings": [
+          {
+            "id": "fsm-task-1",
+            "description": "区分state与next_state",
+            "activities": [
+              0
+            ]
+          },
+          {
+            "id": "fsm-task-2",
+            "description": "按转移表预测沿后状态",
+            "activities": [
+              1
+            ]
+          },
+          {
+            "id": "fsm-task-3",
+            "description": "让运行状态在完成条件前保持",
+            "activities": [
+              2
+            ]
+          },
+          {
+            "id": "fsm-task-4",
+            "description": "按转移表预测沿后状态",
+            "activities": [
+              3
+            ]
+          },
+          {
+            "id": "fsm-task-5",
+            "description": "按转移表预测沿后状态",
+            "activities": [
+              4
+            ]
+          }
+        ],
+        "transferBugDistinct": true,
+        "source": "public/textbook-content.js: exercises"
+      },
+      "independentCheck": {
+        "result": "已通过（按明确规格和课堂示范作静态推演）",
+        "task": "写出从IDLE开始start=1一拍，随后finish=1一拍的状态序列。",
+        "conditions": [
+          [
+            "复位IDLE；start沿后RUN；finish沿后DONE且done=1；再下一沿IDLE且done=0；未命中条件保持。"
+          ]
+        ],
+        "limit": "尚未通过真实零基础学生试学；开放代码不自动验证"
+      },
+      "beforeIssue": "默认保持不能跳过推导",
+      "repair": "RUN未等finish就退出的新错误"
+    },
+    {
+      "id": "moore-mealy",
+      "status": "已通过（编辑语义复核）",
+      "goalCheck": {
+        "result": "已通过",
+        "evidence": "区分沿间响应和状态输出",
+        "source": "public/hdl-content.js: goals, concept"
+      },
+      "prerequisiteCheck": {
+        "result": "已通过",
+        "priorConcepts": [
+          {
+            "concept": "当前状态与下一状态",
+            "taughtIn": "fsm"
+          }
+        ],
+        "repair": "新11序列检测极性错误",
+        "source": "public/hdl-content.js: conceptDependencies, concept"
+      },
+      "workedExampleCheck": {
+        "result": "已通过",
+        "evidence": {
+          "completeCode": "module detect11(input wire clk,rst_n,bit_in,output wire mealy,output reg moore);\n reg prev;\n assign mealy=prev & bit_in;\n always @(posedge clk) begin\n  if(!rst_n) begin prev<=0; moore<=0; end\n  else begin prev<=bit_in; moore<=prev & bit_in; end\n end\nendmodule",
+          "keyLines": {
+            "2": "prev保存上一采样位，表示检测器的历史状态。它不是当前输入的另一名字。",
+            "3": "prev与当前bit_in相与，只要这两个条件在沿间成立，mealy就可立刻变化。",
+            "6": "两条<=都读旧prev。moore把当前检测结果保存到输出寄存器，沿后变化；这是把输出纳入扩展状态的实现。"
+          },
+          "sequence": []
+        },
+        "source": "public/textbook-depth.js"
+      },
+      "assessmentCheck": {
+        "result": "已通过",
+        "mappings": [
+          {
+            "id": "moore-mealy-task-1",
+            "description": "区分沿间与沿后输出",
+            "activities": [
+              0
+            ]
+          },
+          {
+            "id": "moore-mealy-task-2",
+            "description": "说明寄存输出的延迟代价",
+            "activities": [
+              1
+            ]
+          },
+          {
+            "id": "moore-mealy-task-3",
+            "description": "用上一位和当前位共同检测11",
+            "activities": [
+              2
+            ]
+          },
+          {
+            "id": "moore-mealy-task-4",
+            "description": "说明寄存输出的延迟代价",
+            "activities": [
+              3
+            ]
+          },
+          {
+            "id": "moore-mealy-task-5",
+            "description": "说明寄存输出的延迟代价",
+            "activities": [
+              4
+            ]
+          }
+        ],
+        "transferBugDistinct": true,
+        "source": "public/textbook-depth.js: exercises"
+      },
+      "independentCheck": {
+        "result": "已通过（按明确规格和课堂示范作静态推演）",
+        "task": "给序列1,1,0,1画mealy沿前与moore沿后结果，注明观察相位。",
+        "conditions": [
+          [
+            "给定初prev=0、moore=0，输入1、1、0、1：Mealy各沿前结果0、1、0、0，Moore各沿后结果0、1、0、0；另在prev=1时沿间改bit_in，比较是否立即响应。"
+          ]
+        ],
+        "limit": "尚未通过真实零基础学生试学；开放代码不自动验证"
+      },
+      "beforeIssue": "输出寄存并不自动等于原状态Moore",
+      "repair": "新11序列检测极性错误"
+    },
+    {
+      "id": "sv-logic",
+      "status": "已通过（编辑语义复核）",
+      "goalCheck": {
+        "result": "已通过",
+        "evidence": "理解四态变量与驱动限制",
+        "source": "public/hdl-content.js: goals, concept"
+      },
+      "prerequisiteCheck": {
+        "result": "已通过",
+        "priorConcepts": [
+          {
+            "concept": "wire/reg驱动规则",
+            "taughtIn": "net-var"
+          },
+          {
+            "concept": "四态未知",
+            "taughtIn": "four-state"
+          }
+        ],
+        "repair": "位类型截断与X丢失",
+        "source": "public/hdl-content.js: conceptDependencies, concept"
+      },
+      "workedExampleCheck": {
+        "result": "已通过",
+        "evidence": {
+          "completeCode": "module mux_sv(input logic a,b,sel,\n output logic y);\n assign y = sel ? b : a;\nendmodule",
+          "keyLines": {
+            "1": "logic仍是四态类型，可保留X/Z帮助调试；bit为两态，不能用它“修好”未知值。",
+            "2": "y是变量型输出，下面只由一条连续赋值驱动。这里不再按传统Verilog要求写output wire。",
+            "3": "sel选择b或a，y不会因为类型名logic就存储旧值；若同时再让always_comb写y会违反单驱动意图。"
+          },
+          "sequence": []
+        },
+        "source": "public/textbook-depth.js"
+      },
+      "assessmentCheck": {
+        "result": "已通过",
+        "mappings": [
+          {
+            "id": "sv-logic-task-1",
+            "description": "区分四态logic和二态bit",
+            "activities": [
+              0
+            ]
+          },
+          {
+            "id": "sv-logic-task-2",
+            "description": "启用SV模式，保持单驱动规则",
+            "activities": [
+              1
+            ]
+          },
+          {
+            "id": "sv-logic-task-3",
+            "description": "保留未知值而非隐藏为两态",
+            "activities": [
+              2
+            ]
+          },
+          {
+            "id": "sv-logic-task-4",
+            "description": "启用SV模式，保持单驱动规则",
+            "activities": [
+              3
+            ]
+          },
+          {
+            "id": "sv-logic-task-5",
+            "description": "启用SV模式，保持单驱动规则",
+            "activities": [
+              4
+            ]
+          }
+        ],
+        "transferBugDistinct": true,
+        "source": "public/textbook-depth.js: exercises"
+      },
+      "independentCheck": {
+        "result": "已通过（按明确规格和课堂示范作静态推演）",
+        "task": "把wire [7:0] data的单驱动SV变量声明写出。",
+        "conditions": [
+          [
+            "每个输出只保留一个驱动源；组合MUX遍历sel0/1及a=b、a!=b；DFF沿间保持。"
+          ]
+        ],
+        "limit": "尚未通过真实零基础学生试学；开放代码不自动验证"
+      },
+      "beforeIssue": "logic并非自动解决多个过程驱动",
+      "repair": "位类型截断与X丢失"
+    },
+    {
+      "id": "sv-always",
+      "status": "已通过（编辑语义复核）",
+      "goalCheck": {
+        "result": "已通过",
+        "evidence": "按意图迁移组合和时序过程",
+        "source": "public/hdl-content.js: goals, concept"
+      },
+      "prerequisiteCheck": {
+        "result": "已通过",
+        "priorConcepts": [
+          {
+            "concept": "组合默认与时序采样",
+            "taughtIn": "branches"
+          },
+          {
+            "concept": "非阻塞更新",
+            "taughtIn": "nba"
+          },
+          {
+            "concept": "logic类型",
+            "taughtIn": "sv-logic"
+          }
+        ],
+        "repair": "组合过程漏敏感信号迁移",
+        "source": "public/hdl-content.js: conceptDependencies, concept"
+      },
+      "workedExampleCheck": {
+        "result": "已通过",
+        "evidence": {
+          "completeCode": "module enabled_ff(input logic clk,rst_n,en,d,\n output logic q);\n logic next_q;\n always_comb begin\n  next_q = en ? d : q;\n end\n always_ff @(posedge clk) begin\n  if(!rst_n) q <= 1'b0;\n  else q <= next_q;\n end\nendmodule",
+          "keyLines": {
+            "4": "always_comb表达组合意图，并自动处理读取敏感性和初次执行；它不能替你补漏赋值。",
+            "5": "en=1候选输入是d，否则是当前q，形成寄存器前的使能MUX，而非next_q自身的锁存。",
+            "7": "always_ff声明沿触发存储意图，q不应再由其他过程驱动。",
+            "9": "q在非复位沿装入next_q；即使组合next_q沿间改变，q仍等边沿。"
+          },
+          "sequence": []
+        },
+        "source": "public/textbook-content.js"
+      },
+      "assessmentCheck": {
+        "result": "已通过",
+        "mappings": [
+          {
+            "id": "sv-always-task-1",
+            "description": "用always_comb/always_ff表达电路意图",
+            "activities": [
+              0
+            ]
+          },
+          {
+            "id": "sv-always-task-2",
+            "description": "把熟悉的Verilog迁移到SV",
+            "activities": [
+              1
+            ]
+          },
+          {
+            "id": "sv-always-task-3",
+            "description": "修复遗漏输入敏感性的组合仿真",
+            "activities": [
+              2
+            ]
+          },
+          {
+            "id": "sv-always-task-4",
+            "description": "把熟悉的Verilog迁移到SV",
+            "activities": [
+              3
+            ]
+          },
+          {
+            "id": "sv-always-task-5",
+            "description": "把熟悉的Verilog迁移到SV",
+            "activities": [
+              4
+            ]
+          }
+        ],
+        "transferBugDistinct": true,
+        "source": "public/textbook-content.js: exercises"
+      },
+      "independentCheck": {
+        "result": "已通过（按明确规格和课堂示范作静态推演）",
+        "task": "将always @(*) y=a&b迁移成SV。",
+        "conditions": [
+          [
+            "与原计数器对照复位优先、en=0保持、末值回绕、连续加1四类行为；代码关键字迁移不应改变观察相位。"
+          ]
+        ],
+        "limit": "尚未通过真实零基础学生试学；开放代码不自动验证"
+      },
+      "beforeIssue": "关键字不补全遗漏分支",
+      "repair": "组合过程漏敏感信号迁移"
+    },
+    {
+      "id": "sv-latch",
+      "status": "已通过（编辑语义复核）",
+      "goalCheck": {
+        "result": "已通过",
+        "evidence": "有意设计电平保持",
+        "source": "public/hdl-content.js: goals, concept"
+      },
+      "prerequisiteCheck": {
+        "result": "已通过",
+        "priorConcepts": [
+          {
+            "concept": "透明窗口与保持",
+            "taughtIn": "storage"
+          },
+          {
+            "concept": "组合/时序过程意图",
+            "taughtIn": "sv-always"
+          }
+        ],
+        "repair": "新低电平透明锁存器",
+        "source": "public/hdl-content.js: conceptDependencies, concept"
+      },
+      "workedExampleCheck": {
+        "result": "已通过",
+        "evidence": {
+          "completeCode": "module latch_example(input logic gate,d,output logic q);\n always_latch begin\n  if(gate) q<=d;\n end\nendmodule",
+          "keyLines": {
+            "1": "gate是电平开关，不是边沿时钟。规格确实要求透明区间才选锁存器。",
+            "2": "always_latch表达有意的电平存储；工具可检查行为是否像锁存，但不自动纠正条件极性。",
+            "3": "gate=1时q跟随d，gate=0时不写q所以保持。这与always_ff在posedge采一次不同。"
+          },
+          "sequence": []
+        },
+        "source": "public/textbook-depth.js"
+      },
+      "assessmentCheck": {
+        "result": "已通过",
+        "mappings": [
+          {
+            "id": "sv-latch-task-1",
+            "description": "解释锁存器的透明区间",
+            "activities": [
+              0
+            ]
+          },
+          {
+            "id": "sv-latch-task-2",
+            "description": "区分有意存储与组合漏赋值",
+            "activities": [
+              1
+            ]
+          },
+          {
+            "id": "sv-latch-task-3",
+            "description": "按低有效规格实现透明锁存",
+            "activities": [
+              2
+            ]
+          },
+          {
+            "id": "sv-latch-task-4",
+            "description": "区分有意存储与组合漏赋值",
+            "activities": [
+              3
+            ]
+          },
+          {
+            "id": "sv-latch-task-5",
+            "description": "区分有意存储与组合漏赋值",
+            "activities": [
+              4
+            ]
+          }
+        ],
+        "transferBugDistinct": true,
+        "source": "public/textbook-depth.js: exercises"
+      },
+      "independentCheck": {
+        "result": "已通过（按明确规格和课堂示范作静态推演）",
+        "task": "写高有效透明锁存规格，列gate=1和0各两次D切换的Q预期。",
+        "conditions": [
+          [
+            "gate=1时D=0→1→0，Q跟随；gate关闭后D再变化，Q保持关闭前的值；不要按posedge模型解释。"
+          ]
+        ],
+        "limit": "尚未通过真实零基础学生试学；开放代码不自动验证"
+      },
+      "beforeIssue": "不应把所有漏赋值改成锁存",
+      "repair": "新低电平透明锁存器"
+    },
+    {
+      "id": "sv-arrays",
+      "status": "已通过（编辑语义复核）",
+      "goalCheck": {
+        "result": "已通过",
+        "evidence": "区分位维与元素维",
+        "source": "public/hdl-content.js: goals, concept"
+      },
+      "prerequisiteCheck": {
+        "result": "已通过",
+        "priorConcepts": [
+          {
+            "concept": "位选择与切片",
+            "taughtIn": "vectors"
+          },
+          {
+            "concept": "logic声明",
+            "taughtIn": "sv-logic"
+          }
+        ],
+        "repair": "新8个16位元素容量",
+        "source": "public/hdl-content.js: conceptDependencies, concept"
+      },
+      "workedExampleCheck": {
+        "result": "已通过",
+        "evidence": {
+          "completeCode": "module table4(input logic [1:0] index,\n output logic [7:0] data);\n logic [7:0] mem [0:3];\n // 这里用四个固定常量当只读查找表\n assign mem[0] = 8'd10;\n assign mem[1] = 8'd20;\n assign mem[2] = 8'd30;\n assign mem[3] = 8'd40;\n assign data = mem[index];\nendmodule",
+          "keyLines": {
+            "3": "名字左边[7:0]规定每个元素8位，右边[0:3]规定4个元素，总容量32位。",
+            "7": "mem[2]被固定驱动为30，这是查找常量，不是时钟沿写RAM。",
+            "9": "index为2位，选择0到3的一个8位元素。mem[index][0]才是该元素最低位。"
+          },
+          "sequence": []
+        },
+        "source": "public/textbook-depth.js"
+      },
+      "assessmentCheck": {
+        "result": "已通过",
+        "mappings": [
+          {
+            "id": "sv-arrays-task-1",
+            "description": "分清元素数量与每个元素位宽",
+            "activities": [
+              0
+            ]
+          },
+          {
+            "id": "sv-arrays-task-2",
+            "description": "正确访问数组元素和某一位",
+            "activities": [
+              1
+            ]
+          },
+          {
+            "id": "sv-arrays-task-3",
+            "description": "同时确定元素宽度和元素个数",
+            "activities": [
+              2
+            ]
+          },
+          {
+            "id": "sv-arrays-task-4",
+            "description": "正确访问数组元素和某一位",
+            "activities": [
+              3
+            ]
+          },
+          {
+            "id": "sv-arrays-task-5",
+            "description": "正确访问数组元素和某一位",
+            "activities": [
+              4
+            ]
+          }
+        ],
+        "transferBugDistinct": true,
+        "source": "public/textbook-depth.js: exercises"
+      },
+      "independentCheck": {
+        "result": "已通过（按明确规格和课堂示范作静态推演）",
+        "task": "写出mem第3号元素的第5位访问方式。",
+        "conditions": [
+          [
+            "8个元素，每个16位，总128bit；元素地址需要3位；[15:0]放在名字前，[0:7]放在名字后。"
+          ]
+        ],
+        "limit": "尚未通过真实零基础学生试学；开放代码不自动验证"
+      },
+      "beforeIssue": "固定4字节练习照抄示范",
+      "repair": "新8个16位元素容量"
+    },
+    {
+      "id": "sv-types",
+      "status": "已通过（编辑语义复核）",
+      "goalCheck": {
+        "result": "已通过",
+        "evidence": "按字段计算packed位布局",
+        "source": "public/hdl-content.js: goals, concept"
+      },
+      "prerequisiteCheck": {
+        "result": "已通过",
+        "priorConcepts": [
+          {
+            "concept": "packed/unpacked",
+            "taughtIn": "sv-arrays"
+          },
+          {
+            "concept": "状态编码",
+            "taughtIn": "fsm"
+          }
+        ],
+        "repair": "新两字段顺序颠倒",
+        "source": "public/hdl-content.js: conceptDependencies, concept"
+      },
+      "workedExampleCheck": {
+        "result": "已通过",
+        "evidence": {
+          "completeCode": "module type_demo;\n typedef enum logic [1:0] {\n  IDLE=2'd0, RUN=2'd1, DONE=2'd2\n } state_t;\n state_t state;\n typedef struct packed {\n  logic valid;\n  logic [7:0] data;\n } beat_t;\n beat_t beat;\nendmodule",
+          "keyLines": {
+            "3": "IDLE/RUN/DONE分别具有显式2位编码；enum把状态的允许名称和类型放在一起。",
+            "5": "state是state_t类型的变量，不是新定义的类型。typedef只造类型名，不自动创建存储实例。",
+            "7": "packed按声明顺序排列字段，valid放在整个9位结构的最高位[8]，data占[7:0]。",
+            "10": "beat创建一个9位结构对象，beat.data访问低8位，beat.valid访问状态位。"
+          },
+          "sequence": []
+        },
+        "source": "public/textbook-depth.js"
+      },
+      "assessmentCheck": {
+        "result": "已通过",
+        "mappings": [
+          {
+            "id": "sv-types-task-1",
+            "description": "用typedef与enum表达状态类型",
+            "activities": [
+              0
+            ]
+          },
+          {
+            "id": "sv-types-task-2",
+            "description": "计算packed struct总位数",
+            "activities": [
+              1
+            ]
+          },
+          {
+            "id": "sv-types-task-3",
+            "description": "按声明顺序拼接结构字段",
+            "activities": [
+              2
+            ]
+          },
+          {
+            "id": "sv-types-task-4",
+            "description": "计算packed struct总位数",
+            "activities": [
+              3
+            ]
+          },
+          {
+            "id": "sv-types-task-5",
+            "description": "计算packed struct总位数",
+            "activities": [
+              4
+            ]
+          }
+        ],
+        "transferBugDistinct": true,
+        "source": "public/textbook-depth.js: exercises"
+      },
+      "independentCheck": {
+        "result": "已通过（按明确规格和课堂示范作静态推演）",
+        "task": "声明32个16位元素的数组。",
+        "conditions": [
+          [
+            "结构总宽1+2+16=19；valid位18，kind位17:16，data位15:0；按字段赋值后再核对整体位串。"
+          ]
+        ],
+        "limit": "尚未通过真实零基础学生试学；开放代码不自动验证"
+      },
+      "beforeIssue": "修复题完整复用课堂结构",
+      "repair": "新两字段顺序颠倒"
+    },
+    {
+      "id": "sv-package",
+      "status": "已通过（编辑语义复核）",
+      "goalCheck": {
+        "result": "已通过",
+        "evidence": "分清包类型、接口对象和方向",
+        "source": "public/hdl-content.js: goals, concept"
+      },
+      "prerequisiteCheck": {
+        "result": "已通过",
+        "priorConcepts": [
+          {
+            "concept": "共享类型声明",
+            "taughtIn": "sv-types"
+          },
+          {
+            "concept": "实例与端口方向",
+            "taughtIn": "module"
+          }
+        ],
+        "repair": "换为不带协议的采样接口",
+        "source": "public/hdl-content.js: conceptDependencies, concept"
+      },
+      "workedExampleCheck": {
+        "result": "已通过",
+        "evidence": {
+          "completeCode": "package types_pkg;\n  typedef logic [7:0] byte_t;\nendpackage\ninterface sample_if;\n  logic [7:0] value;\n  modport producer(output value);\n  modport observer(input value);\nendinterface\nmodule source(input types_pkg::byte_t x,sample_if.producer bus);\n  assign bus.value=x;\nendmodule\nmodule sink(sample_if.observer bus,output logic [7:0] y);\n  assign y=bus.value;\nendmodule\nmodule sample_top(input logic [7:0] x,output logic [7:0] y);\n  sample_if wires();\n  source u_source(.x(x),.bus(wires));\n  sink u_sink(.bus(wires),.y(y));\nendmodule",
+          "keyLines": {
+            "2": "byte_t是types_pkg共享的8位类型，使用types_pkg::byte_t引用它。包没有输入输出信号。",
+            "6": "producer视图允许连接它的模块驱动value，与observer访问的是同一个接口对象。",
+            "10": "source把输入x持续接到接口成员bus.value。这里没有valid/ready传输规则。",
+            "16": "wires创建一份sample_if接口对象。两个子模块的bus都连它，不能误写成两份不同接口。",
+            "18": "u_sink只读wires.value并驱动父层y。沿x到y追线即可解释组合关系。"
+          },
+          "sequence": []
+        },
+        "source": "public/textbook-depth.js"
+      },
+      "assessmentCheck": {
+        "result": "已通过",
+        "mappings": [
+          {
+            "id": "sv-package-task-1",
+            "description": "从使用模块视角判断modport方向",
+            "activities": [
+              0
+            ]
+          },
+          {
+            "id": "sv-package-task-2",
+            "description": "引用包内共享类型",
+            "activities": [
+              1
+            ]
+          },
+          {
+            "id": "sv-package-task-3",
+            "description": "识别接口中的多驱动",
+            "activities": [
+              2
+            ]
+          },
+          {
+            "id": "sv-package-task-4",
+            "description": "定义接口并创建一份对象",
+            "activities": [
+              3
+            ]
+          },
+          {
+            "id": "sv-package-task-5",
+            "description": "区分接口对象与访问视图",
+            "activities": [
+              4
+            ]
+          }
+        ],
+        "transferBugDistinct": false,
+        "source": "public/textbook-depth.js: exercises"
+      },
+      "independentCheck": {
+        "result": "已通过（按明确规格和课堂示范作静态推演）",
+        "task": "把sample_if改为16位sample，定义writer/reader两个视图，画出驱动者和读取者，不加入时钟或协议。",
+        "conditions": [
+          [
+            "writer驱动sample；reader只读sample，二者连接同一份接口对象"
+          ],
+          [
+            "x=1234时读回1234",
+            "只有writer驱动sample"
+          ]
+        ],
+        "limit": "尚未通过真实零基础学生试学；开放代码不自动验证"
+      },
+      "beforeIssue": "虽然不考握手仍提前使用valid/ready名字",
+      "repair": "换为不带协议的采样接口"
+    },
+    {
+      "id": "testbench",
+      "status": "已通过（编辑语义复核）",
+      "goalCheck": {
+        "result": "已通过",
+        "evidence": "产生激励并确定观察时刻",
+        "source": "public/hdl-content.js: goals, concept"
+      },
+      "prerequisiteCheck": {
+        "result": "已通过",
+        "priorConcepts": [
+          {
+            "concept": "时钟边沿与复位",
+            "taughtIn": "reset"
+          },
+          {
+            "concept": "可综合设计模块",
+            "taughtIn": "module"
+          }
+        ],
+        "repair": "完整解释重复、延迟、翻转和单位",
+        "source": "public/hdl-content.js: conceptDependencies, concept"
+      },
+      "workedExampleCheck": {
+        "result": "已通过",
+        "evidence": {
+          "completeCode": "`timescale 1ns/1ps\nmodule tb;\n reg clk=0, rst_n=0, en=0;\n wire [3:0] q;\n counter dut(.clk(clk),.rst_n(rst_n),.en(en),.q(q));\n always #5 clk=~clk;\n initial begin\n  repeat(2) @(negedge clk);\n  rst_n=1; en=1;\n  repeat(3) @(negedge clk);\n  $display(\"q=%d\",q);\n  $finish;\n end\nendmodule",
+          "keyLines": {
+            "1": "延迟单位为1ns，精度1ps。因此#5是5ns，不是5个时钟周期。",
+            "3": "把clk初始化为0，翻转才会产生确定边沿；若初始X，~X仍为X。",
+            "5": "dut是counter的一份实例，测试台驱动clk/rst_n/en，wire q接收计数结果。综合顶层应选counter，仿真选tb。",
+            "6": "always重复执行；#5先等5个时间单位；~翻转clk；=更新仿真变量。本文件每5ns翻转，周期10ns。仅用于测试台，不是可综合时钟发生器。",
+            "8": "等两个下降沿，即10ns与20ns，再解除复位；此前5ns与15ns的上升沿已经把同步计数器清零。",
+            "10": "释放后再等30/40/50ns三个下降沿，之前25/35/45ns三个上升沿使q=3。",
+            "12": "$finish结束仿真，否则生成时钟的always会一直运行。"
+          },
+          "sequence": []
+        },
+        "source": "public/textbook-depth.js"
+      },
+      "assessmentCheck": {
+        "result": "已通过",
+        "mappings": [
+          {
+            "id": "testbench-task-1",
+            "description": "识别DUT与测试台的职责",
+            "activities": [
+              0
+            ]
+          },
+          {
+            "id": "testbench-task-2",
+            "description": "避免激励与采样在同一沿竞争",
+            "activities": [
+              1
+            ]
+          },
+          {
+            "id": "testbench-task-3",
+            "description": "从半周期推导测试台时钟延迟",
+            "activities": [
+              2
+            ]
+          },
+          {
+            "id": "testbench-task-4",
+            "description": "避免激励与采样在同一沿竞争",
+            "activities": [
+              3
+            ]
+          },
+          {
+            "id": "testbench-task-5",
+            "description": "避免激励与采样在同一沿竞争",
+            "activities": [
+              4
+            ]
+          }
+        ],
+        "transferBugDistinct": true,
+        "source": "public/textbook-depth.js: exercises"
+      },
+      "independentCheck": {
+        "result": "已通过（按明确规格和课堂示范作静态推演）",
+        "task": "解释为什么在negedge而不是posedge更新en。",
+        "conditions": [
+          [
+            "先完成有效复位，再使能3个上升沿应q=3；保持2沿仍3；在下降沿观察，设置超时并对错误退出。"
+          ]
+        ],
+        "limit": "尚未通过真实零基础学生试学；开放代码不自动验证"
+      },
+      "beforeIssue": "always #5被当普通赋值解释",
+      "repair": "完整解释重复、延迟、翻转和单位"
+    },
+    {
+      "id": "scheduling",
+      "status": "已通过（编辑语义复核）",
+      "goalCheck": {
+        "result": "已通过",
+        "evidence": "区分Active/NBA/槽末观察",
+        "source": "public/hdl-content.js: goals, concept"
+      },
+      "prerequisiteCheck": {
+        "result": "已通过",
+        "priorConcepts": [
+          {
+            "concept": "非阻塞赋值",
+            "taughtIn": "nba"
+          },
+          {
+            "concept": "测试台激励与观察相位",
+            "taughtIn": "testbench"
+          }
+        ],
+        "repair": "明确#0不能跨NBA",
+        "source": "public/hdl-content.js: conceptDependencies, concept"
+      },
+      "workedExampleCheck": {
+        "result": "已通过",
+        "evidence": {
+          "completeCode": "`timescale 1ns/1ps\nmodule schedule_demo;\n reg clk=0,q=0,d=1;\n always #5 clk=~clk;\n always @(posedge clk) begin\n  q<=d;\n  $display(\"active q=%b\",q);\n  $strobe(\"end-slot q=%b\",q);\n end\n initial begin #6; $finish; end\nendmodule",
+          "keyLines": {
+            "4": "1ns时间单位下每5ns翻转clk，首个上升沿5ns，initial在6ns结束，所以本例只观察一个上升沿。",
+            "6": "在5ns计算d=1并安排NBA写q，下面display暂时仍能看到初始q=0。",
+            "7": "$display在调用时读取q，打印active q=0；同一时间戳不代表NBA已完成。",
+            "8": "$strobe在当前时间槽末报告q，NBA已提交，打印end-slot q=1。#0仍在NBA前，不能当等待提交。"
+          },
+          "sequence": []
+        },
+        "source": "public/textbook-depth.js"
+      },
+      "assessmentCheck": {
+        "result": "已通过",
+        "mappings": [
+          {
+            "id": "scheduling-task-1",
+            "description": "解释为什么在同沿立刻用if检查q可能误报。",
+            "activities": [
+              0
+            ]
+          },
+          {
+            "id": "scheduling-task-2",
+            "description": "5ns沿处q<=d先读取d=1，q仍是旧0。",
+            "activities": [
+              1
+            ]
+          },
+          {
+            "id": "scheduling-task-3",
+            "description": "5ns沿处q<=d先读取d=1，q仍是旧0。",
+            "activities": [
+              2
+            ]
+          },
+          {
+            "id": "scheduling-task-4",
+            "description": "5ns沿处q<=d先读取d=1，q仍是旧0。",
+            "activities": [
+              3
+            ]
+          },
+          {
+            "id": "scheduling-task-5",
+            "description": "5ns沿处q<=d先读取d=1，q仍是旧0。",
+            "activities": [
+              4
+            ]
+          }
+        ],
+        "transferBugDistinct": false,
+        "source": "public/textbook-depth.js: exercises"
+      },
+      "independentCheck": {
+        "result": "已通过（按明确规格和课堂示范作静态推演）",
+        "task": "解释为什么在同沿立刻用if检查q可能误报。",
+        "conditions": [
+          [
+            "并发阻塞读写在同一沿不应依赖Active执行顺序；NBA版在Active读旧q，末尾观察新q；#0不等同等待NBA。"
+          ],
+          [
+            "并发阻塞读写在同一沿不应依赖Active执行顺序；NBA版在Active读旧q，末尾观察新q；#0不等同等待NBA。"
+          ]
+        ],
+        "limit": "尚未通过真实零基础学生试学；开放代码不自动验证"
+      },
+      "beforeIssue": "delta cycle不等于真实传播延迟",
+      "repair": "明确#0不能跨NBA"
+    },
+    {
+      "id": "checking",
+      "status": "已通过（编辑语义复核）",
+      "goalCheck": {
+        "result": "已通过",
+        "evidence": "写会失败的自检与超时",
+        "source": "public/hdl-content.js: goals, concept"
+      },
+      "prerequisiteCheck": {
+        "result": "已通过",
+        "priorConcepts": [
+          {
+            "concept": "仿真调度与竞争",
+            "taughtIn": "scheduling"
+          },
+          {
+            "concept": "X/Z比较",
+            "taughtIn": "four-state"
+          }
+        ],
+        "repair": "未知输出、错误注入与独立预期",
+        "source": "public/hdl-content.js: conceptDependencies, concept"
+      },
+      "workedExampleCheck": {
+        "result": "已通过",
+        "evidence": {
+          "completeCode": "// 在上一课initial中、打印之后、$finish之前插入：\nif (q !== 4'd3) $fatal(1, \"count mismatch\");\n// 另加一个独立initial用于记录波形：\ninitial begin\n $dumpfile(\"counter.vcd\");\n $dumpvars(0,tb);\nend\n// 终端：\n// iverilog -g2012 -s tb -o sim counter.v tb.v\n// vvp sim\n// gtkwave counter.vcd",
+          "keyLines": {
+            "2": "!==把X/Z也纳入确定比较。q不是确定0011时触发$fatal，进程失败退出；普通!=可能得到X漏过if。",
+            "5": "选择要写出的VCD文件名；仅声明记录还没产生结果，必须运行仿真。",
+            "6": "0表示向下记录所有层级；tb要与实际测试顶层名一致。",
+            "9": "先编译counter.v和tb.v，选择tb顶层，生成sim；找不到模块应检查文件表，不是改预期。",
+            "10": "vvp执行刚生成的sim；改代码之后必须重编译，否则会看见旧程序结果。"
+          },
+          "sequence": []
+        },
+        "source": "public/textbook-depth.js"
+      },
+      "assessmentCheck": {
+        "result": "已通过",
+        "mappings": [
+          {
+            "id": "checking-task-1",
+            "description": "写主动失败的输出检查",
+            "activities": [
+              0
+            ]
+          },
+          {
+            "id": "checking-task-2",
+            "description": "运行仿真、看波形并故意注入错误",
+            "activities": [
+              1
+            ]
+          },
+          {
+            "id": "checking-task-3",
+            "description": "用四态比较捕获未知输出",
+            "activities": [
+              2
+            ]
+          },
+          {
+            "id": "checking-task-4",
+            "description": "运行仿真、看波形并故意注入错误",
+            "activities": [
+              3
+            ]
+          },
+          {
+            "id": "checking-task-5",
+            "description": "运行仿真、看波形并故意注入错误",
+            "activities": [
+              4
+            ]
+          }
+        ],
+        "transferBugDistinct": true,
+        "source": "public/textbook-depth.js: exercises"
+      },
+      "independentCheck": {
+        "result": "已通过（按明确规格和课堂示范作静态推演）",
+        "task": "再增加en=0保持的测试思路。",
+        "conditions": [
+          [
+            "覆盖复位、保持、回绕及连续使能；把DUT加1改为加2后，应出现第一次明确比较失败并非正常通过。"
+          ]
+        ],
+        "limit": "尚未通过真实零基础学生试学；开放代码不自动验证"
+      },
+      "beforeIssue": "错误时只给完整答案",
+      "repair": "未知输出、错误注入与独立预期"
+    },
+    {
+      "id": "setup-hold",
+      "status": "已通过（编辑语义复核）",
+      "goalCheck": {
+        "result": "已通过",
+        "evidence": "从采样沿划出稳定窗口",
+        "source": "public/hdl-content.js: goals, concept"
+      },
+      "prerequisiteCheck": {
+        "result": "已通过",
+        "priorConcepts": [
+          {
+            "concept": "DFF采样沿",
+            "taughtIn": "edges"
+          }
+        ],
+        "repair": "变化位置与窗口边界",
+        "source": "public/hdl-content.js: conceptDependencies, concept"
+      },
+      "workedExampleCheck": {
+        "result": "已通过",
+        "evidence": {
+          "completeCode": "module sampled_data(input wire clk,d,\n output reg q);\n always @(posedge clk) q <= d;\n // RTL只表达逻辑行为；setup/hold由库和STA检查\n // 不在这里用#delay修复物理时序\nendmodule",
+          "keyLines": {
+            "1": "这个RTL接口只包括理想clk、d、q，建立保持参数并未由端口声明给出。",
+            "3": "理想模型在上升沿读d并更新q，不模拟采样窗口内的模拟不稳定。",
+            "4": "真实tsetup、thold来自器件或库，工具结合数据与时钟路径检查；RTL功能通过不能证明物理时序通过。"
+          },
+          "sequence": []
+        },
+        "source": "public/textbook-depth.js"
+      },
+      "assessmentCheck": {
+        "result": "已通过",
+        "mappings": [
+          {
+            "id": "setup-hold-task-1",
+            "description": "标出采样前后的稳定窗口",
+            "activities": [
+              0
+            ]
+          },
+          {
+            "id": "setup-hold-task-2",
+            "description": "解释降频通常不能直接解决保持违例",
+            "activities": [
+              1
+            ]
+          },
+          {
+            "id": "setup-hold-task-3",
+            "description": "解释降频通常不能直接解决保持违例",
+            "activities": [
+              2
+            ]
+          },
+          {
+            "id": "setup-hold-task-4",
+            "description": "解释降频通常不能直接解决保持违例",
+            "activities": [
+              3
+            ]
+          }
+        ],
+        "transferBugDistinct": false,
+        "source": "public/textbook-depth.js: exercises"
+      },
+      "independentCheck": {
+        "result": "已通过（按明确规格和课堂示范作静态推演）",
+        "task": "采样沿10ns，setup=2ns、hold=1ns，稳定窗口是什么？",
+        "conditions": [
+          [
+            "捕获10ns，稳定窗口8～11ns；7和12在窗口外，9影响setup，10.5影响hold。零裕量边界按本页简化约定判断。"
+          ]
+        ],
+        "limit": "尚未通过真实零基础学生试学；开放代码不自动验证"
+      },
+      "beforeIssue": "不能把理想RTL当物理时序",
+      "repair": "变化位置与窗口边界"
+    },
+    {
+      "id": "timing-path",
+      "status": "已通过（编辑语义复核）",
+      "goalCheck": {
+        "result": "已通过",
+        "evidence": "分开延迟、吞吐和周期",
+        "source": "public/hdl-content.js: goals, concept"
+      },
+      "prerequisiteCheck": {
+        "result": "已通过",
+        "priorConcepts": [
+          {
+            "concept": "建立/保持窗口",
+            "taughtIn": "setup-hold"
+          },
+          {
+            "concept": "跨周期样本",
+            "taughtIn": "nba"
+          }
+        ],
+        "repair": "旧s1参与第二级计算",
+        "source": "public/hdl-content.js: conceptDependencies, concept"
+      },
+      "workedExampleCheck": {
+        "result": "已通过",
+        "evidence": {
+          "completeCode": "module math_pipeline(input wire clk,\n input wire [7:0] in_data,\n output reg [7:0] out_data);\n reg [7:0] s1;\n always @(posedge clk) begin\n  s1 <= in_data + 8'd1;\n  out_data <= s1 ^ 8'h55;\n end\nendmodule",
+          "keyLines": {
+            "4": "s1保存第一段加法的结果，是新插入的一级寄存器，切开组合路径。",
+            "6": "第一沿in_data=1时，s1安排变2；它的后续逻辑本沿仍读旧s1。",
+            "7": "out_data使用旧s1再异或55。初s1=0时首沿out=55，下一沿才处理上一拍输入对应的s1=2，得到57。"
+          },
+          "sequence": []
+        },
+        "source": "public/textbook-depth.js"
+      },
+      "assessmentCheck": {
+        "result": "已通过",
+        "mappings": [
+          {
+            "id": "timing-path-task-1",
+            "description": "算一条简化路径的建立裕量",
+            "activities": [
+              0
+            ]
+          },
+          {
+            "id": "timing-path-task-2",
+            "description": "区分流水线延迟与吞吐率",
+            "activities": [
+              1
+            ]
+          },
+          {
+            "id": "timing-path-task-3",
+            "description": "区分流水线延迟与吞吐率",
+            "activities": [
+              2
+            ]
+          },
+          {
+            "id": "timing-path-task-4",
+            "description": "区分流水线延迟与吞吐率",
+            "activities": [
+              3
+            ]
+          }
+        ],
+        "transferBugDistinct": false,
+        "source": "public/textbook-depth.js: exercises"
+      },
+      "independentCheck": {
+        "result": "已通过（按明确规格和课堂示范作静态推演）",
+        "task": "若组合变9ns，提出一种RTL优化思路及代价。",
+        "conditions": [
+          [
+            "原9ns逻辑周期至少1+9+1=11ns；拆成4/5ns后至少1+5+1=7ns，同时数据多等一级寄存器。"
+          ]
+        ],
+        "limit": "尚未通过真实零基础学生试学；开放代码不自动验证"
+      },
+      "beforeIssue": "首拍流水值要说明初始化假设",
+      "repair": "旧s1参与第二级计算"
+    },
+    {
+      "id": "clock-skew",
+      "status": "已通过（编辑语义复核）",
+      "goalCheck": {
+        "result": "已通过",
+        "evidence": "分别计算max/min裕量",
+        "source": "public/hdl-content.js: goals, concept"
+      },
+      "prerequisiteCheck": {
+        "result": "已通过",
+        "priorConcepts": [
+          {
+            "concept": "最大/最小数据路径",
+            "taughtIn": "timing-path"
+          },
+          {
+            "concept": "建立/保持检查",
+            "taughtIn": "setup-hold"
+          }
+        ],
+        "repair": "正偏斜帮助setup而压缩hold",
+        "source": "public/hdl-content.js: conceptDependencies, concept"
+      },
+      "workedExampleCheck": {
+        "result": "已通过",
+        "evidence": {
+          "completeCode": "// 本课先读路径预算，不使用尚未学习的SDC命令\n// Setup: T + s - tCQmax - combmax - tsetup - Usetup\n// Hold: tCQmin + combmin - s - thold - Uhold\n// s = 捕获时钟到达 - 发射时钟到达\n// 约束命令请在 FPGA 工程实践的时钟与I/O约束课学习",
+          "keyLines": {
+            "2": "T+s是下一捕获沿相对发射沿的时间预算，再减最长CQ、组合、setup及不确定度。s为正时捕获更晚，setup裕量增加。",
+            "3": "保持比较同一对边沿：最短CQ+组合必须抵住捕获晚到s及hold要求。正s让hold更难，增加周期T不能修好它。",
+            "4": "偏斜符号固定为捕获到达减发射到达。换符号定义会改变公式，不能只记正偏斜“有利”这一半结论。"
+          },
+          "sequence": []
+        },
+        "source": "public/textbook-depth.js"
+      },
+      "assessmentCheck": {
+        "result": "已通过",
+        "mappings": [
+          {
+            "id": "clock-skew-task-1",
+            "description": "分别计算Setup与Hold裕量",
+            "activities": [
+              0
+            ]
+          },
+          {
+            "id": "clock-skew-task-2",
+            "description": "解释正偏斜的两种作用",
+            "activities": [
+              1
+            ]
+          },
+          {
+            "id": "clock-skew-task-3",
+            "description": "解释正偏斜的两种作用",
+            "activities": [
+              2
+            ]
+          },
+          {
+            "id": "clock-skew-task-4",
+            "description": "解释正偏斜的两种作用",
+            "activities": [
+              3
+            ]
+          }
+        ],
+        "transferBugDistinct": false,
+        "source": "public/textbook-depth.js: exercises"
+      },
+      "independentCheck": {
+        "result": "已通过（按明确规格和课堂示范作静态推演）",
+        "task": "分别求建立与保持裕量。周期10ns，捕获时钟晚到0.5ns。建立检查用CQ=1ns、组合6ns、setup=1ns、不确定度0.2ns；保持检查用CQ=0.2ns、组合0.4ns、hold=0.2ns、不确定度0.1ns。",
+        "conditions": [
+          [
+            "setup=10+0.5-1-6-1-0.2=2.3ns；hold=0.2+0.4-0.5-0.2-0.1=-0.2ns；只改变T不能修复同沿hold。"
+          ]
+        ],
+        "limit": "尚未通过真实零基础学生试学；开放代码不自动验证"
+      },
+      "beforeIssue": "公式符号与到达时间需要推导",
+      "repair": "正偏斜帮助setup而压缩hold"
+    },
+    {
+      "id": "multicycle",
+      "status": "已通过（编辑语义复核）",
+      "goalCheck": {
+        "result": "已通过",
+        "evidence": "理解使能和例外的前提",
+        "source": "public/hdl-content.js: goals, concept"
+      },
+      "prerequisiteCheck": {
+        "result": "已通过",
+        "priorConcepts": [
+          {
+            "concept": "使能寄存器",
+            "taughtIn": "reset"
+          },
+          {
+            "concept": "同沿hold与跨沿setup",
+            "taughtIn": "clock-skew"
+          }
+        ],
+        "repair": "源稳定与捕获使能表",
+        "source": "public/hdl-content.js: conceptDependencies, concept"
+      },
+      "workedExampleCheck": {
+        "result": "已通过",
+        "evidence": {
+          "completeCode": "module slow_capture(input wire clk,rst_n,en3,\n input wire [7:0] d,output reg [7:0] q);\n always @(posedge clk) begin\n  if(!rst_n) q<=0;\n  else if(en3) q<=d;\n end\nendmodule",
+          "keyLines": {
+            "3": "每个上升沿都会进入过程，多周期例外不会让这个always自动跳过边沿。",
+            "4": "同步复位仍在每个有效沿优先清零，不受en3控制。",
+            "5": "只有en3=1才真正捕获d。允许三周期的前提需要源数据稳定和捕获使能配合，不是给路径写个数字3。"
+          },
+          "sequence": []
+        },
+        "source": "public/textbook-depth.js"
+      },
+      "assessmentCheck": {
+        "result": "已通过",
+        "mappings": [
+          {
+            "id": "multicycle-task-1",
+            "description": "证明多周期的功能前提",
+            "activities": [
+              0
+            ]
+          },
+          {
+            "id": "multicycle-task-2",
+            "description": "核对捕获边沿与Hold关系",
+            "activities": [
+              1
+            ]
+          },
+          {
+            "id": "multicycle-task-3",
+            "description": "核对捕获边沿与Hold关系",
+            "activities": [
+              2
+            ]
+          },
+          {
+            "id": "multicycle-task-4",
+            "description": "核对捕获边沿与Hold关系",
+            "activities": [
+              3
+            ]
+          }
+        ],
+        "transferBugDistinct": false,
+        "source": "public/textbook-depth.js: exercises"
+      },
+      "independentCheck": {
+        "result": "已通过（按明确规格和课堂示范作静态推演）",
+        "task": "列三拍路径的数据稳定和捕获使能表；说明第二拍若源变化为何可能失效。",
+        "conditions": [
+          [
+            "前两拍目的使能0，第三拍1；源在所需窗口内稳定；第二拍改变源可能使第三拍捕获另一笔数据，时序例外不修复功能协议。"
+          ]
+        ],
+        "limit": "尚未通过真实零基础学生试学；开放代码不自动验证"
+      },
+      "beforeIssue": "不能用约束修改电路功能",
+      "repair": "源稳定与捕获使能表"
+    },
+    {
+      "id": "cdc",
+      "status": "已通过（编辑语义复核）",
+      "goalCheck": {
+        "result": "已通过",
+        "evidence": "选择适合电平、脉冲、总线的方法",
+        "source": "public/hdl-content.js: goals, concept"
+      },
+      "prerequisiteCheck": {
+        "result": "已通过",
+        "priorConcepts": [
+          {
+            "concept": "建立/保持窗口",
+            "taughtIn": "setup-hold"
+          },
+          {
+            "concept": "两级寄存器",
+            "taughtIn": "nba"
+          }
+        ],
+        "repair": "明确AMD属性及慢电平边界",
+        "source": "public/hdl-content.js: conceptDependencies, concept"
+      },
+      "workedExampleCheck": {
+        "result": "已通过",
+        "evidence": {
+          "completeCode": "module sync_bit(input wire dst_clk,rst_n,async_level,output wire synced);\n (* ASYNC_REG=\"TRUE\" *) reg meta,stable;\n always @(posedge dst_clk) begin\n  if(!rst_n) begin meta<=0;stable<=0;end\n  else begin meta<=async_level;stable<=meta;end\n end\n assign synced=stable;\nendmodule",
+          "keyLines": {
+            "2": "ASYNC_REG是AMD工具常见属性，用于标识同步链；其他厂商识别方式要查适配说明。它不改变RTL逻辑或保证零失效率。",
+            "5": "meta采异步电平，stable采旧meta，给首级更长恢复时间。RTL模型只显示0/1延迟，无法显示模拟亚稳态概率。",
+            "7": "只输出第二级stable。窄脉冲若未碰到目的沿，两个寄存器都不会帮它延长；多位数据也不能各位独立这样同步。"
+          },
+          "sequence": []
+        },
+        "source": "public/textbook-depth.js"
+      },
+      "assessmentCheck": {
+        "result": "已通过",
+        "mappings": [
+          {
+            "id": "cdc-task-1",
+            "description": "判断双FF的适用边界",
+            "activities": [
+              0
+            ]
+          },
+          {
+            "id": "cdc-task-2",
+            "description": "为脉冲与多位数据选择协议",
+            "activities": [
+              1
+            ]
+          },
+          {
+            "id": "cdc-task-3",
+            "description": "为脉冲与多位数据选择协议",
+            "activities": [
+              2
+            ]
+          },
+          {
+            "id": "cdc-task-4",
+            "description": "为脉冲与多位数据选择协议",
+            "activities": [
+              3
+            ]
+          }
+        ],
+        "transferBugDistinct": false,
+        "source": "public/textbook-depth.js: exercises"
+      },
+      "independentCheck": {
+        "result": "已通过（按明确规格和课堂示范作静态推演）",
+        "task": "为异步慢电平设计同步链，再说明10ns窄脉冲对100ns目的周期为何可能漏掉。",
+        "conditions": [
+          [
+            "目的沿0/100ns，20～30ns脉冲两次均采0；慢电平两级同步有延迟且只降低风险；窄脉冲需另设计事件传递协议。"
+          ]
+        ],
+        "limit": "尚未通过真实零基础学生试学；开放代码不自动验证"
+      },
+      "beforeIssue": "ASYNC_REG属性不是跨厂商保证",
+      "repair": "明确AMD属性及慢电平边界"
+    },
+    {
+      "id": "capstone",
+      "status": "已通过（编辑语义复核）",
+      "goalCheck": {
+        "result": "已通过",
+        "evidence": "把参数RTL与自检连起来",
+        "source": "public/hdl-content.js: goals, concept"
+      },
+      "prerequisiteCheck": {
+        "result": "已通过",
+        "priorConcepts": [
+          {
+            "concept": "参数展开",
+            "taughtIn": "parameters"
+          },
+          {
+            "concept": "计数器边界",
+            "taughtIn": "counter"
+          },
+          {
+            "concept": "自检失败判据",
+            "taughtIn": "checking"
+          }
+        ],
+        "repair": "参数边界与错误注入",
+        "source": "public/hdl-content.js: conceptDependencies, concept"
+      },
+      "workedExampleCheck": {
+        "result": "已通过",
+        "evidence": {
+          "completeCode": "// counter_sv.sv\nmodule counter_sv #(parameter int W=4)(\n input logic clk,rst_n,en,\n output logic [W-1:0] q);\n always_ff @(posedge clk) begin\n  if(!rst_n) q <= '0;\n  else if(en) q <= q + {{(W-1){1'b0}},1'b1};\n end\nendmodule",
+          "keyLines": {
+            "2": "W默认4，工程验收还要展开W=1、3、8，不能只看默认参数。",
+            "6": "'0按q的上下文宽度填满零，所以W变化时不必写死4位。它仍是同步复位，在上升沿生效。",
+            "7": "把W-1个零与最低位1拼成W位步长。W=1时复制0次，整体仍有最后那一位1；最高值加一会回绕。"
+          },
+          "sequence": []
+        },
+        "source": "public/textbook-depth.js"
+      },
+      "assessmentCheck": {
+        "result": "已通过",
+        "mappings": [
+          {
+            "id": "capstone-task-1",
+            "description": "独立完成可复用计数器与自检",
+            "activities": [
+              0
+            ]
+          },
+          {
+            "id": "capstone-task-2",
+            "description": "让故意错误触发检查失败",
+            "activities": [
+              1
+            ]
+          },
+          {
+            "id": "capstone-task-3",
+            "description": "让故意错误触发检查失败",
+            "activities": [
+              2
+            ]
+          },
+          {
+            "id": "capstone-task-4",
+            "description": "让故意错误触发检查失败",
+            "activities": [
+              3
+            ]
+          },
+          {
+            "id": "capstone-task-5",
+            "description": "让故意错误触发检查失败",
+            "activities": [
+              4
+            ]
+          }
+        ],
+        "transferBugDistinct": false,
+        "source": "public/textbook-depth.js: exercises"
+      },
+      "independentCheck": {
+        "result": "已通过（按明确规格和课堂示范作静态推演）",
+        "task": "独立写一份8位版本，并给出255→0、使能保持与同步复位的预期表。",
+        "conditions": [
+          [
+            "W=1与W=4分别检查复位、保持、最大值回绕和复位优先；注入加2错误后检测器必须失败。"
+          ],
+          [
+            "W=1与W=4分别检查复位、保持、最大值回绕和复位优先；注入加2错误后检测器必须失败。"
+          ]
+        ],
+        "limit": "尚未通过真实零基础学生试学；开放代码不自动验证"
+      },
+      "beforeIssue": "自查材料不等于真实仿真",
+      "repair": "参数边界与错误注入"
+    },
+    {
+      "id": "synthesis-lab",
+      "status": "已通过（编辑语义复核）",
+      "goalCheck": {
+        "result": "已通过",
+        "evidence": "从RTL表达式判断推断结构",
+        "source": "public/hdl-content.js: goals, concept"
+      },
+      "prerequisiteCheck": {
+        "result": "已通过",
+        "priorConcepts": [
+          {
+            "concept": "RTL结构与共享运算",
+            "taughtIn": "alu"
+          },
+          {
+            "concept": "参数和generate",
+            "taughtIn": "parameters"
+          },
+          {
+            "concept": "物理路径预算",
+            "taughtIn": "clock-skew"
+          }
+        ],
+        "repair": "MUX后加法器与报告对应",
+        "source": "public/hdl-content.js: conceptDependencies, concept"
+      },
+      "workedExampleCheck": {
+        "result": "已通过",
+        "evidence": {
+          "completeCode": "module shared_add(input wire [7:0] a,b,c,input wire sel,output wire [8:0] y);\n wire [7:0] chosen=sel?b:c;\n assign y={1'b0,a}+{1'b0,chosen};\nendmodule",
+          "keyLines": {
+            "1": "y是9位，可保留两个8位数相加的进位；综合顶层选择shared_add。",
+            "2": "sel先从b/c选8位操作数chosen，表达MUX在加法器之前的结构意图。",
+            "3": "a与chosen各补0后做一次9位加法。实际资源还受优化与器件映射影响，要看综合网表而不是仅数源代码加号。"
+          },
+          "sequence": []
+        },
+        "source": "public/textbook-depth.js"
+      },
+      "assessmentCheck": {
+        "result": "已通过",
+        "mappings": [
+          {
+            "id": "synthesis-lab-task-1",
+            "description": "从RTL推断资源并检查报告",
+            "activities": [
+              0
+            ]
+          },
+          {
+            "id": "synthesis-lab-task-2",
+            "description": "完成Lint到综合的回归闭环",
+            "activities": [
+              1
+            ]
+          },
+          {
+            "id": "synthesis-lab-task-3",
+            "description": "完成Lint到综合的回归闭环",
+            "activities": [
+              2
+            ]
+          },
+          {
+            "id": "synthesis-lab-task-4",
+            "description": "完成Lint到综合的回归闭环",
+            "activities": [
+              3
+            ]
+          },
+          {
+            "id": "synthesis-lab-task-5",
+            "description": "完成Lint到综合的回归闭环",
+            "activities": [
+              4
+            ]
+          }
+        ],
+        "transferBugDistinct": false,
+        "source": "public/textbook-depth.js: exercises"
+      },
+      "independentCheck": {
+        "result": "已通过（按明确规格和课堂示范作静态推演）",
+        "task": "在“从RTL到门级：Lint、资源与约束闭环”中检查这个错误方案： 把#10当时序修复，再综合。写出具体修改办法与核对步骤。",
+        "conditions": [
+          [
+            "功能输入相同且位宽相同；分别保存网表与通用资源统计；报告需注明工具与目标，不把通用单元数当工艺面积。"
+          ],
+          [
+            "功能输入相同且位宽相同；分别保存网表与通用资源统计；报告需注明工具与目标，不把通用单元数当工艺面积。"
+          ]
+        ],
+        "limit": "尚未通过真实零基础学生试学；开放代码不自动验证"
+      },
+      "beforeIssue": "源码形式不能保证最终资源数量",
+      "repair": "MUX后加法器与报告对应"
+    },
+    {
+      "id": "memory",
+      "status": "已通过（编辑语义复核）",
+      "goalCheck": {
+        "result": "已通过",
+        "evidence": "按read-first规则推导读写",
+        "source": "public/hdl-content.js: goals, concept"
+      },
+      "prerequisiteCheck": {
+        "result": "已通过",
+        "priorConcepts": [
+          {
+            "concept": "非阻塞读旧值",
+            "taughtIn": "nba"
+          },
+          {
+            "concept": "数组索引",
+            "taughtIn": "sv-arrays"
+          }
+        ],
+        "repair": "同址5A写A5的两沿推导",
+        "source": "public/hdl-content.js: conceptDependencies, concept"
+      },
+      "workedExampleCheck": {
+        "result": "已通过",
+        "evidence": {
+          "completeCode": "module ram16(input logic clk,we,input logic [3:0] addr,\n input logic [7:0] wdata,output logic [7:0] rdata);\n logic [7:0] mem[0:15];\n always_ff @(posedge clk) begin\n  if(we) mem[addr]<=wdata;\n  rdata<=mem[addr];\n end\nendmodule",
+          "keyLines": {
+            "3": "16个8位元素，容量128位。声明本身没有把所有元素初始化成0。",
+            "5": "we=1时，沿后把wdata写入沿前addr选中的位置；本过程下一行仍读取写入前的mem。",
+            "6": "rdata无论we为何都安排读旧mem[addr]。同址5A写A5时此沿输出5A，下一个只读沿才输出A5。"
+          },
+          "sequence": []
+        },
+        "source": "public/textbook-depth.js"
+      },
+      "assessmentCheck": {
+        "result": "已通过",
+        "mappings": [
+          {
+            "id": "memory-task-1",
+            "description": "预测同步读与同址冲突",
+            "activities": [
+              0
+            ]
+          },
+          {
+            "id": "memory-task-2",
+            "description": "核对RAM推断的工具边界",
+            "activities": [
+              1
+            ]
+          },
+          {
+            "id": "memory-task-3",
+            "description": "核对RAM推断的工具边界",
+            "activities": [
+              2
+            ]
+          },
+          {
+            "id": "memory-task-4",
+            "description": "核对RAM推断的工具边界",
+            "activities": [
+              3
+            ]
+          },
+          {
+            "id": "memory-task-5",
+            "description": "核对RAM推断的工具边界",
+            "activities": [
+              4
+            ]
+          }
+        ],
+        "transferBugDistinct": false,
+        "source": "public/textbook-depth.js: exercises"
+      },
+      "independentCheck": {
+        "result": "已通过（按明确规格和课堂示范作静态推演）",
+        "task": "在“RAM/ROM：读延迟与读写冲突”中检查这个错误方案： 同址写后当沿期待新值。写出具体修改办法与核对步骤。",
+        "conditions": [
+          [
+            "两地址写不同值后读回，检查地址隔离；同址旧5A写A5时，首个沿后读5A、下一只读沿后读A5；未初始化地址不假设0。"
+          ],
+          [
+            "两地址写不同值后读回，检查地址隔离；同址旧5A写A5时，首个沿后读5A、下一只读沿后读A5；未初始化地址不假设0。"
+          ]
+        ],
+        "limit": "尚未通过真实零基础学生试学；开放代码不自动验证"
+      },
+      "beforeIssue": "下游同沿仍见旧rdata",
+      "repair": "同址5A写A5的两沿推导"
+    },
+    {
+      "id": "fifo-project",
+      "status": "已通过（编辑语义复核）",
+      "goalCheck": {
+        "result": "已通过",
+        "evidence": "按接受事件更新队列",
+        "source": "public/hdl-content.js: goals, concept"
+      },
+      "prerequisiteCheck": {
+        "result": "已通过",
+        "priorConcepts": [
+          {
+            "concept": "RAM读写",
+            "taughtIn": "memory"
+          },
+          {
+            "concept": "回绕计数与使能",
+            "taughtIn": "counter"
+          },
+          {
+            "concept": "独立参考检查",
+            "taughtIn": "checking"
+          }
+        ],
+        "repair": "非空沿前读队首及满边界",
+        "source": "public/hdl-content.js: conceptDependencies, concept"
+      },
+      "workedExampleCheck": {
+        "result": "已通过",
+        "evidence": {
+          "completeCode": "module fifo4(input logic clk,rst_n,push,pop,input logic [7:0] din,\n output logic [7:0] dout,output logic full,empty);\n logic [7:0] mem[0:3];\n logic [1:0] wp,rp;\n logic [2:0] count;\n wire wr=push && !full, rd=pop && !empty;\n assign full=(count==4);\n assign empty=(count==0);\n assign dout=mem[rp];\n always_ff @(posedge clk) begin\n  if(!rst_n) begin wp<=0;rp<=0;count<=0;end\n  else begin\n   if(wr) begin mem[wp]<=din;wp<=wp+2'd1;end\n   if(rd) rp<=rp+2'd1;\n   case({wr,rd})\n    2'b10: count<=count+3'd1;\n    2'b01: count<=count-3'd1;\n    default: count<=count;\n   endcase\n  end\n end\nendmodule",
+          "keyLines": {
+            "5": "count需要表示0..4共5个值，必须3位；两位只能到3，无法表示满。",
+            "6": "wr/rd是沿前真正被接受的操作，不等于裸请求push/pop。满时push不接受，即便同沿也请求pop。",
+            "9": "非空时dout在读沿前已是队首。这是首字直通；empty=1时其值不表示有效字节。",
+            "13": "接受写入才把din存到旧wp并推进wp；指针写回截断到2位，3后回0。",
+            "14": "接受读取才推进rp；测试台要在沿前取得被消费的dout，不是沿后再看新队首。",
+            "18": "没有操作或同时接受一进一出，count保持，但指针仍可各自推进。"
+          },
+          "sequence": []
+        },
+        "source": "public/textbook-depth.js"
+      },
+      "assessmentCheck": {
+        "result": "已通过",
+        "mappings": [
+          {
+            "id": "fifo-project-task-1",
+            "description": "按规格实现深度4同步FIFO",
+            "activities": [
+              0
+            ]
+          },
+          {
+            "id": "fifo-project-task-2",
+            "description": "验证满空、并发与回绕",
+            "activities": [
+              1
+            ]
+          },
+          {
+            "id": "fifo-project-task-3",
+            "description": "在写指针的旧地址保存队列数据",
+            "activities": [
+              2
+            ]
+          },
+          {
+            "id": "fifo-project-task-4",
+            "description": "验证满空、并发与回绕",
+            "activities": [
+              3
+            ]
+          },
+          {
+            "id": "fifo-project-task-5",
+            "description": "验证满空、并发与回绕",
+            "activities": [
+              4
+            ]
+          }
+        ],
+        "transferBugDistinct": true,
+        "source": "public/textbook-depth.js: exercises"
+      },
+      "independentCheck": {
+        "result": "已通过（按明确规格和课堂示范作静态推演）",
+        "task": "写独立队列TB，覆盖满/空/同时/回绕，并记录每次接受事务序号。",
+        "conditions": [
+          [
+            "空时pop拒绝，满时push拒绝；同时push/pop按沿前标志决定是否接受；回绕后逐笔核对顺序；FWFT在消费沿前比较队头。"
+          ]
+        ],
+        "limit": "尚未通过真实零基础学生试学；开放代码不自动验证"
+      },
+      "beforeIssue": "FWFT与寄存输出不同",
+      "repair": "非空沿前读队首及满边界"
+    },
+    {
+      "id": "async-fifo",
+      "status": "已通过（编辑语义复核）",
+      "goalCheck": {
+        "result": "已通过",
+        "evidence": "解释跨域指针与本域存储",
+        "source": "public/hdl-content.js: goals, concept"
+      },
+      "prerequisiteCheck": {
+        "result": "已通过",
+        "priorConcepts": [
+          {
+            "concept": "本域指针、满空与先进先出顺序",
+            "taughtIn": "fifo-project"
+          },
+          {
+            "concept": "跨域电平同步及多位总线限制",
+            "taughtIn": "cdc"
+          }
+        ],
+        "repair": "移到同步FIFO后，新增两域操作例",
+        "source": "public/hdl-content.js: conceptDependencies, concept"
+      },
+      "workedExampleCheck": {
+        "result": "已通过",
+        "evidence": {
+          "completeCode": "module gray_step #(parameter A=3)(input wire [A:0] binary,output wire [A:0] gray);\n assign gray=(binary>>1)^binary;\nendmodule",
+          "keyLines": {
+            "1": "深度2的A次方时，地址A位，binary含额外一位绕回信息，所以本例[A:0]总共A+1位。",
+            "2": "Gray等于右移一位的binary逐位异或原binary。3=0011得到0010，4=0100得到0110，只一位变化。",
+            "3": "此模块只结束Gray编码器，完全没有实现存储、同步链、满空比较和复位。不要把它当可交付的异步FIFO。"
+          },
+          "sequence": []
+        },
+        "source": "public/textbook-depth.js"
+      },
+      "assessmentCheck": {
+        "result": "已通过",
+        "mappings": [
+          {
+            "id": "async-fifo-task-1",
+            "description": "解释数据与指针跨域路径",
+            "activities": [
+              0
+            ]
+          },
+          {
+            "id": "async-fifo-task-2",
+            "description": "计算Gray并说明约束边界",
+            "activities": [
+              1
+            ]
+          },
+          {
+            "id": "async-fifo-task-3",
+            "description": "计算Gray并说明约束边界",
+            "activities": [
+              2
+            ]
+          },
+          {
+            "id": "async-fifo-task-4",
+            "description": "计算Gray并说明约束边界",
+            "activities": [
+              3
+            ]
+          }
+        ],
+        "transferBugDistinct": false,
+        "source": "public/textbook-depth.js: exercises"
+      },
+      "independentCheck": {
+        "result": "已通过（按明确规格和课堂示范作静态推演）",
+        "task": "列出binary0..7与Gray，并说明异步FIFO为何同步指针不逐位同步数据。",
+        "conditions": [
+          [
+            "binary0..7的Gray依次000、001、011、010、110、111、101、100；相邻差一位；同步控制指针不等于逐位同步数据总线。"
+          ]
+        ],
+        "limit": "尚未通过真实零基础学生试学；开放代码不自动验证"
+      },
+      "beforeIssue": "RAM/FIFO尚未学，严重断层",
+      "repair": "移到同步FIFO后，新增两域操作例"
+    },
+    {
+      "id": "uart-project",
+      "status": "已通过（编辑语义复核）",
+      "goalCheck": {
+        "result": "已通过",
+        "evidence": "按8N1帧位和位时间发字节",
+        "source": "public/hdl-content.js: goals, concept"
+      },
+      "prerequisiteCheck": {
+        "result": "已通过",
+        "priorConcepts": [
+          {
+            "concept": "移位与逐拍状态",
+            "taughtIn": "shift-pulse"
+          },
+          {
+            "concept": "状态机",
+            "taughtIn": "fsm"
+          },
+          {
+            "concept": "自检与超时",
+            "taughtIn": "checking"
+          }
+        ],
+        "repair": "锁存帧和位索引关系",
+        "source": "public/hdl-content.js: conceptDependencies, concept"
+      },
+      "workedExampleCheck": {
+        "result": "已通过",
+        "evidence": {
+          "completeCode": "module uart_tx #(parameter CLKS_PER_BIT=4)(\n input logic clk,rst_n,start,input logic [7:0] data,output logic tx,busy);\n logic [9:0] frame;\n integer tick,bitno;\n always_ff @(posedge clk) begin\n  if(!rst_n) begin tx<=1;busy<=0;tick<=0;bitno<=0;frame<=10'h3ff;end\n  else if(!busy) begin\n   tx<=1;\n   if(start) begin frame<={1'b1,data,1'b0};tx<=0;busy<=1;tick<=0;bitno<=0;end\n  end else if(tick==CLKS_PER_BIT-1) begin\n   tick<=0;\n   if(bitno==9) begin tx<=1;busy<=0;end\n   else begin bitno<=bitno+1;tx<=frame[bitno+1];end\n  end else tick<=tick+1;\n end\nendmodule",
+          "keyLines": {
+            "3": "frame共10位，保存起始、8位数据和停止位；busy期间不再从外部data临时取位。",
+            "9": "接受start时一次锁存{停止1,data,起始0}；立即输出最低位起始0，并把tick和bitno置0。",
+            "10": "tick到N-1才过完一个位时间；N=4时每位持续4个系统周期，比较N会多一拍。",
+            "13": "旧bitno加1选下一位，先data[0]再到data[7]和停止位。外部data改变不会污染已锁存的frame。"
+          },
+          "sequence": []
+        },
+        "source": "public/textbook-depth.js"
+      },
+      "assessmentCheck": {
+        "result": "已通过",
+        "mappings": [
+          {
+            "id": "uart-project-task-1",
+            "description": "实现8N1低位先发发送器",
+            "activities": [
+              0
+            ]
+          },
+          {
+            "id": "uart-project-task-2",
+            "description": "验证帧位序和每位持续周期",
+            "activities": [
+              1
+            ]
+          },
+          {
+            "id": "uart-project-task-3",
+            "description": "验证帧位序和每位持续周期",
+            "activities": [
+              2
+            ]
+          },
+          {
+            "id": "uart-project-task-4",
+            "description": "验证帧位序和每位持续周期",
+            "activities": [
+              3
+            ]
+          },
+          {
+            "id": "uart-project-task-5",
+            "description": "验证帧位序和每位持续周期",
+            "activities": [
+              4
+            ]
+          }
+        ],
+        "transferBugDistinct": false,
+        "source": "public/textbook-depth.js: exercises"
+      },
+      "independentCheck": {
+        "result": "已通过（按明确规格和课堂示范作静态推演）",
+        "task": "在“项目二：UART 8N1发送与自检”中检查这个错误方案：tx<=data[bitno]; // 发送中读外部data。写出具体修改办法与核对步骤。",
+        "conditions": [
+          [
+            "每帧起始0、D0到D7、停止1；N=1与4时每位持续N拍；busy期间修改外部data/start不撕裂已锁存帧。"
+          ],
+          [
+            "每帧起始0、D0到D7、停止1；N=1与4时每位持续N拍；busy期间修改外部data/start不撕裂已锁存帧。"
+          ]
+        ],
+        "limit": "尚未通过真实零基础学生试学；开放代码不自动验证"
+      },
+      "beforeIssue": "忙期间读取新data会混帧",
+      "repair": "锁存帧和位索引关系"
+    },
+    {
+      "id": "sv-handshake",
+      "status": "已通过（编辑语义复核）",
+      "goalCheck": {
+        "result": "已通过",
+        "evidence": "只在valid与ready同沿为1传输",
+        "source": "public/hdl-content.js: goals, concept"
+      },
+      "prerequisiteCheck": {
+        "result": "已通过",
+        "priorConcepts": [
+          {
+            "concept": "同沿采样",
+            "taughtIn": "nba"
+          },
+          {
+            "concept": "使能与保持",
+            "taughtIn": "reset"
+          }
+        ],
+        "repair": "背压中保持数据的新练习",
+        "source": "public/hdl-content.js: conceptDependencies, concept"
+      },
+      "workedExampleCheck": {
+        "result": "已通过",
+        "evidence": {
+          "completeCode": "// 同一时钟域中的传输计数示意\nalways_ff @(posedge clk) begin\n if(!rst_n) transfers <= 8'd0;\n else if(valid && ready) transfers <= transfers + 8'd1;\nend\n// valid=1, ready=0：没有接收，发送方保持data\n// valid=1, ready=1：在该上升沿接收一次",
+          "keyLines": {
+            "2": "这个片段在共同clk上升沿观察两方信号，前提是同一时钟域，不是跨域同步协议。",
+            "4": "valid和ready同沿都为1才加一。valid连续三拍为1但ready=0,0,1时只发生一次传输。",
+            "6": "背压时源必须保留valid=1及同一data，直到一次接受沿。不是每等一拍就换一个新字节。"
+          },
+          "sequence": []
+        },
+        "source": "public/textbook-depth.js"
+      },
+      "assessmentCheck": {
+        "result": "已通过",
+        "mappings": [
+          {
+            "id": "sv-handshake-task-1",
+            "description": "逐沿判断一次有效传输",
+            "activities": [
+              0
+            ]
+          },
+          {
+            "id": "sv-handshake-task-2",
+            "description": "解释背压时为何必须保持数据",
+            "activities": [
+              1
+            ]
+          },
+          {
+            "id": "sv-handshake-task-3",
+            "description": "在背压时保持待交付字节",
+            "activities": [
+              2
+            ]
+          },
+          {
+            "id": "sv-handshake-task-4",
+            "description": "解释背压时为何必须保持数据",
+            "activities": [
+              3
+            ]
+          },
+          {
+            "id": "sv-handshake-task-5",
+            "description": "解释背压时为何必须保持数据",
+            "activities": [
+              4
+            ]
+          }
+        ],
+        "transferBugDistinct": true,
+        "source": "public/textbook-depth.js: exercises"
+      },
+      "independentCheck": {
+        "result": "已通过（按明确规格和课堂示范作静态推演）",
+        "task": "ready=0时为什么不能继续换data？",
+        "conditions": [
+          [
+            "三沿valid=1、ready=0/0/1，数据5A保持，只有第三沿计一次传输；不得在未接收时更换该笔内容。"
+          ]
+        ],
+        "limit": "尚未通过真实零基础学生试学；开放代码不自动验证"
+      },
+      "beforeIssue": "自查不是自动功能验证",
+      "repair": "背压中保持数据的新练习"
+    },
+    {
+      "id": "integration",
+      "status": "已通过（编辑语义复核）",
+      "goalCheck": {
+        "result": "已通过",
+        "evidence": "一拍缓冲能消费并替换",
+        "source": "public/hdl-content.js: goals, concept"
+      },
+      "prerequisiteCheck": {
+        "result": "已通过",
+        "priorConcepts": [
+          {
+            "concept": "首字直通FIFO接口",
+            "taughtIn": "fifo-project"
+          },
+          {
+            "concept": "有效/就绪传输条件",
+            "taughtIn": "sv-handshake"
+          },
+          {
+            "concept": "串口忙闲接口",
+            "taughtIn": "uart-project"
+          }
+        ],
+        "repair": "同时取A装B的时序推导",
+        "source": "public/hdl-content.js: conceptDependencies, concept"
+      },
+      "workedExampleCheck": {
+        "result": "已通过",
+        "evidence": {
+          "completeCode": "module rv_register(input logic clk,rst_n,s_valid,m_ready,input logic [7:0] s_data,\n output logic s_ready,m_valid,output logic [7:0] m_data);\n assign s_ready=!m_valid || m_ready;\n always_ff @(posedge clk) begin\n  if(!rst_n) begin m_valid<=0;m_data<=0;end\n  else if(s_ready) begin m_valid<=s_valid; if(s_valid) m_data<=s_data;end\n end\nendmodule",
+          "keyLines": {
+            "3": "本级为空就可收；本级非空但m_ready=1时旧字节会被消费，也可同沿装新字节。",
+            "5": "复位清有效位取消未交付字节，m_data清0只是方便观察，不能把0当有效数据。",
+            "6": "仅s_ready时更新整个缓冲状态。若旧A本沿被取走且s_valid=1，沿后装B并继续有效；背压时保留A。"
+          },
+          "sequence": []
+        },
+        "source": "public/textbook-depth.js"
+      },
+      "assessmentCheck": {
+        "result": "已通过",
+        "mappings": [
+          {
+            "id": "integration-task-1",
+            "description": "实现背压下保持的弹性寄存器",
+            "activities": [
+              0
+            ]
+          },
+          {
+            "id": "integration-task-2",
+            "description": "用事务检查证明集成不丢不重",
+            "activities": [
+              1
+            ]
+          },
+          {
+            "id": "integration-task-3",
+            "description": "允许缓冲同时消费和替换",
+            "activities": [
+              2
+            ]
+          },
+          {
+            "id": "integration-task-4",
+            "description": "用事务检查证明集成不丢不重",
+            "activities": [
+              3
+            ]
+          },
+          {
+            "id": "integration-task-5",
+            "description": "用事务检查证明集成不丢不重",
+            "activities": [
+              4
+            ]
+          }
+        ],
+        "transferBugDistinct": true,
+        "source": "public/textbook-depth.js: exercises"
+      },
+      "independentCheck": {
+        "result": "已通过（按明确规格和课堂示范作静态推演）",
+        "task": "把输入字节队列接FIFO再接UART，提交接口表、背压测试、复位策略和端到端顺序检查。",
+        "conditions": [
+          [
+            "下游长期ready=0时有效数据保持；允许同时出旧入新；复位清有效标志；队列与串口按接受事务顺序端到端比对。"
+          ]
+        ],
+        "limit": "尚未通过真实零基础学生试学；开放代码不自动验证"
+      },
+      "beforeIssue": "旧记录不应被升级为仿真通过",
+      "repair": "同时取A装B的时序推导"
+    },
+    {
+      "id": "sv-tasks",
+      "status": "已通过（编辑语义复核）",
+      "goalCheck": {
+        "result": "已通过",
+        "evidence": "任务等待与队列模型",
+        "source": "public/hdl-content.js: goals, concept"
+      },
+      "prerequisiteCheck": {
+        "result": "已通过",
+        "priorConcepts": [
+          {
+            "concept": "安全驱动与采样相位",
+            "taughtIn": "scheduling"
+          },
+          {
+            "concept": "函数与task边界",
+            "taughtIn": "hierarchy"
+          },
+          {
+            "concept": "自检比较",
+            "taughtIn": "checking"
+          }
+        ],
+        "repair": "两个待检查输出的队列顺序",
+        "source": "public/hdl-content.js: conceptDependencies, concept"
+      },
+      "workedExampleCheck": {
+        "result": "已通过",
+        "evidence": {
+          "completeCode": "task automatic pulse_enable;\n @(negedge clk); en = 1'b1;\n @(negedge clk); en = 1'b0;\nendtask\n// 下列声明位于测试模块内部、initial外部\nint expected[$];\n// 在initial内调用：\n// pulse_enable();\n// expected.push_back(3);\n// if(expected.size()>0) ref_value=expected.pop_front();",
+          "keyLines": {
+            "1": "automatic为每次调用提供独立局部存储，不阻止两个调用同时改共享en。激励仍需唯一驱动者。",
+            "2": "调用过程暂停到下降沿，再把en置1；这个等待是测试台时间行为，不是组合表达式。",
+            "3": "下一个下降沿才清en，所以覆盖一个上升沿采样机会。",
+            "6": "[$]声明可变长度队列，用于测试台参考序列，不是本课可综合FIFO。"
+          },
+          "sequence": []
+        },
+        "source": "public/textbook-depth.js"
+      },
+      "assessmentCheck": {
+        "result": "已通过",
+        "mappings": [
+          {
+            "id": "sv-tasks-task-1",
+            "description": "用task安排测试激励",
+            "activities": [
+              0
+            ]
+          },
+          {
+            "id": "sv-tasks-task-2",
+            "description": "正确操作期望值队列",
+            "activities": [
+              1
+            ]
+          },
+          {
+            "id": "sv-tasks-task-3",
+            "description": "从参考队头提取最早预期项",
+            "activities": [
+              2
+            ]
+          },
+          {
+            "id": "sv-tasks-task-4",
+            "description": "正确操作期望值队列",
+            "activities": [
+              3
+            ]
+          },
+          {
+            "id": "sv-tasks-task-5",
+            "description": "正确操作期望值队列",
+            "activities": [
+              4
+            ]
+          }
+        ],
+        "transferBugDistinct": true,
+        "source": "public/textbook-depth.js: exercises"
+      },
+      "independentCheck": {
+        "result": "已通过（按明确规格和课堂示范作静态推演）",
+        "task": "为什么pop_front前要检查size()？",
+        "conditions": [
+          [
+            "队列压入3、5后输出应按3、5比对；空队列多余输出必须失败；只有一个驱动进程写en，automatic不提供互斥。"
+          ]
+        ],
+        "limit": "尚未通过真实零基础学生试学；开放代码不自动验证"
+      },
+      "beforeIssue": "任务并发不代表驱动仲裁",
+      "repair": "两个待检查输出的队列顺序"
+    },
+    {
+      "id": "sv-verification",
+      "status": "已通过（编辑语义复核）",
+      "goalCheck": {
+        "result": "已通过",
+        "evidence": "检查randomize结果与命中",
+        "source": "public/hdl-content.js: goals, concept"
+      },
+      "prerequisiteCheck": {
+        "result": "已通过",
+        "priorConcepts": [
+          {
+            "concept": "定向边界检查",
+            "taughtIn": "checking"
+          },
+          {
+            "concept": "类型与字段",
+            "taughtIn": "sv-types"
+          }
+        ],
+        "repair": "无解约束的新调试场景",
+        "source": "public/hdl-content.js: conceptDependencies, concept"
+      },
+      "workedExampleCheck": {
+        "result": "已通过",
+        "evidence": {
+          "completeCode": "class item;\n rand bit [3:0] value;\n constraint small_values { value inside {[0:9]}; }\nendclass\nmodule tb_random;\n item t; // 对象句柄\n initial begin\n  t = new();\n  if (!t.randomize()) $fatal(1,\"random failed\");\n  $display(\"value=%0d\",t.value);\n end\nendmodule",
+          "keyLines": {
+            "2": "rand允许求解器给4位value选值，bit是两态；这里对象用于测试台事务，不是RTL寄存器定义。",
+            "3": "inside约束只允许0..9；它不要求十次调用遍历十个数。",
+            "8": "new创建对象实例，t只是句柄，未创建便调用方法会出错。",
+            "9": "randomize返回成功/失败。无解时应报告失败，不能拿旧value继续当新随机样本。"
+          },
+          "sequence": []
+        },
+        "source": "public/textbook-depth.js"
+      },
+      "assessmentCheck": {
+        "result": "已通过",
+        "mappings": [
+          {
+            "id": "sv-verification-task-1",
+            "description": "区分类、句柄和对象",
+            "activities": [
+              0
+            ]
+          },
+          {
+            "id": "sv-verification-task-2",
+            "description": "检查随机化返回值和约束边界",
+            "activities": [
+              1
+            ]
+          },
+          {
+            "id": "sv-verification-task-3",
+            "description": "用闭区间允许两个随机边界",
+            "activities": [
+              2
+            ]
+          },
+          {
+            "id": "sv-verification-task-4",
+            "description": "检查随机化返回值和约束边界",
+            "activities": [
+              3
+            ]
+          },
+          {
+            "id": "sv-verification-task-5",
+            "description": "检查随机化返回值和约束边界",
+            "activities": [
+              4
+            ]
+          }
+        ],
+        "transferBugDistinct": true,
+        "source": "public/textbook-depth.js: exercises"
+      },
+      "independentCheck": {
+        "result": "已通过（按明确规格和课堂示范作静态推演）",
+        "task": "列出计数器仍需定向测试的边界。",
+        "conditions": [
+          [
+            "显式定向0、9并记录种子；randomize失败立即报错；随机重复命中不能替代覆盖所有0..9，检查结果正确性与命中率分开。"
+          ]
+        ],
+        "limit": "尚未通过真实零基础学生试学；开放代码不自动验证"
+      },
+      "beforeIssue": "随机次数不保证覆盖",
+      "repair": "无解约束的新调试场景"
+    },
+    {
+      "id": "sv-assert",
+      "status": "已通过（编辑语义复核）",
+      "goalCheck": {
+        "result": "已通过",
+        "evidence": "按采样沿解释性质",
+        "source": "public/hdl-content.js: goals, concept"
+      },
+      "prerequisiteCheck": {
+        "result": "已通过",
+        "priorConcepts": [
+          {
+            "concept": "采样调度",
+            "taughtIn": "scheduling"
+          },
+          {
+            "concept": "背压保持条件",
+            "taughtIn": "sv-handshake"
+          }
+        ],
+        "repair": "前件后件采样及复位取消区别",
+        "source": "public/hdl-content.js: conceptDependencies, concept"
+      },
+      "workedExampleCheck": {
+        "result": "已通过",
+        "evidence": {
+          "completeCode": "property reset_check;\n @(posedge clk) !rst_n |=> (q == 4'd0);\nendproperty\nassert property(reset_check);\ncover property(@(posedge clk) q == 4'd15);",
+          "keyLines": {
+            "1": "property为一条时序规则命名，不创建数据寄存器；下面的assert才启用检查。",
+            "2": "在采样沿看到!rst_n成立，|=>要求下一个采样沿q为0。采样在NBA更新前，因此不能拿本沿刚清零的新q解释同沿后件。",
+            "4": "assert实例化reset_check，前件没发生的通过与真正测试到复位不同，应结合cover观察场景。",
+            "5": "cover记录采样到q=15的经历，不比较任何输出规格，命中不能证明功能正确。"
+          },
+          "sequence": []
+        },
+        "source": "public/textbook-depth.js"
+      },
+      "assessmentCheck": {
+        "result": "已通过",
+        "mappings": [
+          {
+            "id": "sv-assert-task-1",
+            "description": "解释非重叠蕴含的采样点",
+            "activities": [
+              0
+            ]
+          },
+          {
+            "id": "sv-assert-task-2",
+            "description": "区分性质检查与场景覆盖",
+            "activities": [
+              1
+            ]
+          },
+          {
+            "id": "sv-assert-task-3",
+            "description": "区分性质检查与场景覆盖",
+            "activities": [
+              2
+            ]
+          },
+          {
+            "id": "sv-assert-task-4",
+            "description": "区分性质检查与场景覆盖",
+            "activities": [
+              3
+            ]
+          }
+        ],
+        "transferBugDistinct": false,
+        "source": "public/textbook-depth.js: exercises"
+      },
+      "independentCheck": {
+        "result": "已通过（按明确规格和课堂示范作静态推演）",
+        "task": "为计数器写一句自然语言保持性质。",
+        "conditions": [
+          [
+            "valid=1且ready=0后下一拍仍需valid有效、data保持；按规格处理复位；首次$past没有前一有效样本时需屏蔽或显式标记。"
+          ]
+        ],
+        "limit": "尚未通过真实零基础学生试学；开放代码不自动验证"
+      },
+      "beforeIssue": "不能把SVA行当时序赋值",
+      "repair": "前件后件采样及复位取消区别"
+    },
+    {
+      "id": "advanced-map",
+      "status": "已通过（编辑语义复核）",
+      "goalCheck": {
+        "result": "已通过",
+        "evidence": "规划后续验证与PPA学习",
+        "source": "public/hdl-content.js: goals, concept"
+      },
+      "prerequisiteCheck": {
+        "result": "已通过",
+        "priorConcepts": [
+          {
+            "concept": "检查器与通过标准",
+            "taughtIn": "checking"
+          },
+          {
+            "concept": "断言/覆盖用途",
+            "taughtIn": "sv-assert"
+          }
+        ],
+        "repair": "覆盖与正确性反例",
+        "source": "public/hdl-content.js: conceptDependencies, concept"
+      },
+      "workedExampleCheck": {
+        "result": "已通过",
+        "evidence": {
+          "completeCode": "// 工程检查计划片段，不是可直接编译的模块\n// 规格：每个accepted请求最终完成，复位取消未完成事务\n// 断言：背压时valid和data保持\n// 覆盖：空/满/回绕/背压/复位组合\n// 总线：先确定握手，再研究地址、响应和突发\n// PPA：同一功能、约束和工艺下比较面积/功耗/性能",
+          "keyLines": {
+            "2": "accepted应由具体接口定义，例如valid&&ready；“最终”还要界定复位、取消和超时，否则断言无法清楚表达。",
+            "4": "覆盖空、满、回绕和背压说明这些情境出现过；每种情境还需要独立预期值比较。",
+            "6": "PPA比较必须固定功能、工艺、约束和活动条件；较少源码不自动意味着较小面积或较低功耗。"
+          },
+          "sequence": []
+        },
+        "source": "public/textbook-depth.js"
+      },
+      "assessmentCheck": {
+        "result": "已通过",
+        "mappings": [
+          {
+            "id": "advanced-map-task-1",
+            "description": "建立规格到覆盖的验证计划",
+            "activities": [
+              0
+            ]
+          },
+          {
+            "id": "advanced-map-task-2",
+            "description": "说明UVM、ASIC与PPA学习边界",
+            "activities": [
+              1
+            ]
+          },
+          {
+            "id": "advanced-map-task-3",
+            "description": "说明UVM、ASIC与PPA学习边界",
+            "activities": [
+              2
+            ]
+          },
+          {
+            "id": "advanced-map-task-4",
+            "description": "说明UVM、ASIC与PPA学习边界",
+            "activities": [
+              3
+            ]
+          }
+        ],
+        "transferBugDistinct": false,
+        "source": "public/textbook-depth.js: exercises"
+      },
+      "independentCheck": {
+        "result": "已通过（按明确规格和课堂示范作静态推演）",
+        "task": "为FIFO写功能覆盖矩阵，列空/满/同时/回绕/复位交叉，并对应检查器。",
+        "conditions": [
+          [
+            "每个覆盖格对应检查器和输入条件；命中不能证明输出正确；缺失格在计划中标明定向补测。"
+          ]
+        ],
+        "limit": "尚未通过真实零基础学生试学；开放代码不自动验证"
+      },
+      "beforeIssue": "概览不等于独立工业签核能力",
+      "repair": "覆盖与正确性反例"
+    }
+  ]
+}

@@ -19,9 +19,9 @@ test('six deep lessons provide real scoped practices and complete mastery requir
   assert.equal(new Set(l.lab.exercises.map(e=>e.type)).size,5);
   for(const e of l.lab.exercises)assert.ok(e.prompt.length>10);
   const st={done:false,passed:true,draft:'independent work',activities:{}};
-  assert.equal(M.level(l,st),'practiced');assert.equal(M.canComplete(l,st),false);
-  for(const [i,e] of l.lab.exercises.entries())st.activities[i]=['implementation','analysis'].includes(e.kind)?{revision:2,draft:'my implementation and evidence',reviewed:true}:{revision:2,choice:e.correct,answers:e.blanks?.map(b=>b.accepted[0]),response:e.accepted?.[0],passed:true};
-  assert.equal(M.canComplete(l,st),true);st.done=true;assert.equal(M.level(l,st),'mastered');
+  assert.equal(M.level(l,st),'understood');assert.equal(M.canComplete(l,st),false);
+  for(const [i,e] of l.lab.exercises.entries())st.activities[i]=['implementation','analysis'].includes(e.kind)?{revision:e.revision,draft:'my implementation and evidence',reviewed:true}:{revision:e.revision,choice:e.correct,answers:e.blanks?.map(b=>b.accepted[0]),response:e.accepted?.[0],reason:'my counterexample and correction',passed:true};
+  assert.equal(M.canComplete(l,st),true);st.done=true;assert.equal(M.level(l,st),'automatic-checked');
   const norm=M.normalizeActivities(l,st.activities);assert.equal(M.canComplete(l,{activities:norm}),true);
   const first=l.lab.exercises.findIndex(e=>e.options);norm[first].choice=99;assert.equal(M.normalizeActivities(l,norm)[first].passed,false);
  }

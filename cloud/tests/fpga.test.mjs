@@ -10,7 +10,7 @@ test('27 stable chapters teach nine engineering phases with exact available sour
  assert.ok(fs.existsSync('public/fpga/uart-led-workflow.zip'));
 });
 test('pretest admits existing RTL learners without the original 24-course lock',()=>{
- const p=fresh();const late=C.modules.find(m=>m.phase>=2);assert.equal(P.prerequisites(p,late.id).open,true);ready(p,late.id);assert.equal(P.complete(p,late.id),false);enter(p);assert.equal(P.complete(p,late.id),true);assert.equal(Object.keys(p.lessons).length,0);
+ const p=fresh();const late=C.modules.find(m=>m.phase>=2);assert.equal(P.prerequisites(p,late.id).open,true);ready(p,late.id);assert.equal(P.prerequisites(p,late.id).practiceReady,true);assert.equal(P.complete(p,late.id),true);enter(p);assert.equal(P.complete(p,late.id),true);assert.equal(Object.keys(p.lessons).length,0);
 });
 test('new completion revalidates quizzes; legitimate historical completion survives changed material',()=>{
  const p=fresh();enter(p);for(const m of C.modules){ready(p,m.id);assert.equal(P.complete(p,m.id),true);}const n=P.normalize(p);assert.equal(n.fpga.lessons['21'].completed,true);n.fpga.lessons['21'].choices[0]=99;assert.equal(P.normalize(n).fpga.lessons['21'].completed,false);

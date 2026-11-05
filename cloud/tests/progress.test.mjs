@@ -118,3 +118,11 @@ test('pending or failed session shows unknown progress, guest recovery restores 
  assert.equal(document.body.dataset.syncState,'guest');assert.equal(document.querySelector('#overall-count').textContent,'3 / 37');
  assert.equal(document.querySelector('#lesson').inert,false);
 });
+test('older FPGA and activity clients retain LED drafts and newer assessment revisions',async()=>{
+ const initial={...data,fpga:{schema:2,projects:{led:{draft:'new LED RTL',evidence:'pending',updatedAt:9}},lessons:{}},hdl:{module:{draft:'new',activities:{2:{revision:3,response:'new repair',reason:'counterexample',passed:true}}}}};
+ assert.equal((await call('new-project-protection','PUT',{revision:0,data:initial})).status,200);
+ const old={...data,fpga:{schema:2,lessons:{}},hdl:{module:{draft:'old client edit',activities:{2:{revision:2,response:'old repair',passed:true}}}}};
+ assert.equal((await call('new-project-protection','PUT',{revision:1,data:old})).status,200);
+ const stored=(await(await call('new-project-protection')).json()).data;
+ assert.equal(stored.fpga.projects.led.draft,'new LED RTL');assert.equal(stored.hdl.module.activities[2].revision,3);assert.equal(stored.hdl.module.activities[2].legacyClientAnswer.response,'old repair');
+});

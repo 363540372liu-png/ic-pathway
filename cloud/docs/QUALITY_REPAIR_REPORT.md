@@ -1,3 +1,5 @@
+> 本文件保留上轮审查。本轮重新核对结果见 [教学修复报告](TEACHING_REBUILD_REPORT.md) 与 [新问题矩阵](BEGINNER_QUALITY_MATRIX.md)，请勿把旧结论当成本轮验收。
+
 # 教学质量修复与FPGA全流程重构 · 评审报告
 
 本次只在feat/teaching-fpga-workflow分支交付，不合并main，不部署正式网站。保留原生JavaScript/hash路由、Worker/D1与现有课程标识。

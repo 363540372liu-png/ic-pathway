@@ -1,0 +1,938 @@
+{
+  "nodes": [
+    {
+      "id": "orientation",
+      "order": 1,
+      "stage": 0,
+      "title": "怎么学：先认识电路，再认识语言",
+      "tier": "主线"
+    },
+    {
+      "id": "numbers",
+      "order": 2,
+      "stage": 0,
+      "title": "bit、二进制与常量写法",
+      "tier": "主线"
+    },
+    {
+      "id": "logic-gates",
+      "order": 3,
+      "stage": 0,
+      "title": "与、或、非、异或：先画真值表",
+      "tier": "主线"
+    },
+    {
+      "id": "boolean-decoder",
+      "order": 4,
+      "stage": 0,
+      "title": "布尔代数与译码器：从真值表得到电路",
+      "tier": "主线"
+    },
+    {
+      "id": "mindset",
+      "order": 5,
+      "stage": 0,
+      "title": "先懂电路，再读代码",
+      "tier": "主线"
+    },
+    {
+      "id": "storage",
+      "order": 6,
+      "stage": 0,
+      "title": "电平与边沿：锁存器、触发器、寄存器",
+      "tier": "主线"
+    },
+    {
+      "id": "module",
+      "order": 7,
+      "stage": 1,
+      "title": "从第一个与门到模块实例连接",
+      "tier": "主线"
+    },
+    {
+      "id": "tool-start",
+      "order": 8,
+      "stage": 1,
+      "title": "第一次编译与四组输入仿真",
+      "tier": "主线"
+    },
+    {
+      "id": "net-var",
+      "order": 9,
+      "stage": 1,
+      "title": "wire、reg 与 assign",
+      "tier": "主线"
+    },
+    {
+      "id": "vectors",
+      "order": 10,
+      "stage": 1,
+      "title": "向量、位选、切片与拼接",
+      "tier": "主线"
+    },
+    {
+      "id": "four-state",
+      "order": 11,
+      "stage": 1,
+      "title": "0、1、X、Z 与初始化",
+      "tier": "主线"
+    },
+    {
+      "id": "operators",
+      "order": 12,
+      "stage": 1,
+      "title": "算术、位运算、逻辑与比较",
+      "tier": "主线"
+    },
+    {
+      "id": "width-sign",
+      "order": 13,
+      "stage": 1,
+      "title": "位宽、截断与补码",
+      "tier": "主线"
+    },
+    {
+      "id": "casts",
+      "order": 14,
+      "stage": 1,
+      "title": "符号转换：位串不变，解释可能变",
+      "tier": "主线"
+    },
+    {
+      "id": "branches",
+      "order": 15,
+      "stage": 1,
+      "title": "begin/end、if/else 与组合逻辑",
+      "tier": "主线"
+    },
+    {
+      "id": "case-latch",
+      "order": 16,
+      "stage": 1,
+      "title": "case、优先级与意外锁存器",
+      "tier": "主线"
+    },
+    {
+      "id": "casez",
+      "order": 17,
+      "stage": 1,
+      "title": "casez：通配规则与优先级",
+      "tier": "进阶专题（可先跳过）"
+    },
+    {
+      "id": "loops",
+      "order": 18,
+      "stage": 1,
+      "title": "for 循环：展开的是硬件还是时间？",
+      "tier": "进阶必学"
+    },
+    {
+      "id": "parameters",
+      "order": 19,
+      "stage": 1,
+      "title": "parameter、localparam 与 generate",
+      "tier": "进阶必学"
+    },
+    {
+      "id": "functions",
+      "order": 20,
+      "stage": 1,
+      "title": "function：给组合计算起一个名字",
+      "tier": "进阶必学"
+    },
+    {
+      "id": "directives",
+      "order": 21,
+      "stage": 1,
+      "title": "编译指令、宏与多文件边界",
+      "tier": "进阶专题（可先跳过）"
+    },
+    {
+      "id": "hierarchy",
+      "order": 22,
+      "stage": 1,
+      "title": "多模块工程、层次与RTL task",
+      "tier": "进阶必学"
+    },
+    {
+      "id": "edges",
+      "order": 23,
+      "stage": 2,
+      "title": "时钟边沿、D 触发器与逐拍读图",
+      "tier": "主线"
+    },
+    {
+      "id": "nba",
+      "order": 24,
+      "stage": 2,
+      "title": "阻塞 = 与非阻塞 <=",
+      "tier": "主线"
+    },
+    {
+      "id": "reset",
+      "order": 25,
+      "stage": 2,
+      "title": "同步复位、异步复位与使能",
+      "tier": "主线"
+    },
+    {
+      "id": "counter",
+      "order": 26,
+      "stage": 2,
+      "title": "从规格到完整计数器",
+      "tier": "主线"
+    },
+    {
+      "id": "shift-pulse",
+      "order": 27,
+      "stage": 2,
+      "title": "移位寄存器与单周期边沿脉冲",
+      "tier": "主线"
+    },
+    {
+      "id": "alu",
+      "order": 28,
+      "stage": 2,
+      "title": "小型 ALU：选择运算与保留进位",
+      "tier": "主线"
+    },
+    {
+      "id": "fsm",
+      "order": 29,
+      "stage": 2,
+      "title": "有限状态机：当前状态与下一状态",
+      "tier": "主线"
+    },
+    {
+      "id": "moore-mealy",
+      "order": 30,
+      "stage": 2,
+      "title": "Moore与Mealy：沿间响应和输出寄存",
+      "tier": "主线"
+    },
+    {
+      "id": "sv-logic",
+      "order": 31,
+      "stage": 3,
+      "title": "迈入 SystemVerilog：logic 与 bit",
+      "tier": "主线"
+    },
+    {
+      "id": "sv-always",
+      "order": 32,
+      "stage": 3,
+      "title": "always_comb、always_ff 与迁移",
+      "tier": "主线"
+    },
+    {
+      "id": "sv-latch",
+      "order": 33,
+      "stage": 3,
+      "title": "always_latch：有意的锁存与意外漏赋值",
+      "tier": "主线"
+    },
+    {
+      "id": "sv-arrays",
+      "order": 34,
+      "stage": 3,
+      "title": "SystemVerilog 数组：位和元素要分清",
+      "tier": "主线"
+    },
+    {
+      "id": "sv-types",
+      "order": 35,
+      "stage": 3,
+      "title": "typedef、enum、struct：给数据明确类型",
+      "tier": "主线"
+    },
+    {
+      "id": "sv-package",
+      "order": 36,
+      "stage": 3,
+      "title": "package、interface 与 modport：组织RTL接口",
+      "tier": "进阶必学"
+    },
+    {
+      "id": "testbench",
+      "order": 37,
+      "stage": 4,
+      "title": "测试台、时间单位与激励",
+      "tier": "主线"
+    },
+    {
+      "id": "scheduling",
+      "order": 38,
+      "stage": 4,
+      "title": "事件调度、delta 与竞争：同一时刻不等于同时更新",
+      "tier": "主线"
+    },
+    {
+      "id": "checking",
+      "order": 39,
+      "stage": 4,
+      "title": "自检、波形与第一次实际运行",
+      "tier": "主线"
+    },
+    {
+      "id": "setup-hold",
+      "order": 40,
+      "stage": 5,
+      "title": "建立/保持时间：边沿附近发生什么",
+      "tier": "主线"
+    },
+    {
+      "id": "timing-path",
+      "order": 41,
+      "stage": 5,
+      "title": "寄存器路径、流水线与延迟",
+      "tier": "主线"
+    },
+    {
+      "id": "clock-skew",
+      "order": 42,
+      "stage": 5,
+      "title": "Clock-to-Q、偏斜与Setup/Hold预算",
+      "tier": "主线"
+    },
+    {
+      "id": "multicycle",
+      "order": 43,
+      "stage": 5,
+      "title": "多周期路径：先证明使能，再写例外",
+      "tier": "进阶专题（可先跳过）"
+    },
+    {
+      "id": "cdc",
+      "order": 44,
+      "stage": 5,
+      "title": "亚稳态与CDC：双触发器能做什么",
+      "tier": "主线"
+    },
+    {
+      "id": "capstone",
+      "order": 45,
+      "stage": 6,
+      "title": "贯穿练习：写、预测、仿真、再迁移",
+      "tier": "主线"
+    },
+    {
+      "id": "synthesis-lab",
+      "order": 46,
+      "stage": 6,
+      "title": "从RTL到门级：Lint、资源与约束闭环",
+      "tier": "主线"
+    },
+    {
+      "id": "memory",
+      "order": 47,
+      "stage": 6,
+      "title": "RAM/ROM：读延迟与读写冲突",
+      "tier": "主线"
+    },
+    {
+      "id": "fifo-project",
+      "order": 48,
+      "stage": 6,
+      "title": "项目一：可回归的同步FIFO",
+      "tier": "主线"
+    },
+    {
+      "id": "async-fifo",
+      "order": 49,
+      "stage": 6,
+      "title": "异步FIFO：数据留在RAM，指针跨域",
+      "tier": "进阶必学"
+    },
+    {
+      "id": "uart-project",
+      "order": 50,
+      "stage": 6,
+      "title": "项目二：UART 8N1发送与自检",
+      "tier": "主线"
+    },
+    {
+      "id": "sv-handshake",
+      "order": 51,
+      "stage": 6,
+      "title": "Ready / Valid：传输、背压与保持",
+      "tier": "主线"
+    },
+    {
+      "id": "integration",
+      "order": 52,
+      "stage": 6,
+      "title": "Ready/Valid集成：背压、交付与工程验收",
+      "tier": "主线"
+    },
+    {
+      "id": "sv-tasks",
+      "order": 53,
+      "stage": 7,
+      "title": "选修：用 task 和队列组织测试",
+      "tier": "选修"
+    },
+    {
+      "id": "sv-verification",
+      "order": 54,
+      "stage": 7,
+      "title": "选修：class、约束与随机输入",
+      "tier": "选修"
+    },
+    {
+      "id": "sv-assert",
+      "order": 55,
+      "stage": 7,
+      "title": "选修：断言与覆盖的采样语义",
+      "tier": "选修"
+    },
+    {
+      "id": "advanced-map",
+      "order": 56,
+      "stage": 7,
+      "title": "进阶地图：SVA、覆盖率、总线、ASIC与PPA",
+      "tier": "选修"
+    }
+  ],
+  "edges": [
+    {
+      "from": "orientation",
+      "to": "numbers",
+      "concept": "位与输入输出"
+    },
+    {
+      "from": "numbers",
+      "to": "logic-gates",
+      "concept": "二进制0/1"
+    },
+    {
+      "from": "logic-gates",
+      "to": "boolean-decoder",
+      "concept": "与、非与真值表"
+    },
+    {
+      "from": "numbers",
+      "to": "boolean-decoder",
+      "concept": "二位地址与位权"
+    },
+    {
+      "from": "logic-gates",
+      "to": "mindset",
+      "concept": "门的输入输出关系"
+    },
+    {
+      "from": "mindset",
+      "to": "storage",
+      "concept": "当前输入决定组合输出"
+    },
+    {
+      "from": "mindset",
+      "to": "module",
+      "concept": "并行电路"
+    },
+    {
+      "from": "numbers",
+      "to": "module",
+      "concept": "位与位宽"
+    },
+    {
+      "from": "module",
+      "to": "tool-start",
+      "concept": "模块名与顶层"
+    },
+    {
+      "from": "module",
+      "to": "net-var",
+      "concept": "端口与模块"
+    },
+    {
+      "from": "mindset",
+      "to": "net-var",
+      "concept": "组合关系"
+    },
+    {
+      "from": "net-var",
+      "to": "vectors",
+      "concept": "声明位宽"
+    },
+    {
+      "from": "numbers",
+      "to": "vectors",
+      "concept": "二进制位权"
+    },
+    {
+      "from": "net-var",
+      "to": "four-state",
+      "concept": "网络驱动与过程变量"
+    },
+    {
+      "from": "vectors",
+      "to": "operators",
+      "concept": "向量与单比特"
+    },
+    {
+      "from": "logic-gates",
+      "to": "operators",
+      "concept": "门逻辑"
+    },
+    {
+      "from": "operators",
+      "to": "width-sign",
+      "concept": "运算符结果"
+    },
+    {
+      "from": "vectors",
+      "to": "width-sign",
+      "concept": "位选与拼接"
+    },
+    {
+      "from": "width-sign",
+      "to": "casts",
+      "concept": "补码、符号扩展与位宽"
+    },
+    {
+      "from": "net-var",
+      "to": "branches",
+      "concept": "过程变量"
+    },
+    {
+      "from": "operators",
+      "to": "branches",
+      "concept": "条件表达式"
+    },
+    {
+      "from": "storage",
+      "to": "branches",
+      "concept": "组合与保持"
+    },
+    {
+      "from": "branches",
+      "to": "case-latch",
+      "concept": "默认赋值与漏分支"
+    },
+    {
+      "from": "case-latch",
+      "to": "casez",
+      "concept": "case匹配"
+    },
+    {
+      "from": "four-state",
+      "to": "casez",
+      "concept": "X/Z的含义"
+    },
+    {
+      "from": "branches",
+      "to": "loops",
+      "concept": "过程内语句顺序"
+    },
+    {
+      "from": "operators",
+      "to": "loops",
+      "concept": "异或与归约"
+    },
+    {
+      "from": "width-sign",
+      "to": "parameters",
+      "concept": "常量与位宽"
+    },
+    {
+      "from": "loops",
+      "to": "parameters",
+      "concept": "循环展开"
+    },
+    {
+      "from": "branches",
+      "to": "functions",
+      "concept": "组合过程与分支"
+    },
+    {
+      "from": "width-sign",
+      "to": "functions",
+      "concept": "运算位宽"
+    },
+    {
+      "from": "tool-start",
+      "to": "directives",
+      "concept": "模块编译"
+    },
+    {
+      "from": "parameters",
+      "to": "directives",
+      "concept": "构建常量与运行信号"
+    },
+    {
+      "from": "module",
+      "to": "hierarchy",
+      "concept": "实例端口"
+    },
+    {
+      "from": "functions",
+      "to": "hierarchy",
+      "concept": "函数与无时间计算"
+    },
+    {
+      "from": "width-sign",
+      "to": "hierarchy",
+      "concept": "跨位进位"
+    },
+    {
+      "from": "storage",
+      "to": "edges",
+      "concept": "DFF与有效边沿"
+    },
+    {
+      "from": "branches",
+      "to": "edges",
+      "concept": "过程语法"
+    },
+    {
+      "from": "edges",
+      "to": "nba",
+      "concept": "边沿采样与保持"
+    },
+    {
+      "from": "nba",
+      "to": "reset",
+      "concept": "非阻塞旧值采样"
+    },
+    {
+      "from": "branches",
+      "to": "reset",
+      "concept": "分支优先级"
+    },
+    {
+      "from": "reset",
+      "to": "counter",
+      "concept": "复位与使能"
+    },
+    {
+      "from": "width-sign",
+      "to": "counter",
+      "concept": "有限位宽回绕"
+    },
+    {
+      "from": "nba",
+      "to": "shift-pulse",
+      "concept": "旧状态与新输入"
+    },
+    {
+      "from": "vectors",
+      "to": "shift-pulse",
+      "concept": "移位和拼接"
+    },
+    {
+      "from": "case-latch",
+      "to": "alu",
+      "concept": "case默认分支"
+    },
+    {
+      "from": "width-sign",
+      "to": "alu",
+      "concept": "扩位与进位"
+    },
+    {
+      "from": "reset",
+      "to": "fsm",
+      "concept": "状态寄存器与复位"
+    },
+    {
+      "from": "case-latch",
+      "to": "fsm",
+      "concept": "组合默认值"
+    },
+    {
+      "from": "fsm",
+      "to": "moore-mealy",
+      "concept": "当前状态与下一状态"
+    },
+    {
+      "from": "net-var",
+      "to": "sv-logic",
+      "concept": "wire/reg驱动规则"
+    },
+    {
+      "from": "four-state",
+      "to": "sv-logic",
+      "concept": "四态未知"
+    },
+    {
+      "from": "branches",
+      "to": "sv-always",
+      "concept": "组合默认与时序采样"
+    },
+    {
+      "from": "nba",
+      "to": "sv-always",
+      "concept": "非阻塞更新"
+    },
+    {
+      "from": "sv-logic",
+      "to": "sv-always",
+      "concept": "logic类型"
+    },
+    {
+      "from": "storage",
+      "to": "sv-latch",
+      "concept": "透明窗口与保持"
+    },
+    {
+      "from": "sv-always",
+      "to": "sv-latch",
+      "concept": "组合/时序过程意图"
+    },
+    {
+      "from": "vectors",
+      "to": "sv-arrays",
+      "concept": "位选择与切片"
+    },
+    {
+      "from": "sv-logic",
+      "to": "sv-arrays",
+      "concept": "logic声明"
+    },
+    {
+      "from": "sv-arrays",
+      "to": "sv-types",
+      "concept": "packed/unpacked"
+    },
+    {
+      "from": "fsm",
+      "to": "sv-types",
+      "concept": "状态编码"
+    },
+    {
+      "from": "sv-types",
+      "to": "sv-package",
+      "concept": "共享类型声明"
+    },
+    {
+      "from": "module",
+      "to": "sv-package",
+      "concept": "实例与端口方向"
+    },
+    {
+      "from": "reset",
+      "to": "testbench",
+      "concept": "时钟边沿与复位"
+    },
+    {
+      "from": "module",
+      "to": "testbench",
+      "concept": "可综合设计模块"
+    },
+    {
+      "from": "nba",
+      "to": "scheduling",
+      "concept": "非阻塞赋值"
+    },
+    {
+      "from": "testbench",
+      "to": "scheduling",
+      "concept": "测试台激励与观察相位"
+    },
+    {
+      "from": "scheduling",
+      "to": "checking",
+      "concept": "仿真调度与竞争"
+    },
+    {
+      "from": "four-state",
+      "to": "checking",
+      "concept": "X/Z比较"
+    },
+    {
+      "from": "edges",
+      "to": "setup-hold",
+      "concept": "DFF采样沿"
+    },
+    {
+      "from": "setup-hold",
+      "to": "timing-path",
+      "concept": "建立/保持窗口"
+    },
+    {
+      "from": "nba",
+      "to": "timing-path",
+      "concept": "跨周期样本"
+    },
+    {
+      "from": "timing-path",
+      "to": "clock-skew",
+      "concept": "最大/最小数据路径"
+    },
+    {
+      "from": "setup-hold",
+      "to": "clock-skew",
+      "concept": "建立/保持检查"
+    },
+    {
+      "from": "reset",
+      "to": "multicycle",
+      "concept": "使能寄存器"
+    },
+    {
+      "from": "clock-skew",
+      "to": "multicycle",
+      "concept": "同沿hold与跨沿setup"
+    },
+    {
+      "from": "setup-hold",
+      "to": "cdc",
+      "concept": "建立/保持窗口"
+    },
+    {
+      "from": "nba",
+      "to": "cdc",
+      "concept": "两级寄存器"
+    },
+    {
+      "from": "parameters",
+      "to": "capstone",
+      "concept": "参数展开"
+    },
+    {
+      "from": "counter",
+      "to": "capstone",
+      "concept": "计数器边界"
+    },
+    {
+      "from": "checking",
+      "to": "capstone",
+      "concept": "自检失败判据"
+    },
+    {
+      "from": "alu",
+      "to": "synthesis-lab",
+      "concept": "RTL结构与共享运算"
+    },
+    {
+      "from": "parameters",
+      "to": "synthesis-lab",
+      "concept": "参数和generate"
+    },
+    {
+      "from": "clock-skew",
+      "to": "synthesis-lab",
+      "concept": "物理路径预算"
+    },
+    {
+      "from": "nba",
+      "to": "memory",
+      "concept": "非阻塞读旧值"
+    },
+    {
+      "from": "sv-arrays",
+      "to": "memory",
+      "concept": "数组索引"
+    },
+    {
+      "from": "memory",
+      "to": "fifo-project",
+      "concept": "RAM读写"
+    },
+    {
+      "from": "counter",
+      "to": "fifo-project",
+      "concept": "回绕计数与使能"
+    },
+    {
+      "from": "checking",
+      "to": "fifo-project",
+      "concept": "独立参考检查"
+    },
+    {
+      "from": "fifo-project",
+      "to": "async-fifo",
+      "concept": "本域指针、满空与先进先出顺序"
+    },
+    {
+      "from": "cdc",
+      "to": "async-fifo",
+      "concept": "跨域电平同步及多位总线限制"
+    },
+    {
+      "from": "shift-pulse",
+      "to": "uart-project",
+      "concept": "移位与逐拍状态"
+    },
+    {
+      "from": "fsm",
+      "to": "uart-project",
+      "concept": "状态机"
+    },
+    {
+      "from": "checking",
+      "to": "uart-project",
+      "concept": "自检与超时"
+    },
+    {
+      "from": "nba",
+      "to": "sv-handshake",
+      "concept": "同沿采样"
+    },
+    {
+      "from": "reset",
+      "to": "sv-handshake",
+      "concept": "使能与保持"
+    },
+    {
+      "from": "fifo-project",
+      "to": "integration",
+      "concept": "首字直通FIFO接口"
+    },
+    {
+      "from": "sv-handshake",
+      "to": "integration",
+      "concept": "有效/就绪传输条件"
+    },
+    {
+      "from": "uart-project",
+      "to": "integration",
+      "concept": "串口忙闲接口"
+    },
+    {
+      "from": "scheduling",
+      "to": "sv-tasks",
+      "concept": "安全驱动与采样相位"
+    },
+    {
+      "from": "hierarchy",
+      "to": "sv-tasks",
+      "concept": "函数与task边界"
+    },
+    {
+      "from": "checking",
+      "to": "sv-tasks",
+      "concept": "自检比较"
+    },
+    {
+      "from": "checking",
+      "to": "sv-verification",
+      "concept": "定向边界检查"
+    },
+    {
+      "from": "sv-types",
+      "to": "sv-verification",
+      "concept": "类型与字段"
+    },
+    {
+      "from": "scheduling",
+      "to": "sv-assert",
+      "concept": "采样调度"
+    },
+    {
+      "from": "sv-handshake",
+      "to": "sv-assert",
+      "concept": "背压保持条件"
+    },
+    {
+      "from": "checking",
+      "to": "advanced-map",
+      "concept": "检查器与通过标准"
+    },
+    {
+      "from": "sv-assert",
+      "to": "advanced-map",
+      "concept": "断言/覆盖用途"
+    }
+  ]
+}
