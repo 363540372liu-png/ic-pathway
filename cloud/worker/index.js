@@ -40,6 +40,6 @@ export default {async fetch(request,env){
  if(request.method!=='GET'&&request.method!=='HEAD')return new Response('Method not allowed',{status:405});
  const key=url.pathname==='/'?'/index.html':url.pathname,asset=ASSETS[key];
  if(!asset)return new Response('Not found',{status:404});
- const ext=key.split('.').pop(),type={html:'text/html;charset=utf-8',js:'text/javascript;charset=utf-8',css:'text/css;charset=utf-8',txt:'text/plain;charset=utf-8',zip:'application/zip'}[ext]||'application/octet-stream';
- return new Response(request.method==='HEAD'?null:Uint8Array.from(atob(asset),c=>c.charCodeAt(0)),{headers:{'Content-Type':type,'Cache-Control':'no-cache','X-Content-Type-Options':'nosniff'}});
+ const ext=key.split('.').pop(),type={html:'text/html;charset=utf-8',js:'text/javascript;charset=utf-8',css:'text/css;charset=utf-8',json:'application/json;charset=utf-8',txt:'text/plain;charset=utf-8',zip:'application/zip'}[ext]||'application/octet-stream';
+ return new Response(request.method==='HEAD'?null:Uint8Array.from(atob(asset),c=>c.charCodeAt(0)),{headers:{'Content-Type':type,'Cache-Control':'no-store','X-Content-Type-Options':'nosniff'}});
 }};

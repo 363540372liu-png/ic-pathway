@@ -21,9 +21,10 @@ function enhance(api,l){
  cleanup();cleanup=()=>{};
  const lab=l.lab,host=document.querySelector('#lesson'),st=api.progress.hdl[l.id];
  if(!lab)return;
- const principle=document.createElement('div');principle.className='textbook-principle';principle.innerHTML='<p class="teaching-hook">'+e(lab.hook)+'</p>'+lab.principle.map(p=>'<p>'+e(p)+'</p>').join('')+(lab.hardware?hardware(lab.hardware):'');
+ const principle=document.createElement('div');principle.className='textbook-principle';principle.innerHTML=(lab.hook?'<p class="teaching-hook">'+e(lab.hook)+'</p>':'')+lab.principle.map(p=>'<p>'+e(p)+'</p>').join('')+(lab.hardware?hardware(lab.hardware):'');
  document.querySelector('#study-concept').append(principle);
- if(lab.syntax){const syntax=document.createElement('div');syntax.className='teaching-table syntax-breakdown';syntax.innerHTML='<table><caption>语法与电路含义对照</caption><thead><tr><th>语法/概念</th><th>含义</th><th>使用边界</th></tr></thead><tbody>'+lab.syntax.map(row=>'<tr>'+row.map(v=>'<td>'+e(v)+'</td>').join('')+'</tr>').join('')+'</tbody></table>';document.querySelector('#study-code .code-explanations').before(syntax);}
+ if(l.furtherReading?.length){const more=document.createElement('details');more.className='further-reading';more.innerHTML='<summary>继续读：原理与边界</summary>'+l.furtherReading.map(p=>'<p>'+e(p)+'</p>').join('');document.querySelector('#study-concept').append(more);}
+ if(lab.syntax?.length){const syntax=document.createElement('div');syntax.className='teaching-table syntax-breakdown';syntax.innerHTML='<table><caption>语法与电路含义对照</caption><thead><tr><th>语法/概念</th><th>含义</th><th>使用边界</th></tr></thead><tbody>'+lab.syntax.map(row=>'<tr>'+row.map(v=>'<td>'+e(v)+'</td>').join('')+'</tr>').join('')+'</tbody></table>';document.querySelector('#study-code .code-explanations').before(syntax);}
  const code=host.querySelector('.code-workbench'),rows=[...code.querySelectorAll('.code-line')];
  code.classList.add('explainable-code');
  const rowpanel=document.createElement('div');rowpanel.className='code-explanation';rowpanel.setAttribute('role','status');rowpanel.setAttribute('aria-live','polite');
@@ -58,29 +59,32 @@ function enhance(api,l){
  (host.querySelector('#study-example')||host.querySelector('#study-concept')).append(waveHost);
  if(lab.kind)cleanup=mountTimeline(waveHost,lab,selectLine);else if(lab.timing)cleanup=window.IC_TIMING.mount(waveHost,lab.timing);else waveHost.remove();
 }
+function exerciseWave(w){
+ const count=w.signals[0][1].length,width=110+count*85,height=45+w.signals.length*55;
+ let body='';w.signals.forEach(([name,values],j)=>{const y=45+j*55;body+='<text x="5" y="'+y+'">'+e(name)+'</text>';values.forEach((v,i)=>{const x=100+i*85,bit=v===0||v===1;if(bit){const old=i?values[i-1]:v;body+='<path d="M'+x+' '+(y-(old===1?24:0))+'V'+(y-(v===1?24:0))+'h85"/>';}else body+='<rect x="'+x+'" y="'+(y-27)+'" width="85" height="32"/>';body+='<text x="'+(x+34)+'" y="'+(y+20)+'">'+e(v)+'</text>';});});
+ return '<figure class="exercise-wave"><div class="timeline-scroll"><svg width="'+width+'" height="'+height+'" role="img" aria-label="'+e(w.caption)+'">'+body+'</svg></div><figcaption>'+e(w.caption)+'</figcaption><details><summary>波形的文本记录</summary><table><tbody>'+w.signals.map(([n,v])=>'<tr><th>'+e(n)+'</th>'+v.map(x=>'<td>'+e(x)+'</td>').join('')+'</tr>').join('')+'</tbody></table></details></figure>';
+}
 function mountExercises(api,l,st){
- st.activities||={};
- const section=document.createElement('section');section.className='practice-ladder';
- section.innerHTML='<h3>练习阶梯 · 从预测到独立设计</h3><p>自动反馈只检查下面的封闭题。开放RTL解答保存后由你对照规格自查；网页不会编译任意代码。</p>'+l.lab.exercises.map((ex,i)=>{
-  const a=st.activities[i]||{},name='activity-'+i;
-  return '<details class="practice-step" '+(i===0?'open':'')+'><summary><span>'+String(i+1).padStart(2,'0')+' · '+e(ex.type)+'</span><span id="'+name+'-badge">'+(a.passed||a.reviewed?'✓ 已核对':'待练习')+'</span></summary><p>'+e(ex.prompt)+'</p>'+(ex.options?'<form data-activity="'+i+'"><fieldset><legend class="sr-only">'+e(ex.type)+'</legend>'+ex.options.map((o,j)=>'<label><input type="radio" name="'+name+'" value="'+j+'" '+(a.choice===j?'checked':'')+'>'+e(o)+'</label>').join('')+'</fieldset><button type="submit" class="secondary-button">核对这一步</button><p class="activity-feedback" role="status">'+(a.passed?'✓ 正确。'+e(ex.explain):'')+'</p><button type="button" class="review-explanation">回看对应解释 ↑</button></form>':'<label for="'+name+'-draft">独立实现与测试记录</label><textarea id="'+name+'-draft" maxlength="15000" spellcheck="false">'+e(a.draft||ex.starter||'')+'</textarea><details><summary>参考实现与自查要点</summary><pre>'+e(ex.solution)+'</pre></details><label class="review-check"><input data-review="'+i+'" type="checkbox" '+(a.reviewed?'checked':'')+'>我已按输入、输出、边界和预期表自查；实际仿真情况已注明</label>')+'</details>';
+ st.activities||={};const section=document.createElement('section');section.className='practice-ladder';
+ section.innerHTML='<h3>动手推导与调试</h3><p>填空、短答与固定错误片段按本题给定答案核对，不是任意RTL编译或功能验证。独立实现请按测试条件自查。</p>'+l.lab.exercises.map((ex,i)=>{
+  const a=st.activities[i]||{},name='activity-'+i,manual=['implementation','analysis'].includes(ex.kind);
+  let control='';
+  if(ex.options)control='<fieldset><legend class="sr-only">'+e(ex.type)+'</legend>'+ex.options.map((o,j)=>'<label><input type="radio" name="'+name+'" value="'+j+'" '+(a.choice===j?'checked':'')+'>'+e(o)+'</label>').join('')+'</fieldset>';
+  else if(ex.kind==='fill')control='<pre>'+e(ex.template)+'</pre>'+ex.blanks.map((b,j)=>'<label>'+e(b.label)+'<input data-blank="'+j+'" aria-label="'+e(b.label)+'" value="'+e(a.answers?.[j]||'')+'" spellcheck="false" autocomplete="off"></label>').join('');
+  else if(ex.kind==='repair')control='<label for="'+name+'-response">修改错误代码</label><textarea id="'+name+'-response" data-response spellcheck="false">'+e(a.response||ex.starter)+'</textarea>';
+  else if(!manual)control='<label>你的推导结果<input data-response value="'+e(a.response||'')+'" spellcheck="false" autocomplete="off"></label>';
+  else control=(ex.interface?'<pre>'+e(ex.interface)+'</pre>':'')+(ex.tests?'<p><strong>测试条件：</strong>'+e(ex.tests.join('；'))+'</p>':'')+'<label for="'+name+'-draft">写下实现、推导与测试记录</label><textarea id="'+name+'-draft" data-draft spellcheck="false">'+e(a.draft||ex.starter||'')+'</textarea><details><summary>参考解答与自查要点</summary><pre>'+e(ex.solution)+'</pre></details><label class="review-check"><input type="checkbox" data-review '+(a.reviewed?'checked':'')+'>我已对照规格和测试条件核对自己的解答</label>';
+  return '<details class="practice-step" '+(i===0?'open':'')+'><summary><span>'+String(i+1).padStart(2,'0')+' · '+e(ex.type)+'</span><span id="'+name+'-badge">'+(a.passed||a.reviewed?'✓ 已核对':'待练习')+'</span></summary><p>'+e(ex.prompt)+'</p>'+(ex.wave?exerciseWave(ex.wave):'')+(a.history?'<details><summary>保留的旧版作答记录</summary><pre>'+e(JSON.stringify(a.history,null,2))+'</pre></details>':'')+'<form data-activity="'+i+'">'+control+(manual?'':'<button type="submit" class="secondary-button">核对答案</button>')+'<p class="activity-feedback" role="status">'+(a.passed?'✓ 正确。'+e(ex.explain):'')+'</p><button type="button" class="review-explanation">回看本课解释 ↑</button></form></details>';
  }).join('');
  document.querySelector('#study-practice .complete-row').before(section);
- function save(i,a){st.activities[i]=a;api.persist();api.refreshStatus();const badge=section.querySelector('#activity-'+i+'-badge');badge.textContent=a.passed||a.reviewed?'✓ 已核对':'待练习';}
  section.querySelectorAll('[data-activity]').forEach(form=>{
-  const i=+form.dataset.activity,ex=l.lab.exercises[i],feedback=form.querySelector('.activity-feedback');
-  form.onchange=()=>{const a={...(st.activities[i]||{}),choice:+form.querySelector('input:checked').value,passed:false};save(i,a);feedback.textContent='选择已改变，请重新核对。'};
-  form.onsubmit=ev=>{ev.preventDefault();const input=form.querySelector('input:checked');if(!input){feedback.textContent='先选择一个答案。';return;}const a={...(st.activities[i]||{}),choice:+input.value};a.passed=a.choice===ex.correct;a.attempts=(a.attempts||0)+1;save(i,a);feedback.textContent=(a.passed?'✓ 正确。':'需要复习。')+ex.explain;feedback.dataset.passed=String(a.passed)};
-  form.querySelector('.review-explanation').onclick=()=>document.querySelector(i===3?'#study-code':'#study-concept').scrollIntoView({block:'start',behavior:'instant'});
- });
- section.querySelectorAll('textarea').forEach(textarea=>{
-  const i=+textarea.id.split('-')[1];
-  textarea.oninput=()=>{const a={...(st.activities[i]||{}),draft:textarea.value,reviewed:false};section.querySelector('[data-review="'+i+'"]').checked=false;save(i,a)};
- });
- section.querySelectorAll('[data-review]').forEach(input=>input.onchange=()=>{
-  const i=+input.dataset.review,textarea=section.querySelector('#activity-'+i+'-draft');
-  const a={...(st.activities[i]||{}),draft:textarea.value,reviewed:input.checked&&textarea.value.trim()!==l.lab.exercises[i].starter?.trim()&&!!textarea.value.trim()};
-  input.checked=a.reviewed;save(i,a);if(!a.reviewed)api.toast('先写下自己的实现或推导，再完成自查。');
+  const i=+form.dataset.activity,ex=l.lab.exercises[i],manual=['implementation','analysis'].includes(ex.kind),feedback=form.querySelector('.activity-feedback');
+  function collect(){return {...(st.activities[i]||{}),revision:ex.revision||1,choice:form.querySelector('input[type=radio]:checked')?+form.querySelector('input[type=radio]:checked').value:null,answers:[...form.querySelectorAll('[data-blank]')].map(el=>el.value),response:form.querySelector('[data-response]')?.value||'',draft:form.querySelector('[data-draft]')?.value||''};}
+  function save(a){st.activities[i]=a;api.persist();api.refreshStatus();section.querySelector('#activity-'+i+'-badge').textContent=a.passed||a.reviewed?'✓ 已核对':'待练习';}
+  form.oninput=ev=>{if(ev.target.type==='checkbox')return;const a=collect();a.passed=false;a.reviewed=false;const check=form.querySelector('[data-review]');if(check)check.checked=false;save(a);feedback.textContent='解答已保存，核对后查看反馈。';};
+  form.onsubmit=ev=>{ev.preventDefault();if(manual)return;const a=collect();a.passed=M.evaluate(ex,a);a.attempts=(a.attempts||0)+1;save(a);feedback.textContent=(a.passed?'✓ 正确。':'尚未符合本题答案。')+ex.explain;feedback.dataset.passed=String(a.passed);if(!a.passed&&ex.kind==='repair')feedback.textContent+=' 本题按给定修正片段核对，其他等价写法请结合参考答案自查。';};
+  const review=form.querySelector('[data-review]');if(review)review.onchange=()=>{const a=collect();a.reviewed=review.checked&&!!a.draft.trim()&&a.draft.trim()!==ex.starter?.trim();review.checked=a.reviewed;save(a);feedback.textContent=a.reviewed?'✓ 自查记录已保存。':'请先写出自己的解答，再完成自查。';};
+  form.querySelector('.review-explanation').onclick=()=>document.querySelector(ex.kind==='repair'?'#study-code':'#study-concept').scrollIntoView({block:'start',behavior:'instant'});
  });
 }
 function mountTimeline(host,lab,selectLine){

@@ -1,41 +1,33 @@
 # 芯路 · 数字 IC 学习室
 
-保留原有 24 课、交互模型与计数器练习包；每课有详细文字、代码推演、两份练习和三道选择题。Ultra 在第 4、8、10、14、17、21、24 课后提供阶段任务，分别记录概念分数与由学习者确认的实操证据。
+56节Verilog/SystemVerilog课程（52主线、4选修），保留24节原版参考课与27个FPGA课程ID。教学正文从具体电路问题展开，配合逐行解释、固定模型波形、真实填空/错误编辑与独立推导。
 
-## 运行与数据
+FPGA路线按九个开发阶段组织，用UART控制LED贯穿需求、RTL、仿真、综合、约束、实现、下载、调试与复现。提供无开发板/真实开发板模式及明确的Vivado、Quartus、Efinity适配。已撤下比赛项目；旧项目链接回到FPGA首页，旧数据作为不显示的备份字段保留。
 
-- `public/` 是课程界面源文件；`worker/index.js` 提供静态资源和按已认证用户隔离的进度 API。
-- `npm run build` 无运行时依赖，打包到 `dist/server/index.js`。下载练习包由 `python3 tools/package_lab.py` 更新。
-- 身份由 Sites 提供的 ChatGPT 登录及可信请求头确定；登录、退出由平台处理，不实现自己的 OAuth。
-- 进度存储在 Sites D1 `DB`，`db/schema.ts` 为模式，`drizzle/` 是已生成迁移。`npx drizzle-kit generate` 生成后续增量迁移；不要重写已应用迁移。
-- `/api/progress` 要求身份。PUT 校验同源、输入大小和单调修订号；不接受客户端指定用户。冲突返回 409，客户端按字段合并，冲突解答需用户选择，支持导出两份备份。
-- 旧 localStorage 键 `ic-pathway.progress.v1` 保留用于首个账号的一次迁移。已完成的旧课不因新增练习被清零。每账号缓存仅用于待同步草稿，云端是持久状态来源。首次迁移必须从有旧进度的浏览器进入。
-- 未登录可以阅读和暂存；登录后才保证跨设备同步。网络错误保留待同步草稿，用户可以重试或导出。
-- `node --test tests/progress.test.mjs` 检查课程覆盖、进度迁移、身份隔离、并发覆盖保护、合并及离线缓存。
+## 开发与验证
 
-## 教学边界
+- `npm ci`，`npm run dev`：开发预览；`/__qa`仅在开发服务器提供合成账号、响应式宽度与课程选择，不进入正式构建。
+- `npm test`：Node回归，包括数据隔离、并发同步、旧记录迁移、题型结构和重复题干检查。
+- `npm run lint`：JavaScript语法检查；`npm run build`：将课程资源和Worker打包到dist。
+- `python -m pip install pyslang yowasp-yosys`，并安装g++，再运行`npm run check:hdl`。
+- `python tools/check-hdl.py`：通用FPGA教学模块语法与周期级检查。
+- `python tools/verify-uart-led.py`：UART LED集成顶层周期级检查。
+- `python tools/package-fpga.py`：重建自包含UART LED下载包。
+- `python tools/package-rtl-lab.py`：重建主线工程包。
 
-网站不执行 Verilog，也不连接学校服务器。开放代码题用参考实现与自查清单核对，Ultra 概念题自动评分；代码和实操不能被这些分数证明正确。VCS、DC 和工艺库需要学校提供的授权环境。具体版本选项以各课官方链接及学校环境为准。
+自动题只核对封闭题的固定答案，不运行任意RTL；代码编辑题按给定修正片段比较，等价但不同的写法需自行对照。独立实现保存代码、测试记录及自查状态，不宣称自动功能验证。固定交互模型不包含门延迟、STA或亚稳态概率。
 
-## v3.0.0 · 双路线
+## 记录与兼容
 
-保留24课数字IC主线，新增27个通用FPGA实践模块，以及21个Efinix图像边缘检测项目模块。比赛进展、基础学习、技能自评分别保存；项目日志、A–K里程碑、团队接口表和Ultra图像检验复用已有账号和云端进度。
+身份由Sites的ChatGPT登录和可信请求头确定。Sites D1的DB绑定、learning_progress表及已有迁移保持不变。Worker按身份隔离记录，PUT使用修订号防止并发覆盖；离线草稿可重试、导出和冲突合并。
 
-完整文件清单、迁移逻辑、实测范围和限制见 [CHANGELOG.md](CHANGELOG.md)。
+旧localStorage键ic-pathway.progress.v1保留。原课程ID、草稿和合法完成记录保留；新版练习不把旧选择题自动算作通过，旧作答存入历史。被撤下的competition字段只作为兼容备份往返，不再加载项目逻辑。未登录可暂存本机，登录后才保证跨设备同步。
 
-- `npm install` 后 `npm run dev -- --host 0.0.0.0 --port 4173` 启动本地预览。
-- `/__qa` 仅在开发服务器提供合成账号与响应式测试入口，不进入正式构建。
-- `npm test` 运行33项Node回归；`python -m unittest discover -s tests -p test_golden.py` 运行4项算法测试。
-- `python tools/check-hdl.py` 需要 pyslang、yowasp-yosys 和 C++ 编译器，检查教学RTL。
-- `public/project/kit/README.md` 说明如何运行Golden模型与逐像素比较。
+## 审查资料
 
-## v4.0 · 连续RTL交互教材
+- [逐课程问题矩阵](docs/LESSON_QUALITY_MATRIX.md)
+- [本次交付、测量与边界](docs/QUALITY_REPAIR_REPORT.md)
+- [完整课程依赖路线](docs/COURSE_ROUTE.md)
+- [UART LED工程说明](public/fpga/workflow/README.md)
 
-八阶段56课（52主线+4选修），每课原理、语法/代码解释、错误诊断与5级练习。新增时序预算/窗口、CDC/Gray教学、RAM/FIFO/UART/握手工程与自检下载包。保留原24课、FPGA/项目路线及旧学习进度；网站不编译任意RTL。
-
-- [完整交付与验证边界](docs/IMPLEMENTATION_REPORT.md)
-- [课程路线与依赖](docs/COURSE_ROUTE.md)
-- [审计矩阵](docs/TEACHING_AUDIT.md)
-- `npm test`：33项Node回归；`npm run lint`：JS语法；`npm run check:hdl`：解析/展开、六基础模块与四工程模块CXXRTL及错误注入。
-- HDL依赖：`python -m pip install pyslang yowasp-yosys`，另需g++；这不是事件模拟器或STA。
-- `python tools/package-rtl-lab.py`刷新[学习者工程包](public/rtl-lab/README.md)。
+商业FPGA工具与开发板流程未在本次环境实际运行。VCS/DC需学校授权环境；实际器件、引脚、I/O电压、工具版本和约束必须按板卡与厂商资料核对。

@@ -18,17 +18,26 @@ function level(l,s={}){
  if(s.viewedAt||s.draft||Object.keys(s.activities||{}).length)return 'learning';
  return 'not-started';
 }
+const canonical=v=>String(v??'').replace(/\s+/g,'').replace(/[，、]/g,',').replace(/；/g,';');
+function evaluate(ex,a={}){
+ if(ex.kind==='choice'||ex.options)return a.choice===ex.correct;
+ if(ex.kind==='fill')return ex.blanks.every((b,i)=>b.accepted.some(x=>canonical(x)===canonical(a.answers?.[i])));
+ if(['answer','repair'].includes(ex.kind))return ex.accepted.some(x=>canonical(x)===canonical(a.response));
+ return false;
+}
 function canComplete(l,s={}){
  if(!l.lab)return true;
- return l.lab.exercises.every((ex,i)=>ex.options?s.activities?.[i]?.passed===true:s.activities?.[i]?.reviewed===true&&!!s.activities?.[i]?.draft?.trim());
+ return l.lab.exercises.every((ex,i)=>{const a=s.activities?.[i]||{};return ['implementation','analysis'].includes(ex.kind)?a.reviewed===true&&!!a.draft?.trim()&&a.draft.trim()!==ex.starter?.trim():a.revision===(ex.revision||1)&&a.passed===true&&evaluate(ex,a)});
 }
 function normalizeActivities(l,raw){
- const out={};for(const [i,ex]of (l.lab?.exercises||[]).entries()){
+ const out={};for(const [i,ex] of (l.lab?.exercises||[]).entries()){
   const a=raw?.[i];if(!a||typeof a!=='object')continue;
-  const choice=ex.options&&Number.isInteger(a.choice)&&a.choice>=0&&a.choice<ex.options.length?a.choice:null;
-  const draft=typeof a.draft==='string'?a.draft.slice(0,15000):'';
-  out[i]={choice,passed:!!ex.options&&a.passed===true&&choice===ex.correct,draft,reviewed:a.reviewed===true&&!!draft.trim(),attempts:Number.isInteger(a.attempts)?Math.max(0,Math.min(a.attempts,10000)):0};
+  // Older multiple-choice activities remain inspectable history; they cannot pass a new editor task.
+  const history=a.history||((a.revision||1)!==(ex.revision||1)?{...a}:null);
+  const current=(a.revision||1)===(ex.revision||1),draft=typeof a.draft==='string'?a.draft.slice(0,15000):'';
+  const v={revision:ex.revision||1,choice:ex.options&&Number.isInteger(a.choice)?a.choice:null,answers:Array.isArray(a.answers)?a.answers.map(x=>String(x).slice(0,1000)):[],response:typeof a.response==='string'?a.response.slice(0,15000):'',draft,attempts:Number.isInteger(a.attempts)?Math.max(0,Math.min(a.attempts,10000)):0,history};
+  v.passed=current&&a.passed===true&&evaluate(ex,v);v.reviewed=current&&a.reviewed===true&&!!draft.trim()&&draft.trim()!==ex.starter?.trim();out[i]=v;
  }return out;
 }
-root.IC_TEXTBOOK_MODEL={initial,step,level,canComplete,normalizeActivities};
+root.IC_TEXTBOOK_MODEL={initial,step,level,canComplete,normalizeActivities,evaluate};
 })(typeof window==='undefined'?globalThis:window);

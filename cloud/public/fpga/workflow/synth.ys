@@ -1,0 +1,6 @@
+read_verilog rtl/uart_rx.v rtl/command_led.v rtl/uart_led_top.v
+hierarchy -check -top uart_led_top
+synth -top uart_led_top
+check -assert
+stat
+write_json work/uart-led-generic.json
