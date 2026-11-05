@@ -87,7 +87,6 @@ window.IC_SYNC={
       // Merge anonymous extension records once; retain explicit conflict resolution.
       for(const key of ['ultra','fpga','ultraFPGA','competition','hdl']){
        let incoming=local[key];
-       if(key==='competition'&&incoming){incoming=clone(incoming);incoming.integration=Object.fromEntries(Object.entries(incoming.integration||{}).filter(([,v])=>v));if(!incoming.reflection)delete incoming.reflection;if(!Object.values(incoming.journalDraft||{}).some(v=>Array.isArray(v)?v.length:!!v))delete incoming.journalDraft;}
        if(key==='fpga'&&incoming){incoming=clone(incoming);incoming.board=Object.fromEntries(Object.entries(incoming.board||{}).filter(([,v])=>v));incoming.lessons=Object.fromEntries(Object.entries(incoming.lessons||{}).filter(([,v])=>v.guided||v.independent||v.evidence||v.completed||v.choices?.some(x=>x!==null)));}
        if(!incoming||!Object.keys(incoming).length)continue;
        const conflicts=[];next[key]=merge({},incoming,next[key]||{},'.'+key,conflicts);

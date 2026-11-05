@@ -1,6 +1,6 @@
 'use strict';
 (() => {
-if(window.IC_BOOT_FAILED||!window.IC_COURSE||!window.IC_HDL||!window.IC_TEXTBOOK_DEPTH||!window.IC_TIMING||!window.IC_TEXTBOOK_MODEL||!window.IC_TEXTBOOK||!window.IC_SYNC||!window.IC_PROJECT_MODEL||!window.IC_FPGA_PROGRESS||!window.IC_ULTRA){
+if(window.IC_BOOT_FAILED||!window.IC_COURSE||!window.IC_HDL||!window.IC_TEXTBOOK_DEPTH||!window.IC_TIMING||!window.IC_TEXTBOOK_MODEL||!window.IC_TEXTBOOK||!window.IC_SYNC||!window.IC_PROGRESS_COMPAT||!window.IC_FPGA_PROGRESS||!window.IC_ULTRA){
  window.IC_BOOT?.fail('必要课程文件尚未载入，未读取或覆盖本机进度。请检查网络后重新载入。');
  return;
 }
@@ -9,7 +9,7 @@ const MODEL=window.IC_MODELS;
 const KEY='ic-pathway.progress.v1';
 const $=(s,root=document)=>root.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const blank=()=>({schema:1,course:'ic-pathway',last:'hdl',lessons:{},acceptance:{},ultra:{},fpga:{schema:1,lessons:{},readiness:{},board:{}},ultraFPGA:{},competition:window.IC_PROJECT_MODEL.blank()});
+const blank=()=>({schema:1,course:'ic-pathway',last:'hdl',lessons:{},acceptance:{},ultra:{},...window.IC_FPGA_PROGRESS.normalize({})});
 const CHECKS=['我能脱离参考解释组合逻辑、触发器和非阻塞赋值。','我独立写过计数器 RTL，并解释了复位、使能和回绕。','我实际运行过自检，覆盖六类关键行为，并确认故意引入的错误会失败。','我在学校 VCS 环境重新编译并运行了同一设计，保存了实际日志和波形。','我用实际标准单元库与确认过的约束运行了 DC，并检查未约束路径及重要警告。','我保存了网表、面积/建立/保持报告，能解释结果的单位、条件与剩余限制。'];
 let progress=blank(),canStore=true,current,toastTimer,suppressSync=false;
 function normalize(raw){
@@ -27,8 +27,8 @@ function normalize(raw){
   out.ultra[u.id]={...clean(v),reference:v.reference===true,attempts:(Array.isArray(v.attempts)?v.attempts:[]).filter(a=>a&&typeof a==='object'&&Number.isFinite(Date.parse(a.at))).slice(-10).map(a=>({...clean(a),at:a.at,assisted:!!a.assisted,score:LESSONS.slice(...u.range).filter((l,i)=>a.choices?.[i]===l.extraQuizzes[i%2].correct).length}))};
  }
  Object.assign(out,window.IC_FPGA_PROGRESS.normalize(raw));
- out.competition=window.IC_PROJECT_MODEL.normalize(raw);
- if(window.IC_PROJECT.isRoute(raw.last))out.last=raw.last;
+ window.IC_PROGRESS_COMPAT.preserve(raw,out);
+ if(window.IC_PROGRESS_COMPAT.isRetiredRoute(raw.last))out.last='fpga';
  if(window.IC_FPGA.isRoute(raw.last))out.last=raw.last;
  return out;
 }
@@ -40,21 +40,20 @@ function persist(){try{localStorage.setItem(KEY,JSON.stringify(progress));canSto
 function download(name,text,type='application/json'){const a=document.createElement('a'),url=URL.createObjectURL(new Blob([text],{type}));a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);}
 function codePanel(code){return code?`<div class="code-panel"><div class="code-header"><span>${esc(code.name)}</span><button class="copy-button" data-copy>复制代码</button></div><pre><code>${esc(code.text)}</code></pre></div>`:'';}
 function renderNav(){
- const hdlView=window.IC_HDL.isRoute(progress.last);const total=hdlView?window.HDL_LESSONS.filter(l=>!l.optional).length:LESSONS.length;
- const done=hdlView?window.HDL_LESSONS.filter(l=>!l.optional&&progress.hdl?.[l.id]?.done).length:LESSONS.filter(l=>state(l.id).completed).length;
+ const fpgaView=window.IC_FPGA.isRoute(progress.last),hdlView=window.IC_HDL.isRoute(progress.last);const total=fpgaView?window.IC_FPGA_CATALOG.modules.length:hdlView?window.HDL_LESSONS.filter(l=>!l.optional).length:LESSONS.length;
+ const done=fpgaView?window.IC_FPGA_CATALOG.modules.filter(m=>progress.fpga?.lessons?.[m.id]?.completed).length:hdlView?window.HDL_LESSONS.filter(l=>!l.optional&&progress.hdl?.[l.id]?.done).length:LESSONS.filter(l=>state(l.id).completed).length;
  const countLabel=String(done)+' / '+String(total);
  $('#overall-count').dataset.loadedCount=countLabel;
  $('#overall-count').textContent=['loading','error'].includes(document.body.dataset.syncState)?'待载入':countLabel;
- $('.sidebar-heading span:first-child').textContent=hdlView?'核心主线':'原版课程';
+ $('.sidebar-heading span:first-child').textContent=fpgaView?'FPGA 工程实践':hdlView?'核心主线':'原版课程';
  $('#overall-progress').max=total;$('#overall-progress').value=done;
  $('#course-nav').innerHTML=window.IC_HDL.nav(progress)+'<details class="hdl-legacy"><summary class="hdl-nav-stage">进阶参考 · 原版 IC / 工具课</summary>'+STAGES.map((s,i)=>`<div class="nav-group"><h2 class="nav-group-title"><span>${String(i+1).padStart(2,'0')}</span>${esc(s.title)}</h2>${LESSONS.filter(l=>l.stage===i).map(l=>`<a class="lesson-link ${l.id===current.id?'active':''}" href="#${l.id}" ${l.id===current.id?'aria-current="page"':''}><span class="nav-number">${String(LESSONS.indexOf(l)+1).padStart(2,'0')}</span><span>${esc(l.title)}</span>${state(l.id).completed?'<span class="nav-done" aria-label="本课已完成">✓</span>':''}</a>`).join('')}</div>`).join('')+'</details>';
- if(hdlView)$('#course-nav').insertAdjacentHTML('beforeend','<details class="hdl-engineering"><summary class="hdl-nav-stage">工程与项目实践</summary>');
- $('#course-nav').insertAdjacentHTML('beforeend','<div class="nav-group"><h2 class="nav-group-title">ULTRA RTL · 阶段检验</h2><a class="lesson-link" href="#ultra">独立任务与检验记录</a></div>');
- $('#course-nav').insertAdjacentHTML('beforeend',window.IC_FPGA.nav(progress)+window.IC_PROJECT.nav(progress));
+ if(hdlView)$('#course-nav').insertAdjacentHTML('beforeend','<details class="hdl-engineering"><summary class="hdl-nav-stage">工程实践</summary>');
+ $('#course-nav').insertAdjacentHTML('beforeend','<div class="nav-group"><h2 class="nav-group-title">RTL 阶段实训</h2><a class="lesson-link" href="#ultra">独立任务与检验记录</a></div>');
+ $('#course-nav').insertAdjacentHTML('beforeend',window.IC_FPGA.nav(progress));
  if(hdlView){const holder=$('#course-nav .hdl-engineering');let next=holder.nextElementSibling;while(next){const move=next;next=next.nextElementSibling;holder.append(move);}}
- document.querySelectorAll('.track-nav a').forEach(a=>{const key=progress.last;const target=window.IC_HDL.isRoute(key)?'learning':key==='home'?'home':key==='skills'?'skills':key.startsWith('ultra')?'ultra-hub':window.IC_PROJECT.isRoute(key)&&key!=='learning'?'competition':'learning';a.classList.toggle('active',a.getAttribute('href')==='#'+target);});
- if(window.IC_PROJECT.isRoute(progress.last)){document.querySelectorAll('#course-nav .active').forEach(x=>{x.classList.remove('active');x.removeAttribute('aria-current');});}
- if(window.IC_FPGA.isRoute(progress.last)){document.querySelectorAll('#course-nav .active').forEach(x=>{x.classList.remove('active');x.removeAttribute('aria-current');});const target=progress.last.startsWith('ultra-fpga')?'ultra-fpga':progress.last==='fpga-readiness'?'fpga-readiness':'fpga';const link=document.querySelector('#course-nav a[href="#'+target+'"]');if(link){link.classList.add('active');link.setAttribute('aria-current','page');}}
+ document.querySelectorAll('.track-nav a').forEach(a=>{const key=progress.last,target=key==='fpga-readiness'?'fpga-readiness':key.startsWith('ultra')?'ultra-hub':window.IC_FPGA.isRoute(key)?'fpga':'learning';a.classList.toggle('active',a.getAttribute('href')==='#'+target);});
+ if(window.IC_FPGA.isRoute(progress.last)){document.querySelectorAll('#course-nav .active').forEach(x=>{x.classList.remove('active');x.removeAttribute('aria-current');});const target=progress.last.startsWith('fpga-')&&window.IC_FPGA_CATALOG.modules.some(m=>'fpga-'+m.id===progress.last)?progress.last:progress.last.startsWith('ultra-fpga')?'ultra-fpga':progress.last==='fpga-readiness'?'fpga-readiness':'fpga';const link=document.querySelector('#course-nav a[href="#'+target+'"]');if(link){link.classList.add('active');link.setAttribute('aria-current','page');}}
  if(hdlView){document.querySelectorAll('#course-nav .active').forEach(a=>{a.classList.remove('active');a.removeAttribute('aria-current');});const a=document.querySelector('#course-nav a[href="#'+progress.last+'"]');if(a){a.classList.add('active');a.setAttribute('aria-current','page');const d=a.closest('details');if(d)d.open=true;}}
  if(!hdlView){const active=$('#course-nav a.active');const details=active?.closest('details');if(details)details.open=true;}
  $('#pathbar').innerHTML=STAGES.map((s,i)=>`<button class="stage-button ${i===current.stage?'active':''}" data-stage="${i}" ${i===current.stage?'aria-current="step"':''}><span>${String(i+1).padStart(2,'0')}</span>${esc(s.short)}</button>`).join('');
@@ -75,6 +74,9 @@ function teachingHtml(l){
 }
 function renderLesson(id,focus=false){
  window.IC_TEXTBOOK?.dispose();
+ if(window.IC_PROGRESS_COMPAT.isRetiredRoute(id)){sessionStorage.setItem('ic.retired-route','1');location.hash='fpga';return;}
+ if(id!=='fpga')sessionStorage.removeItem('ic.retired-route');
+ document.body.classList.remove('fpga-mode');
  document.body.classList.toggle('hdl-mode',window.IC_HDL.isRoute(id));
  if(!window.IC_HDL.isRoute(id)){document.body.classList.remove('hdl-lesson-mode','reading-focus');}
 
@@ -84,11 +86,10 @@ function renderLesson(id,focus=false){
  if(focus){window.scrollTo({top:0,behavior:'instant'});$('#lesson').focus({preventScroll:true});}return;
  }
 
- if(window.IC_PROJECT.isRoute(id)){current=current||LESSONS[0];progress.last=id;persist();renderNav();setMenu(false);window.IC_PROJECT.render({progress,persist,esc,toast,codePanel,refreshNav:renderNav},id);if(focus){window.scrollTo({top:0,behavior:'instant'});$('#lesson').focus({preventScroll:true});}return;}
 
  if(window.IC_FPGA.isRoute(id)){
   current=current||LESSONS[0];progress.last=id;persist();renderNav();setMenu(false);
-  window.IC_FPGA.render({progress,persist,esc,toast,codePanel,refreshNav:renderNav},id);
+  $('#pathbar').innerHTML='';window.IC_FPGA.render({progress,persist,esc,toast,codePanel,refreshNav:renderNav},id);
   if(focus){window.scrollTo({top:0,behavior:'instant'});$('#lesson').focus({preventScroll:true});}return;
  }
 
@@ -115,7 +116,7 @@ function renderLesson(id,focus=false){
  document.querySelectorAll('[data-copy]').forEach(button=>button.addEventListener('click',async()=>{const code=button.closest('.code-panel').querySelector('code');try{await navigator.clipboard.writeText(code.textContent);toast('代码已复制');}catch{const range=document.createRange();range.selectNodeContents(code);const sel=window.getSelection();sel.removeAllRanges();sel.addRange(range);toast('已选中代码，请复制');}}));
  document.querySelectorAll('[data-accept]').forEach(input=>input.onchange=()=>{progress.acceptance[input.dataset.accept]=input.checked;persist();updateAcceptance();});
  window.IC_FPGA.bridge(current.id,progress,esc);
- window.IC_PROJECT.bridge(current.id,progress,esc);
+
  updateAcceptance();completionStatus();if(current.lab)renderLab(current.lab);
  if(focus){window.scrollTo({top:0,behavior:'instant'});$('#lesson').focus({preventScroll:true});}
 }
@@ -185,7 +186,7 @@ $('#sidebar-backdrop').onclick=()=>{setMenu(false);$('#menu-button').focus();};
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('#sidebar').classList.contains('open')){setMenu(false);$('#menu-button').focus();}});
 $('#export-progress').onclick=()=>download('芯路-学习进度.json',JSON.stringify({...progress,exportedAt:new Date().toISOString()},null,2));
 $('#import-button').onclick=()=>$('#import-progress').click();
-$('#import-progress').onchange=async e=>{const file=e.target.files?.[0];if(!file)return;try{if(file.size>1024*1024)throw Error('文件过大，请选择本课程导出的进度文件');const imported=normalize(JSON.parse(await file.text()));for(const [id,v]of Object.entries(imported.lessons)){const old=progress.lessons[id];if(!old||v.completed||!old.completed)progress.lessons[id]=v;}for(let i=0;i<CHECKS.length;i++)progress.acceptance[i]=!!progress.acceptance[i]||!!imported.acceptance[i];Object.assign(progress.hdl||(progress.hdl={}),imported.hdl);Object.assign(progress.ultra,imported.ultra);Object.assign(progress.fpga.lessons,imported.fpga.lessons);Object.assign(progress.fpga.readiness,imported.fpga.readiness);Object.assign(progress.ultraFPGA,imported.ultraFPGA);for(const k of ['modules','milestones','journal','skills','ultra'])Object.assign(progress.competition[k],imported.competition[k]);for(const [k,v]of Object.entries(imported.competition.integration))if(v)progress.competition.integration[k]=v;if(imported.competition.reflection)progress.competition.reflection=imported.competition.reflection;for(const [k,v] of Object.entries(imported.fpga.board))if(v)progress.fpga.board[k]=v;persist();renderLesson(location.hash.slice(1)||progress.last);toast('进度已导入，已完成的课程记录已保留');}catch(error){toast('导入失败：'+error.message);}e.target.value='';};
+$('#import-progress').onchange=async e=>{const file=e.target.files?.[0];if(!file)return;try{if(file.size>1024*1024)throw Error('文件过大，请选择本课程导出的进度文件');const rawImported=JSON.parse(await file.text());const imported=normalize(rawImported);for(const [id,v]of Object.entries(imported.lessons)){const old=progress.lessons[id];if(!old||v.completed||!old.completed)progress.lessons[id]=v;}for(let i=0;i<CHECKS.length;i++)progress.acceptance[i]=!!progress.acceptance[i]||!!imported.acceptance[i];Object.assign(progress.hdl||(progress.hdl={}),imported.hdl);Object.assign(progress.ultra,imported.ultra);Object.assign(progress.fpga.lessons,imported.fpga.lessons);Object.assign(progress.fpga.readiness,imported.fpga.readiness);if(imported.fpga.entry.passed)progress.fpga.entry=imported.fpga.entry;for(const k of ['mode','tool'])if(Object.hasOwn(rawImported.fpga||{},k))progress.fpga[k]=imported.fpga[k];Object.assign(progress.ultraFPGA,imported.ultraFPGA);if(imported.competition)progress.competition=imported.competition;for(const [k,v] of Object.entries(imported.fpga.board))if(v)progress.fpga.board[k]=v;persist();renderLesson(location.hash.slice(1)||progress.last);toast('进度已导入，已完成的课程记录已保留');}catch(error){toast('导入失败：'+error.message);}e.target.value='';};
 window.addEventListener('hashchange',()=>renderLesson(location.hash.slice(1),true));
 renderLesson(location.hash.slice(1)||progress.last);
 window.IC_BOOT?.ready();

@@ -5,7 +5,7 @@ import vm from 'node:vm';
 import {DatabaseSync} from 'node:sqlite';
 import worker from '../worker/index.js';
 const context=vm.createContext({window:{}});
-for(const file of ['curriculum','enrichment','ultra','fpga/catalog','fpga/examples','fpga/content','fpga/neutral','fpga/foundation','fpga/progress','fpga/view','project/catalog','project/content','project/engineering','project/model','project/view','hdl-content','textbook-content','textbook-depth','textbook-model','timing','textbook','hdl'])vm.runInContext(fs.readFileSync(`public/${file}.js`,'utf8'),context);
+for(const file of ['curriculum','enrichment','progress-compat','ultra','fpga/catalog','fpga/examples','fpga/content','fpga/neutral','fpga/progress','fpga/view','hdl-content','textbook-content','textbook-depth','textbook-model','timing','textbook','hdl'])vm.runInContext(fs.readFileSync(`public/${file}.js`,'utf8'),context);
 const {LESSONS}=context.window.IC_COURSE;
 test('24 stable lessons have two added questions and a substantive code task; seven Ultra stages refer to valid lessons',()=>{
  assert.equal(LESSONS.length,24);
