@@ -52,6 +52,7 @@ function renderNav(){
  $('#course-nav').insertAdjacentHTML('beforeend','<div class="nav-group"><h2 class="nav-group-title">RTL 阶段实训</h2><a class="lesson-link" href="#ultra">独立任务与检验记录</a></div>');
  $('#course-nav').insertAdjacentHTML('beforeend',window.IC_FPGA.nav(progress));
  if(hdlView){const holder=$('#course-nav .hdl-engineering');let next=holder.nextElementSibling;while(next){const move=next;next=next.nextElementSibling;holder.append(move);}}
+ if(fpgaView){const nav=$('#course-nav'),primary=nav.querySelector('.fpga-nav'),secondary=document.createElement('details');secondary.className='fpga-reference-nav';secondary.innerHTML='<summary class="hdl-nav-stage">返回语言基础与工具参考</summary>';[...nav.children].filter(x=>x!==primary).forEach(x=>secondary.append(x));nav.replaceChildren(primary,secondary);}
  document.querySelectorAll('.track-nav a').forEach(a=>{const key=progress.last,target=key==='fpga-readiness'?'fpga-readiness':key.startsWith('ultra')?'ultra-hub':window.IC_FPGA.isRoute(key)?'fpga':'learning';a.classList.toggle('active',a.getAttribute('href')==='#'+target);});
  if(window.IC_FPGA.isRoute(progress.last)){document.querySelectorAll('#course-nav .active').forEach(x=>{x.classList.remove('active');x.removeAttribute('aria-current');});const target=progress.last.startsWith('fpga-')&&window.IC_FPGA_CATALOG.modules.some(m=>'fpga-'+m.id===progress.last)?progress.last:progress.last.startsWith('ultra-fpga')?'ultra-fpga':progress.last==='fpga-readiness'?'fpga-readiness':'fpga';const link=document.querySelector('#course-nav a[href="#'+target+'"]');if(link){link.classList.add('active');link.setAttribute('aria-current','page');}}
  if(hdlView){document.querySelectorAll('#course-nav .active').forEach(a=>{a.classList.remove('active');a.removeAttribute('aria-current');});const a=document.querySelector('#course-nav a[href="#'+progress.last+'"]');if(a){a.classList.add('active');a.setAttribute('aria-current','page');const d=a.closest('details');if(d)d.open=true;}}
@@ -181,6 +182,7 @@ function renderLab(kind){
   const update=()=>{const p=Number($('#period-slider').value),slack=MODEL.setupSlack(p);$('#period-label').textContent=p.toFixed(1)+' ns';$('#timing-freq').textContent=(1000/p).toFixed(1)+' MHz';$('#timing-slack').textContent=(slack>=0?'+':'')+slack.toFixed(1)+' ns';$('#timing-equation').textContent=`${p.toFixed(1)} − 0.7 − 7.8 = ${slack.toFixed(1)} ns`;$('#timing-state').textContent=slack>=0?'在这个简化模型下，建立时间预算满足。':'在这个简化模型下，建立时间预算不足。';$('#timing-meter').style.width=Math.min(100,8.5/p*100)+'%';$('#timing-meter').style.background=slack>=0?'#79caaa':'#ff9a72';};$('#period-slider').oninput=update;update();
  }
 }
+$('.skip-link').onclick=ev=>{ev.preventDefault();$('#lesson').focus();$('#lesson').scrollIntoView({block:'start',behavior:'instant'});};
 $('#menu-button').onclick=()=>setMenu(!$('#sidebar').classList.contains('open'));
 $('#sidebar-backdrop').onclick=()=>{setMenu(false);$('#menu-button').focus();};
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('#sidebar').classList.contains('open')){setMenu(false);$('#menu-button').focus();}});
