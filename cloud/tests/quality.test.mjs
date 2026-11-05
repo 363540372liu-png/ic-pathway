@@ -5,7 +5,7 @@ test('56 lessons: unique checkpoints, real task schemas, earlier prerequisites a
  assert.equal(L.length,56);const stems=new Set(),prompts=new Set();
  for(const [index,l] of L.entries()){
   assert.ok(l.concept.length>=2&&l.concept.every(p=>p.length>=35),l.id);assert.ok(l.narrative,l.id);
-  assert.ok(!/什么证据最能支持/.test(l.q),l.id);assert.ok(!stems.has(canon(l.q)),l.id+' repeated checkpoint');stems.add(canon(l.q));
+  assert.ok(!/什么证据最能支持/.test(l.q),l.id);assert.ok(!/先明确规格、输入边界和验证依据/.test(l.trap),l.id+' generic warning');assert.ok(!stems.has(canon(l.q)),l.id+' repeated checkpoint');stems.add(canon(l.q));
   for(const id of l.prerequisites)assert.ok(L.findIndex(x=>x.id===id)>=0&&L.findIndex(x=>x.id===id)<index,l.id+' prerequisite '+id);
   for(const d of l.conceptDependencies){assert.ok(d.concept.trim());assert.ok(L.findIndex(x=>x.id===d.taughtIn)>=0&&L.findIndex(x=>x.id===d.taughtIn)<index,l.id+' concept '+d.concept);}
   assert.deepEqual(Array.from(l.conceptReview.prior),Array.from(l.prerequisites));
