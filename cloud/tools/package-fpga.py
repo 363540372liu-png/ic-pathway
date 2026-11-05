@@ -8,3 +8,8 @@ with zipfile.ZipFile(p/'uart-led-workflow.zip','w',zipfile.ZIP_DEFLATED) as z:
  for name,data in sorted(files.items()):
   info=zipfile.ZipInfo('uart-led-workflow/'+name,(2026,11,5,0,0,0));info.compress_type=zipfile.ZIP_DEFLATED;z.writestr(info,data)
 print('Packaged UART LED project:',len(files),'files')
+files={'README.md':(p/'led-workflow/README.md').read_bytes(), 'rtl/led_minimal.v':(p/'rtl/led_minimal.v').read_bytes(),'tb/tb_led_minimal.sv':(p/'tb/tb_led_minimal.sv').read_bytes()}
+with zipfile.ZipFile(p/'led-minimal-workflow.zip','w',zipfile.ZIP_DEFLATED) as z:
+ for name,data in sorted(files.items()):
+  info=zipfile.ZipInfo('led-minimal-workflow/'+name,(2026,11,5,0,0,0));info.compress_type=zipfile.ZIP_DEFLATED;z.writestr(info,data)
+print('Packaged minimal LED project:',len(files),'files')

@@ -19,10 +19,13 @@ export default {async fetch(request,env){
     if(row?.revision===body.revision){
      const previous=JSON.parse(row.data);
      for(const key of ['fpga','ultraFPGA','competition','hdl'])if(!Object.hasOwn(data,key)&&Object.hasOwn(previous,key))data[key]=previous[key];
+     if(data.fpga&&typeof data.fpga==='object'&&!Array.isArray(data.fpga)&&previous.fpga?.projects){data.fpga.projects={...previous.fpga.projects,...(data.fpga.projects||{})};}
      if(data.hdl&&typeof data.hdl==='object'&&!Array.isArray(data.hdl)&&previous.hdl){
       for(const [lesson,record] of Object.entries(previous.hdl)){
        if(!Object.hasOwn(data.hdl,lesson))data.hdl[lesson]=record;
        else if(data.hdl[lesson]&&typeof data.hdl[lesson]==='object'&&!Array.isArray(data.hdl[lesson])&&record&&typeof record==='object'){
+        const incoming=data.hdl[lesson].activities;
+        if(incoming&&typeof incoming==='object'&&record.activities)for(const [i,activity]of Object.entries(record.activities)){if(!Object.hasOwn(incoming,i))incoming[i]=activity;else if((incoming[i]?.revision||1)<(activity?.revision||1))incoming[i]={...activity,legacyClientAnswer:incoming[i]};}
         if(!Object.hasOwn(data.hdl[lesson],'activities')&&Object.hasOwn(record,'activities'))data.hdl[lesson].activities=record.activities;
        }
       }

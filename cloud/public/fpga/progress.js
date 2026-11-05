@@ -9,11 +9,11 @@ const entryQuestions=[
 ];
 const blankLesson=()=>({guided:'',independent:'',choices:[null,null],quizPassed:false,checks:[false,false,false],completed:false,evidence:'',completionMode:null});
 function entryReady(p){return entryQuestions.every((q,i)=>p.fpga?.entry?.choices?.[i]===q.correct)&&p.fpga.entry.passed===true||['module','branches','nba','checking'].every(id=>p.hdl?.[id]?.done)||['module','combinational','sequential','testbench','selfcheck'].every(id=>p.lessons?.[id]?.completed);}
-function prerequisites(p,id){const m=C.modules.find(x=>x.id===id);return {open:!!m,practiceReady:!!m&&(m.phase<2||entryReady(p)),missing:entryReady(p)?[]:['module','nba','checking'],previous:m?.previous||null};}
+function prerequisites(p,id){const m=C.modules.find(x=>x.id===id);return {open:!!m,practiceReady:!!m,missing:entryReady(p)?[]:['module','nba','checking'],previous:m?.previous||null};}
 function eligible(st){return !!(st?.guided?.trim()&&st?.independent?.trim()&&st.quizPassed&&st.checks?.length===3&&st.checks.every(Boolean));}
 function complete(p,id){if(!prerequisites(p,id).practiceReady||!eligible(p.fpga?.lessons?.[id]))return false;p.fpga.lessons[id].completed=true;p.fpga.lessons[id].completionMode=p.fpga.mode||'simulation';return true;}
 function normalize(raw={}){
- const f=raw.fpga||{},fpga={schema:2,mode:f.mode==='board'?'board':'simulation',tool:['vivado','quartus','efinity'].includes(f.tool)?f.tool:'vivado',entry:{choices:entryQuestions.map((q,i)=>Number.isInteger(f.entry?.choices?.[i])?f.entry.choices[i]:null),passed:f.entry?.passed===true},lessons:{},readiness:{},board:{model:text(f.board?.model,200),part:text(f.board?.part,200),clock:text(f.board?.clock,100),manual:text(f.board?.manual,1000)}};
+ const f=raw.fpga||{},fpga={schema:2,mode:f.mode==='board'?'board':'simulation',projects:{led:{draft:text(f.projects?.led?.draft),evidence:text(f.projects?.led?.evidence,8000),updatedAt:Number.isSafeInteger(f.projects?.led?.updatedAt)?f.projects.led.updatedAt:0}},tool:['vivado','quartus','efinity'].includes(f.tool)?f.tool:'vivado',entry:{choices:entryQuestions.map((q,i)=>Number.isInteger(f.entry?.choices?.[i])?f.entry.choices[i]:null),passed:f.entry?.passed===true},lessons:{},readiness:{},board:{model:text(f.board?.model,200),part:text(f.board?.part,200),clock:text(f.board?.clock,100),manual:text(f.board?.manual,1000)}};
  fpga.entry.passed=fpga.entry.passed&&entryQuestions.every((q,i)=>fpga.entry.choices[i]===q.correct);
  for(const m of C.modules){const v=f.lessons?.[m.id];if(!v||typeof v!=='object')continue;
   const choices=[0,1].map(i=>Number.isInteger(v.choices?.[i])&&v.choices[i]>=0&&v.choices[i]<3?v.choices[i]:null),quiz=root.IC_FPGA_CONTENT?.[m.id]?.quiz;

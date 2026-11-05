@@ -40,7 +40,7 @@ window.HDL_LESSONS=[
       ]
     ],
     "minutes": 30,
-    "context": "这是输入、规则与输出的说明，不需要编译。四种开关组合就是本课的完整例子。",
+    "context": "电路规格与手算记录，不是需要编译的HDL文件；本课不要求编写模块。",
     "knowledge": [
       {
         "id": "concept",
@@ -68,9 +68,25 @@ window.HDL_LESSONS=[
         "知道输入、规则、输出是什么",
         "知道每课怎样学，核心主线在哪里结束"
       ],
-      "exerciseScope": "见docs/LESSON_QUALITY_MATRIX.md逐课语义审查"
+      "exerciseScope": "docs/COURSE_SEMANTIC_REVIEW.json#orientation"
     },
-    "conceptDependencies": []
+    "conceptDependencies": [],
+    "assessmentGoals": [
+      {
+        "id": "orientation-task-1",
+        "description": "知道输入、规则、输出是什么",
+        "activities": [
+          0
+        ]
+      },
+      {
+        "id": "orientation-task-2",
+        "description": "知道每课怎样学，核心主线在哪里结束",
+        "activities": [
+          1
+        ]
+      }
+    ]
   },
   {
     "id": "numbers",
@@ -80,9 +96,9 @@ window.HDL_LESSONS=[
       "四根只能表示0或1的线，能给多少个不同编号？不是4个，也不是从0数到16；先把每根线代表的位权写出来。",
       "四位从高到低的权是8、4、2、1，所以1010表示8+2=10。所有位都为1时是15，一共16种编码。4'b1010、4'd10和4'hA是同一个四位值的不同写法；本课只要求读懂这些数，下面完整模块的外壳在模块课再拆。"
     ],
-    "code": "module number_demo(output wire [3:0] a);\n assign a = 4'b1010;\n // 同一个值也可写 4'd10 或 4'hA\nendmodule",
+    "code": "// 4位数的位权，从左到右：8、4、2、1\n// 1010 = 8 + 0 + 2 + 0 = 10\n// 4'b1010、4'd10、4'hA 表示同一个4位数\n// 1111 = 15；10000需要5位才能保留",
     "notes": [
-      "[3:0] 包含编号3、2、1、0，共4位，左边是最高位。",
+      "四位从高到低的位权是8、4、2、1，先按位置展开再求和。",
       "4 是位数，不是数值；b 后的1010才是数值。",
       "十六进制一位对应4 bit：A对应1010。",
       "有限位宽会截断高位，不会自动扩展存储空间。"
@@ -99,7 +115,7 @@ window.HDL_LESSONS=[
     "task": "把十进制13写成四位二进制，不加进制前缀。",
     "solution": "1101；8+4+1=13。",
     "diagram": null,
-    "context": "这是可编译模块，但本课只要求读懂4位常量的数值。module、端口与assign将在模块和驱动课拆解。",
+    "context": "电路规格与手算记录，不是需要编译的HDL文件；本课不要求编写模块。",
     "optional": false,
     "prerequisites": [
       "orientation"
@@ -167,12 +183,28 @@ window.HDL_LESSONS=[
         "读懂定宽二/十/十六进制常量",
         "手算位权、最大值与截断"
       ],
-      "exerciseScope": "见docs/LESSON_QUALITY_MATRIX.md逐课语义审查"
+      "exerciseScope": "docs/COURSE_SEMANTIC_REVIEW.json#numbers"
     },
     "conceptDependencies": [
       {
         "concept": "位与输入输出",
         "taughtIn": "orientation"
+      }
+    ],
+    "assessmentGoals": [
+      {
+        "id": "numbers-task-1",
+        "description": "读懂定宽二/十/十六进制常量",
+        "activities": [
+          0
+        ]
+      },
+      {
+        "id": "numbers-task-2",
+        "description": "手算位权、最大值与截断",
+        "activities": [
+          1
+        ]
       }
     ]
   },
@@ -260,7 +292,7 @@ window.HDL_LESSONS=[
         ]
       ]
     },
-    "context": "先读这张真值表，再把门符号对应到每一行。完整模块语法从后面的模块课开始。",
+    "context": "电路规格与手算记录，不是需要编译的HDL文件；本课不要求编写模块。",
     "knowledge": [
       {
         "id": "concept",
@@ -290,12 +322,28 @@ window.HDL_LESSONS=[
         "列全两个输入的四种组合",
         "区分与、或、非和异或"
       ],
-      "exerciseScope": "见docs/LESSON_QUALITY_MATRIX.md逐课语义审查"
+      "exerciseScope": "docs/COURSE_SEMANTIC_REVIEW.json#logic-gates"
     },
     "conceptDependencies": [
       {
         "concept": "二进制0/1",
         "taughtIn": "numbers"
+      }
+    ],
+    "assessmentGoals": [
+      {
+        "id": "logic-gates-task-1",
+        "description": "列全两个输入的四种组合",
+        "activities": [
+          0
+        ]
+      },
+      {
+        "id": "logic-gates-task-2",
+        "description": "区分与、或、非和异或",
+        "activities": [
+          1
+        ]
       }
     ]
   },
@@ -306,7 +354,7 @@ window.HDL_LESSONS=[
     "prerequisites": [
       "logic-gates"
     ],
-    "code": "module decode2(input wire [1:0] a,input wire en,output wire [3:0] y);\n assign y[0]=en & ~a[1] & ~a[0];\n assign y[1]=en & ~a[1] &  a[0];\n assign y[2]=en &  a[1] & ~a[0];\n assign y[3]=en &  a[1] &  a[0];\nendmodule",
+    "code": "// 输入：使能en，以及两位地址a1、a0\n// en=0：y3 y2 y1 y0 = 0000\n// en=1，地址00：0001；01：0010\n// en=1，地址10：0100；11：1000\n// y0 = en 与 非a1 与 非a0\n// y3 = en 与 a1 与 a0",
     "concept": [
       "地址a=10时，只想选中四条输出中的第2条，其余都关掉。怎样从真值表一步步得到这四个输出？",
       "对y[2]来说，条件是使能有效、a[1]=1、a[0]=0，所以它的逻辑式是en & a[1] & ~a[0]。另外三位各自照着对应行写。这样地址不是直接“复制到输出”，而是被展开为独热选择。本课用真值表和门表达式推导，移位写法留到运算符课以后。"
@@ -336,7 +384,7 @@ window.HDL_LESSONS=[
         "约定输入、输出、时钟、复位和边界行为。"
       ]
     ],
-    "context": "本课先读四个输出的与/非关系。module、wire与assign的完整语法在后面的模块、驱动课讲解，这里不要求独立写模块。",
+    "context": "电路规格与手算记录，不是需要编译的HDL文件；本课不要求编写模块。",
     "minutes": 30,
     "optional": false,
     "language": "verilog",
@@ -370,7 +418,7 @@ window.HDL_LESSONS=[
         "从真值表写出译码器",
         "用德摩根律验证等价表达式"
       ],
-      "exerciseScope": "见docs/LESSON_QUALITY_MATRIX.md逐课语义审查"
+      "exerciseScope": "docs/COURSE_SEMANTIC_REVIEW.json#boolean-decoder"
     },
     "conceptDependencies": [
       {
@@ -380,6 +428,22 @@ window.HDL_LESSONS=[
       {
         "concept": "二位地址与位权",
         "taughtIn": "numbers"
+      }
+    ],
+    "assessmentGoals": [
+      {
+        "id": "boolean-decoder-task-1",
+        "description": "从真值表写出译码器",
+        "activities": [
+          0
+        ]
+      },
+      {
+        "id": "boolean-decoder-task-2",
+        "description": "用德摩根律验证等价表达式",
+        "activities": [
+          1
+        ]
       }
     ]
   },
@@ -391,12 +455,12 @@ window.HDL_LESSONS=[
       "把两条assign交换位置，y和z会不会交换先后？先想一下：图上的与门和或门会因为我们换了两行字就先后开始工作吗？",
       "a=1、b从0变1时，两路组合输出各按自己的连接重新求值：y由0变1，z仍为1。两条assign描述两路同时存在的关系，并不轮流占用一个软件执行位置。后面遇到always时，我们会再分清“过程内怎样计算”与“多个过程并发存在”。"
     ],
-    "code": "module gates(input wire a, b,\n             output wire y, z);\n  assign y = a & b;\n  assign z = a | b;\nendmodule",
+    "code": "// 两个输入：a、b；两个独立输出：y、z\n// y = a 与 b\n// z = a 或 b\n// a=1、b=0：y=0，同时z=1\n// 改变书写顺序，不改变这两条关系",
     "notes": [
-      "module 开始定义电路模块，gates 是自己取的名字。",
-      "input/output 定义从外部观察的方向，wire 是连接信号的网络。",
-      "& 是逐位与，| 是逐位或；两条 assign 并行、持续地驱动输出。",
-      "endmodule 结束模块；语句用分号结束。"
+      "y与z是两条独立关系，直接由同一组a、b输入决定。",
+      "与门和或门是两份并行资源，不是一个门先做与再做或。",
+      "交换两条关系的书写位置不改变连线，也不引入时钟。",
+      "需要保持先前值时才需要再引入存储元件，下一课比较这两类电路。"
     ],
     "trap": "不要把 HDL 当作普通程序从第一行一直运行到最后一行。",
     "q": "a=b=1 时，y 和 z 是多少？",
@@ -410,7 +474,7 @@ window.HDL_LESSONS=[
     "task": "画出 a、b 到两个输出的连线，说明是否需要时钟。",
     "solution": "a、b 同时连接到与门和或门；输出分别是 y、z。没有保存状态，不需要时钟。",
     "diagram": "gates",
-    "context": "完整模块示例。保存为.v（SystemVerilog使用.sv）；仿真还需测试台提供输入。先读懂下面的逐步拆解。",
+    "context": "电路规格与手算记录，不是需要编译的HDL文件；本课不要求编写模块。",
     "optional": false,
     "prerequisites": [
       "logic-gates"
@@ -463,12 +527,42 @@ window.HDL_LESSONS=[
         "把两条assign理解成并行电路",
         "区分组合关系和保存状态"
       ],
-      "exerciseScope": "见docs/LESSON_QUALITY_MATRIX.md逐课语义审查"
+      "exerciseScope": "docs/COURSE_SEMANTIC_REVIEW.json#mindset"
     },
     "conceptDependencies": [
       {
         "concept": "门的输入输出关系",
         "taughtIn": "logic-gates"
+      }
+    ],
+    "assessmentGoals": [
+      {
+        "id": "mindset-task-1",
+        "description": "把两条assign理解成并行电路",
+        "activities": [
+          0
+        ]
+      },
+      {
+        "id": "mindset-task-2",
+        "description": "区分组合关系和保存状态",
+        "activities": [
+          1
+        ]
+      },
+      {
+        "id": "mindset-task-3",
+        "description": "区分组合关系和保存状态",
+        "activities": [
+          2
+        ]
+      },
+      {
+        "id": "mindset-task-4",
+        "description": "区分组合关系和保存状态",
+        "activities": [
+          3
+        ]
       }
     ]
   },
@@ -512,7 +606,7 @@ window.HDL_LESSONS=[
       ]
     ],
     "minutes": 30,
-    "context": "这是电路行为规格，不是要编译的Verilog。先用输入变化与Q的取值检验自己的判断。",
+    "context": "电路规格与手算记录，不是需要编译的HDL文件；本课不要求编写模块。",
     "knowledge": [
       {
         "id": "concept",
@@ -542,26 +636,46 @@ window.HDL_LESSONS=[
         "比较锁存器与DFF采样的时间条件。",
         "先判断有没有“保持过去”的要求。"
       ],
-      "exerciseScope": "见docs/LESSON_QUALITY_MATRIX.md逐课语义审查"
+      "exerciseScope": "docs/COURSE_SEMANTIC_REVIEW.json#storage"
     },
     "conceptDependencies": [
       {
         "concept": "当前输入决定组合输出",
         "taughtIn": "mindset"
       }
+    ],
+    "assessmentGoals": [
+      {
+        "id": "storage-task-1",
+        "description": "比较锁存器与DFF采样的时间条件。",
+        "activities": [
+          0
+        ]
+      },
+      {
+        "id": "storage-task-2",
+        "description": "先判断有没有“保持过去”的要求。",
+        "activities": [
+          1
+        ]
+      }
     ]
   },
   {
     "id": "module",
     "stage": 1,
-    "title": "模块、端口与实例连接",
+    "title": "从第一个与门到模块实例连接",
     "concept": [
-      "一个与门已经会写了，怎样在更大的电路里接上它？先把模块看成有名字、方向和宽度的一组接口。",
-      "and2是电路类型，u_and是top里的一份实例。.a(x)的意思是把子模块a端口接到父模块x信号，不是把父子名字反过来。沿x→a、z→b、y→result逐根追线，就能检查连接；两个实例同时存在，不是先后调用两次软件函数。"
+      "现在要让两个开关都打开时灯才亮。真值表已经给出规则，但怎样把这个规则交给工具？先只写一份电路，不放第二个模块：module and2 开始一个名叫and2的定义，endmodule结束定义。它们之间写接口和逻辑关系。这里的“结束”是文件结构结束，不是电路停止运行。",
+      "input从当前模块看是输入，output是输出；wire表示一条由电路驱动的信号连接。input wire a与input wire b是两个一位输入，output wire y是一个一位输出。逗号分开端口，右括号后的分号结束模块头。信号默认一位；暂时不需要reg或always。",
+      "assign y = a & b;读作“始终用a与b的结果驱动y”。&是已经学过的与运算，=在这条连续赋值中连接等式两边，分号结束语句。a或b改变，组合关系重新求值；没有时钟，也没有保存过去值的要求。先遮住示例，自己写出这三行，再检查00、01、10、11得到0、0、0、1。",
+      "如果改成assign y = a | b;，仅10输入就能点亮；改成^时11反而熄灭。请先根据真值表预测，再改运算符。能自己写完单个模块后，才继续看下面的top：我们要计算(x与z)再与enable。",
+      "定义and2只提供图纸；and2 u_pair(...)在top中放一份实际电路。and2是类型，u_pair是这份实例的名字。第二份叫u_mask，不能在同一层也叫u_pair。两份电路并行存在，实例化不是软件函数调用，不会先运行第一份再创建第二份。",
+      "wire pair是top内部的一条线，没有出现在top端口里。.a(x)左边a是and2的端口名，括号中x是top中的信号；.y(pair)把第一份电路输出接到内部线pair。第二份的.a(pair)接收它，.b(enable)接开关，.y(result)连到顶层输出。x=z=1但enable=0时，pair=1而result=0。命名端口可以调换书写次序，但不能交换端口含义。"
     ],
-    "code": "module and2(input wire a, b, output wire y);\n  assign y = a & b;\nendmodule\nmodule top(input wire x, z, output wire result);\n  and2 u_and(.a(x), .b(z), .y(result));\nendmodule",
+    "code": "module and2(input wire a, input wire b, output wire y);\n  assign y = a & b;\nendmodule\nmodule top(input wire x, z, enable, output wire result);\n  wire pair;\n  and2 u_pair(.a(x), .b(z), .y(pair));\n  and2 u_mask(.a(pair), .b(enable), .y(result));\nendmodule",
     "notes": [
-      "and2 是模块类型，u_and 是这一次实例的名字。",
+      "and2 是模块类型，u_pair 是这一次实例的名字。",
       ".a 是子模块端口名，括号里的 x 是本层信号。",
       "两个模块同时存在，不是调用函数后再返回。",
       "一个模块可实例化多次，每个实例是独立的硬件。"
@@ -575,8 +689,8 @@ window.HDL_LESSONS=[
     ],
     "correct": 0,
     "answer": "点号后是被实例化模块的端口名。",
-    "task": "再实例化一个 and2，输入仍为x和z，输出接第二个输出other。",
-    "solution": "先在top端口声明output wire other；再写 and2 u_other(.a(x), .b(z), .y(other));",
+    "task": "先独立写or2并列出四组真值表；再用两个and2实现result=x & z & enable。解释内部pair由谁驱动、由谁读取。",
+    "solution": "or2使用assign y=a|b；两级and2分别计算pair=x&z与result=pair&enable。枚举8组输入，仅111输出1。",
     "diagram": null,
     "context": "完整模块示例。保存为.v（SystemVerilog使用.sv）；仿真还需测试台提供输入。先读懂下面的逐步拆解。",
     "optional": false,
@@ -584,8 +698,9 @@ window.HDL_LESSONS=[
       "mindset"
     ],
     "goals": [
-      "区分模块类型与实例名",
-      "用命名端口正确连线"
+      "独立写出包含端口、wire、assign的完整与门模块",
+      "把与门改为或门、异或门，并手算四组输入",
+      "区分模块类型和实例名称，用内部wire连接两个实例"
     ],
     "terms": [
       [
@@ -597,7 +712,7 @@ window.HDL_LESSONS=[
         "在当前设计中创建并连接的一份子模块电路。"
       ]
     ],
-    "minutes": 30,
+    "minutes": 55,
     "knowledge": [
       {
         "id": "concept",
@@ -627,7 +742,7 @@ window.HDL_LESSONS=[
         "区分模块类型与实例名",
         "用命名端口正确连线"
       ],
-      "exerciseScope": "见docs/LESSON_QUALITY_MATRIX.md逐课语义审查"
+      "exerciseScope": "docs/COURSE_SEMANTIC_REVIEW.json#module"
     },
     "conceptDependencies": [
       {
@@ -638,11 +753,48 @@ window.HDL_LESSONS=[
         "concept": "位与位宽",
         "taughtIn": "numbers"
       }
+    ],
+    "assessmentGoals": [
+      {
+        "id": "module-task-1",
+        "description": "区分模块类型与实例名",
+        "activities": [
+          0
+        ]
+      },
+      {
+        "id": "module-task-2",
+        "description": "独立补齐与门的定义与连续赋值",
+        "activities": [
+          1
+        ]
+      },
+      {
+        "id": "module-task-3",
+        "description": "按命名端口修复父子信号连接",
+        "activities": [
+          2
+        ]
+      },
+      {
+        "id": "module-task-4",
+        "description": "独立编写逻辑并连接多个实例",
+        "activities": [
+          3
+        ]
+      },
+      {
+        "id": "module-task-5",
+        "description": "逐输入推导多级组合输出",
+        "activities": [
+          4
+        ]
+      }
     ]
   },
   {
     "id": "tool-start",
-    "title": "准备工具：先完成一次语法编译",
+    "title": "第一次编译与四组输入仿真",
     "concept": [
       "文件里有一个and2模块，第一次运行工具最值得确认什么？先别同时处理波形和综合，先让工具确实读到这个文件、找到这个顶层。",
       "在终端运行iverilog -V确认程序可用，再用-g2005 -s and2 -tnull编译检查。这里-s选的是模块名，-tnull不生成运行程序。通过说明语法和展开过关，下一步仍需给输入并检查输出；编译与仿真不是同一件事。"
@@ -652,7 +804,7 @@ window.HDL_LESSONS=[
       "文件夹路径里有空格时，在终端给文件路径加引号。",
       "出现command not found或“不是内部或外部命令”：先检查安装与PATH，重新打开终端。",
       "出现Unable to find root module：检查-s后模块名是否与module声明一致。",
-      "通过编译后先继续语言课；到测试台课才运行激励和检查输出。"
+      "-tnull后运行本课四组输入测试台，实际执行vvp才会得到PASS或失败；后续验证课继续解释复杂时钟和自检。"
     ],
     "trap": "语法编译不检查真值表。想知道电路算得对不对，还要用测试输入、自检和波形。",
     "q": "这一步编译通过说明什么？",
@@ -685,7 +837,7 @@ window.HDL_LESSONS=[
         "仿真环境，产生激励并检查设计输出。"
       ]
     ],
-    "minutes": 30,
+    "minutes": 45,
     "context": "这是系统终端命令，不是Verilog源文件。先保存前一课的and2.v，再按自己安装的工具版本执行。",
     "knowledge": [
       {
@@ -716,12 +868,42 @@ window.HDL_LESSONS=[
         "找到工具版本信息",
         "完成一次语法编译并区分功能验证"
       ],
-      "exerciseScope": "见docs/LESSON_QUALITY_MATRIX.md逐课语义审查"
+      "exerciseScope": "docs/COURSE_SEMANTIC_REVIEW.json#tool-start"
     },
     "conceptDependencies": [
       {
         "concept": "模块名与顶层",
         "taughtIn": "module"
+      }
+    ],
+    "assessmentGoals": [
+      {
+        "id": "tool-start-task-1",
+        "description": "找到工具版本信息",
+        "activities": [
+          0
+        ]
+      },
+      {
+        "id": "tool-start-task-2",
+        "description": "完成一次语法编译并区分功能验证",
+        "activities": [
+          1
+        ]
+      },
+      {
+        "id": "tool-start-task-3",
+        "description": "完成一次语法编译并区分功能验证",
+        "activities": [
+          2
+        ]
+      },
+      {
+        "id": "tool-start-task-4",
+        "description": "完成一次语法编译并区分功能验证",
+        "activities": [
+          3
+        ]
       }
     ]
   },
@@ -730,6 +912,7 @@ window.HDL_LESSONS=[
     "stage": 1,
     "title": "wire、reg 与 assign",
     "concept": [
+      "与门已能用assign写出。现在把y2放进always @(*)里，为什么output必须从wire改成reg？always建立一个独立仿真过程，@(*)等待过程所读的a、b发生变化；变化后重新执行块中的y2=a&b。这里的=先算右侧再写过程变量。没有延迟和沿触发，最终仍然是与门。reg只说明赋值途径，不能单凭名字断言存在寄存器。",
       "同样计算a&b，一种输出声明wire，另一种写reg，为什么综合出来仍可能是同一个与门？",
       "y1由assign持续驱动，y2在完整的always @(*)里每次求值都被赋成a&b。两者都没有“记住过去”的要求，所以都能形成组合电路。wire与reg先规定在Verilog中怎样连接、怎样赋值；是否需要触发器或锁存器，还要看触发条件和漏没漏分支。"
     ],
@@ -801,7 +984,7 @@ window.HDL_LESSONS=[
         "知道连续赋值和过程赋值用在哪里",
         "解释reg不一定产生寄存器"
       ],
-      "exerciseScope": "见docs/LESSON_QUALITY_MATRIX.md逐课语义审查"
+      "exerciseScope": "docs/COURSE_SEMANTIC_REVIEW.json#net-var"
     },
     "conceptDependencies": [
       {
@@ -811,6 +994,43 @@ window.HDL_LESSONS=[
       {
         "concept": "组合关系",
         "taughtIn": "mindset"
+      }
+    ],
+    "assessmentGoals": [
+      {
+        "id": "net-var-task-1",
+        "description": "知道连续赋值和过程赋值用在哪里",
+        "activities": [
+          0
+        ]
+      },
+      {
+        "id": "net-var-task-2",
+        "description": "解释reg不一定产生寄存器",
+        "activities": [
+          1
+        ]
+      },
+      {
+        "id": "net-var-task-3",
+        "description": "根据赋值过程选择输出变量类型",
+        "activities": [
+          2
+        ]
+      },
+      {
+        "id": "net-var-task-4",
+        "description": "解释reg不一定产生寄存器",
+        "activities": [
+          3
+        ]
+      },
+      {
+        "id": "net-var-task-5",
+        "description": "解释reg不一定产生寄存器",
+        "activities": [
+          4
+        ]
       }
     ]
   },
@@ -916,7 +1136,7 @@ window.HDL_LESSONS=[
         "计算位宽并做位选/切片",
         "用拼接和复制构造新向量"
       ],
-      "exerciseScope": "见docs/LESSON_QUALITY_MATRIX.md逐课语义审查"
+      "exerciseScope": "docs/COURSE_SEMANTIC_REVIEW.json#vectors"
     },
     "conceptDependencies": [
       {
@@ -926,6 +1146,43 @@ window.HDL_LESSONS=[
       {
         "concept": "二进制位权",
         "taughtIn": "numbers"
+      }
+    ],
+    "assessmentGoals": [
+      {
+        "id": "vectors-task-1",
+        "description": "计算位宽并做位选/切片",
+        "activities": [
+          0
+        ]
+      },
+      {
+        "id": "vectors-task-2",
+        "description": "用拼接和复制构造新向量",
+        "activities": [
+          1
+        ]
+      },
+      {
+        "id": "vectors-task-3",
+        "description": "调整拼接顺序完成半字节交换",
+        "activities": [
+          2
+        ]
+      },
+      {
+        "id": "vectors-task-4",
+        "description": "用拼接和复制构造新向量",
+        "activities": [
+          3
+        ]
+      },
+      {
+        "id": "vectors-task-5",
+        "description": "用拼接和复制构造新向量",
+        "activities": [
+          4
+        ]
       }
     ]
   },
@@ -1005,12 +1262,49 @@ window.HDL_LESSONS=[
         "解释X和Z的常见来源",
         "知道未知值不能随意当作0"
       ],
-      "exerciseScope": "见docs/LESSON_QUALITY_MATRIX.md逐课语义审查"
+      "exerciseScope": "docs/COURSE_SEMANTIC_REVIEW.json#four-state"
     },
     "conceptDependencies": [
       {
         "concept": "网络驱动与过程变量",
         "taughtIn": "net-var"
+      }
+    ],
+    "assessmentGoals": [
+      {
+        "id": "four-state-task-1",
+        "description": "解释X和Z的常见来源",
+        "activities": [
+          0
+        ]
+      },
+      {
+        "id": "four-state-task-2",
+        "description": "知道未知值不能随意当作0",
+        "activities": [
+          1
+        ]
+      },
+      {
+        "id": "four-state-task-3",
+        "description": "知道未知值不能随意当作0",
+        "activities": [
+          2
+        ]
+      },
+      {
+        "id": "four-state-task-4",
+        "description": "知道未知值不能随意当作0",
+        "activities": [
+          3
+        ]
+      },
+      {
+        "id": "four-state-task-5",
+        "description": "知道未知值不能随意当作0",
+        "activities": [
+          4
+        ]
       }
     ]
   },
@@ -1118,7 +1412,7 @@ window.HDL_LESSONS=[
         "区分按位、逻辑与归约",
         "根据类型解释比较和移位"
       ],
-      "exerciseScope": "见docs/LESSON_QUALITY_MATRIX.md逐课语义审查"
+      "exerciseScope": "docs/COURSE_SEMANTIC_REVIEW.json#operators"
     },
     "conceptDependencies": [
       {
@@ -1129,6 +1423,43 @@ window.HDL_LESSONS=[
         "concept": "门逻辑",
         "taughtIn": "logic-gates"
       }
+    ],
+    "assessmentGoals": [
+      {
+        "id": "operators-task-1",
+        "description": "区分按位、逻辑与归约",
+        "activities": [
+          0
+        ]
+      },
+      {
+        "id": "operators-task-2",
+        "description": "根据类型解释比较和移位",
+        "activities": [
+          1
+        ]
+      },
+      {
+        "id": "operators-task-3",
+        "description": "用归约或判断任意请求有效",
+        "activities": [
+          2
+        ]
+      },
+      {
+        "id": "operators-task-4",
+        "description": "根据类型解释比较和移位",
+        "activities": [
+          3
+        ]
+      },
+      {
+        "id": "operators-task-5",
+        "description": "根据类型解释比较和移位",
+        "activities": [
+          4
+        ]
+      }
     ]
   },
   {
@@ -1137,7 +1468,8 @@ window.HDL_LESSONS=[
     "title": "位宽、截断与补码",
     "concept": [
       "4位最大数15再加1，数学上是16，为什么输出却可能回到0？把16写成二进制10000，答案就在多出来的那一位里。",
-      "四根输出线只能留下低四位，所以10000被截为0000。若要保留进位，先把两个操作数扩到5位再相加。signed又是另一层解释：四位1000可表示-8，扩展时要复制符号位；不能把零扩展和符号扩展混着用。"
+      "四根输出线只能留下低四位，所以10000被截为0000。若要保留进位，先把两个操作数扩到5位再相加。signed又是另一层解释：四位1000可表示-8，扩展时要复制符号位；不能把零扩展和符号扩展混着用。",
+      "把a=b=15代入：两个输入各是1111，显式补零后为01111，相加11110，需要5位。若输出只声明4位，最终只能留下1110，即14。这里把“数学运算结果”和“端口能保留的位”分开，才能定位错误究竟发生在表达式还是写回位置。下面交互将相同宽度的输入先解释再运算；真实Verilog还要检查整个表达式的上下文。"
     ],
     "code": "module extend_demo(input wire [3:0] a,b,\n input wire signed [3:0] s,\n output wire [4:0] sum,\n output wire signed [7:0] extended);\n assign sum = {1'b0,a} + {1'b0,b};\n assign extended = {{4{s[3]}},s};\nendmodule",
     "notes": [
@@ -1207,7 +1539,7 @@ window.HDL_LESSONS=[
         "区分无符号与补码范围",
         "显式扩展并保留进位"
       ],
-      "exerciseScope": "见docs/LESSON_QUALITY_MATRIX.md逐课语义审查"
+      "exerciseScope": "docs/COURSE_SEMANTIC_REVIEW.json#width-sign"
     },
     "conceptDependencies": [
       {
@@ -1217,6 +1549,43 @@ window.HDL_LESSONS=[
       {
         "concept": "位选与拼接",
         "taughtIn": "vectors"
+      }
+    ],
+    "assessmentGoals": [
+      {
+        "id": "width-sign-task-1",
+        "description": "区分无符号与补码范围",
+        "activities": [
+          0
+        ]
+      },
+      {
+        "id": "width-sign-task-2",
+        "description": "显式扩展并保留进位",
+        "activities": [
+          1
+        ]
+      },
+      {
+        "id": "width-sign-task-3",
+        "description": "复制符号位保留补码数值",
+        "activities": [
+          2
+        ]
+      },
+      {
+        "id": "width-sign-task-4",
+        "description": "显式扩展并保留进位",
+        "activities": [
+          3
+        ]
+      },
+      {
+        "id": "width-sign-task-5",
+        "description": "显式扩展并保留进位",
+        "activities": [
+          4
+        ]
       }
     ]
   },
@@ -1290,12 +1659,49 @@ window.HDL_LESSONS=[
         "给raw=1000写出sx和zx的十进制。",
         "$signed(raw)仍是4位表达式，赋给8位signed输出时符号扩展。"
       ],
-      "exerciseScope": "见docs/LESSON_QUALITY_MATRIX.md逐课语义审查"
+      "exerciseScope": "docs/COURSE_SEMANTIC_REVIEW.json#casts"
     },
     "conceptDependencies": [
       {
         "concept": "补码、符号扩展与位宽",
         "taughtIn": "width-sign"
+      }
+    ],
+    "assessmentGoals": [
+      {
+        "id": "casts-task-1",
+        "description": "给raw=1000写出sx和zx的十进制。",
+        "activities": [
+          0
+        ]
+      },
+      {
+        "id": "casts-task-2",
+        "description": "$signed(raw)仍是4位表达式，赋给8位signed输出时符号扩展。",
+        "activities": [
+          1
+        ]
+      },
+      {
+        "id": "casts-task-3",
+        "description": "选择无符号解释进行零扩展",
+        "activities": [
+          2
+        ]
+      },
+      {
+        "id": "casts-task-4",
+        "description": "$signed(raw)仍是4位表达式，赋给8位signed输出时符号扩展。",
+        "activities": [
+          3
+        ]
+      },
+      {
+        "id": "casts-task-5",
+        "description": "$signed(raw)仍是4位表达式，赋给8位signed输出时符号扩展。",
+        "activities": [
+          4
+        ]
       }
     ]
   },
@@ -1305,7 +1711,8 @@ window.HDL_LESSONS=[
     "title": "begin/end、if/else 与组合逻辑",
     "concept": [
       "sel=0选a、sel=1选b。写if之前，先问一句：两个分支是不是都能给y一个明确值？",
-      "例子先令y=a，再在sel=1时用y=b覆盖它。因此sel为0时也有输出，不需要记忆。若只留下if(sel) y=b，sel=0时程序没给新值，硬件就得保存旧结果；这已经不是原本的纯MUX规格。"
+      "例子先令y=a，再在sel=1时用y=b覆盖它。因此sel为0时也有输出，不需要记忆。若只留下if(sel) y=b，sel=0时程序没给新值，硬件就得保存旧结果；这已经不是原本的纯MUX规格。",
+      "试着让sel从1变0：原来b=7，所以y=7；现在a=2，默认赋值先让y=2，if条件为假，不再覆盖，最终y=2。若删掉默认行，sel=0时根本没有给y新值，电路便需要记住7。不是少写了一种语法风格，而是把无记忆的选择器改成了带存储的行为。"
     ],
     "code": "module mux_proc(input wire [3:0] a,b,\n input wire sel, output reg [3:0] y);\n always @(*) begin\n  y = a;\n  if(sel) begin\n   y = b;\n  end\n end\nendmodule",
     "notes": [
@@ -1398,7 +1805,7 @@ window.HDL_LESSONS=[
         "读懂begin/end和if/else",
         "为组合输出覆盖所有路径"
       ],
-      "exerciseScope": "见docs/LESSON_QUALITY_MATRIX.md逐课语义审查"
+      "exerciseScope": "docs/COURSE_SEMANTIC_REVIEW.json#branches"
     },
     "conceptDependencies": [
       {
@@ -1412,6 +1819,43 @@ window.HDL_LESSONS=[
       {
         "concept": "组合与保持",
         "taughtIn": "storage"
+      }
+    ],
+    "assessmentGoals": [
+      {
+        "id": "branches-task-1",
+        "description": "读懂begin/end和if/else",
+        "activities": [
+          0
+        ]
+      },
+      {
+        "id": "branches-task-2",
+        "description": "为组合输出覆盖所有路径",
+        "activities": [
+          1
+        ]
+      },
+      {
+        "id": "branches-task-3",
+        "description": "分别覆盖组合逻辑的每个输出路径",
+        "activities": [
+          2
+        ]
+      },
+      {
+        "id": "branches-task-4",
+        "description": "为组合输出覆盖所有路径",
+        "activities": [
+          3
+        ]
+      },
+      {
+        "id": "branches-task-5",
+        "description": "为组合输出覆盖所有路径",
+        "activities": [
+          4
+        ]
       }
     ]
   },
@@ -1510,12 +1954,49 @@ window.HDL_LESSONS=[
         "用case写选择规则",
         "发现漏赋值导致的意外存储"
       ],
-      "exerciseScope": "见docs/LESSON_QUALITY_MATRIX.md逐课语义审查"
+      "exerciseScope": "docs/COURSE_SEMANTIC_REVIEW.json#case-latch"
     },
     "conceptDependencies": [
       {
         "concept": "默认赋值与漏分支",
         "taughtIn": "branches"
+      }
+    ],
+    "assessmentGoals": [
+      {
+        "id": "case-latch-task-1",
+        "description": "用case写选择规则",
+        "activities": [
+          0
+        ]
+      },
+      {
+        "id": "case-latch-task-2",
+        "description": "发现漏赋值导致的意外存储",
+        "activities": [
+          1
+        ]
+      },
+      {
+        "id": "case-latch-task-3",
+        "description": "按选择规格校正两个输出",
+        "activities": [
+          2
+        ]
+      },
+      {
+        "id": "case-latch-task-4",
+        "description": "发现漏赋值导致的意外存储",
+        "activities": [
+          3
+        ]
+      },
+      {
+        "id": "case-latch-task-5",
+        "description": "发现漏赋值导致的意外存储",
+        "activities": [
+          4
+        ]
       }
     ]
   },
@@ -1589,7 +2070,7 @@ window.HDL_LESSONS=[
         "给req=0000写出valid和index。",
         "?只在casez模式中表示通配。"
       ],
-      "exerciseScope": "见docs/LESSON_QUALITY_MATRIX.md逐课语义审查"
+      "exerciseScope": "docs/COURSE_SEMANTIC_REVIEW.json#casez"
     },
     "conceptDependencies": [
       {
@@ -1599,6 +2080,44 @@ window.HDL_LESSONS=[
       {
         "concept": "X/Z的含义",
         "taughtIn": "four-state"
+      }
+    ],
+    "learningTier": "进阶专题（可先跳过）",
+    "assessmentGoals": [
+      {
+        "id": "casez-task-1",
+        "description": "给req=0000写出valid和index。",
+        "activities": [
+          0
+        ]
+      },
+      {
+        "id": "casez-task-2",
+        "description": "?只在casez模式中表示通配。",
+        "activities": [
+          1
+        ]
+      },
+      {
+        "id": "casez-task-3",
+        "description": "按casez首个匹配规则安排优先级",
+        "activities": [
+          2
+        ]
+      },
+      {
+        "id": "casez-task-4",
+        "description": "?只在casez模式中表示通配。",
+        "activities": [
+          3
+        ]
+      },
+      {
+        "id": "casez-task-5",
+        "description": "?只在casez模式中表示通配。",
+        "activities": [
+          4
+        ]
       }
     ]
   },
@@ -1709,7 +2228,7 @@ window.HDL_LESSONS=[
         "手工展开固定for循环",
         "分清循环次数与时钟拍数"
       ],
-      "exerciseScope": "见docs/LESSON_QUALITY_MATRIX.md逐课语义审查"
+      "exerciseScope": "docs/COURSE_SEMANTIC_REVIEW.json#loops"
     },
     "conceptDependencies": [
       {
@@ -1719,6 +2238,44 @@ window.HDL_LESSONS=[
       {
         "concept": "异或与归约",
         "taughtIn": "operators"
+      }
+    ],
+    "learningTier": "进阶必学",
+    "assessmentGoals": [
+      {
+        "id": "loops-task-1",
+        "description": "手工展开固定for循环",
+        "activities": [
+          0
+        ]
+      },
+      {
+        "id": "loops-task-2",
+        "description": "分清循环次数与时钟拍数",
+        "activities": [
+          1
+        ]
+      },
+      {
+        "id": "loops-task-3",
+        "description": "选择组合归约的正确初值",
+        "activities": [
+          2
+        ]
+      },
+      {
+        "id": "loops-task-4",
+        "description": "分清循环次数与时钟拍数",
+        "activities": [
+          3
+        ]
+      },
+      {
+        "id": "loops-task-5",
+        "description": "分清循环次数与时钟拍数",
+        "activities": [
+          4
+        ]
       }
     ]
   },
@@ -1800,7 +2357,7 @@ window.HDL_LESSONS=[
         "用参数配置硬件位宽",
         "解释generate在展开时复制硬件"
       ],
-      "exerciseScope": "见docs/LESSON_QUALITY_MATRIX.md逐课语义审查"
+      "exerciseScope": "docs/COURSE_SEMANTIC_REVIEW.json#parameters"
     },
     "conceptDependencies": [
       {
@@ -1810,6 +2367,44 @@ window.HDL_LESSONS=[
       {
         "concept": "循环展开",
         "taughtIn": "loops"
+      }
+    ],
+    "learningTier": "进阶必学",
+    "assessmentGoals": [
+      {
+        "id": "parameters-task-1",
+        "description": "用参数配置硬件位宽",
+        "activities": [
+          0
+        ]
+      },
+      {
+        "id": "parameters-task-2",
+        "description": "解释generate在展开时复制硬件",
+        "activities": [
+          1
+        ]
+      },
+      {
+        "id": "parameters-task-3",
+        "description": "从配置参数推导内部边界",
+        "activities": [
+          2
+        ]
+      },
+      {
+        "id": "parameters-task-4",
+        "description": "解释generate在展开时复制硬件",
+        "activities": [
+          3
+        ]
+      },
+      {
+        "id": "parameters-task-5",
+        "description": "解释generate在展开时复制硬件",
+        "activities": [
+          4
+        ]
       }
     ]
   },
@@ -1885,7 +2480,7 @@ window.HDL_LESSONS=[
         "声明函数的输入与返回值",
         "解释函数调用的位宽和硬件含义"
       ],
-      "exerciseScope": "见docs/LESSON_QUALITY_MATRIX.md逐课语义审查"
+      "exerciseScope": "docs/COURSE_SEMANTIC_REVIEW.json#functions"
     },
     "conceptDependencies": [
       {
@@ -1895,6 +2490,44 @@ window.HDL_LESSONS=[
       {
         "concept": "运算位宽",
         "taughtIn": "width-sign"
+      }
+    ],
+    "learningTier": "进阶必学",
+    "assessmentGoals": [
+      {
+        "id": "functions-task-1",
+        "description": "声明函数的输入与返回值",
+        "activities": [
+          0
+        ]
+      },
+      {
+        "id": "functions-task-2",
+        "description": "解释函数调用的位宽和硬件含义",
+        "activities": [
+          1
+        ]
+      },
+      {
+        "id": "functions-task-3",
+        "description": "定义并测试返回减一结果的函数",
+        "activities": [
+          2
+        ]
+      },
+      {
+        "id": "functions-task-4",
+        "description": "解释函数调用的位宽和硬件含义",
+        "activities": [
+          3
+        ]
+      },
+      {
+        "id": "functions-task-5",
+        "description": "解释函数调用的位宽和硬件含义",
+        "activities": [
+          4
+        ]
       }
     ]
   },
@@ -1970,7 +2603,7 @@ window.HDL_LESSONS=[
         "解释include与实例化的区别。",
         "宏是文本替换，使用时同样有反引号。"
       ],
-      "exerciseScope": "见docs/LESSON_QUALITY_MATRIX.md逐课语义审查"
+      "exerciseScope": "docs/COURSE_SEMANTIC_REVIEW.json#directives"
     },
     "conceptDependencies": [
       {
@@ -1980,6 +2613,44 @@ window.HDL_LESSONS=[
       {
         "concept": "构建常量与运行信号",
         "taughtIn": "parameters"
+      }
+    ],
+    "learningTier": "进阶专题（可先跳过）",
+    "assessmentGoals": [
+      {
+        "id": "directives-task-1",
+        "description": "解释include与实例化的区别。",
+        "activities": [
+          0
+        ]
+      },
+      {
+        "id": "directives-task-2",
+        "description": "宏是文本替换，使用时同样有反引号。",
+        "activities": [
+          1
+        ]
+      },
+      {
+        "id": "directives-task-3",
+        "description": "宏是文本替换，使用时同样有反引号。",
+        "activities": [
+          2
+        ]
+      },
+      {
+        "id": "directives-task-4",
+        "description": "宏是文本替换，使用时同样有反引号。",
+        "activities": [
+          3
+        ]
+      },
+      {
+        "id": "directives-task-5",
+        "description": "宏是文本替换，使用时同样有反引号。",
+        "activities": [
+          4
+        ]
       }
     ]
   },
@@ -2056,7 +2727,7 @@ window.HDL_LESSONS=[
         "正确连接多模块工程",
         "区分实例、层次与任务"
       ],
-      "exerciseScope": "见docs/LESSON_QUALITY_MATRIX.md逐课语义审查"
+      "exerciseScope": "docs/COURSE_SEMANTIC_REVIEW.json#hierarchy"
     },
     "conceptDependencies": [
       {
@@ -2071,6 +2742,44 @@ window.HDL_LESSONS=[
         "concept": "跨位进位",
         "taughtIn": "width-sign"
       }
+    ],
+    "learningTier": "进阶必学",
+    "assessmentGoals": [
+      {
+        "id": "hierarchy-task-1",
+        "description": "正确连接多模块工程",
+        "activities": [
+          0
+        ]
+      },
+      {
+        "id": "hierarchy-task-2",
+        "description": "区分实例、层次与任务",
+        "activities": [
+          1
+        ]
+      },
+      {
+        "id": "hierarchy-task-3",
+        "description": "区分实例、层次与任务",
+        "activities": [
+          2
+        ]
+      },
+      {
+        "id": "hierarchy-task-4",
+        "description": "区分实例、层次与任务",
+        "activities": [
+          3
+        ]
+      },
+      {
+        "id": "hierarchy-task-5",
+        "description": "区分实例、层次与任务",
+        "activities": [
+          4
+        ]
+      }
     ]
   },
   {
@@ -2079,7 +2788,8 @@ window.HDL_LESSONS=[
     "title": "时钟边沿、D 触发器与逐拍读图",
     "concept": [
       "D在一个周期里变了几次，Q到底取哪一次？我们只看clk从0跳到1前，D已经稳定成了什么。",
-      "假设Q原来0，第一上升沿前D=1，沿后Q更新成1。接着D变0但clk没有新的上升沿，Q还保持1，直到下一个有效沿才取0。posedge指定事件，<=描述该沿采样后的更新；它不是高电平期间一直跟随D。"
+      "假设Q原来0，第一上升沿前D=1，沿后Q更新成1。接着D变0但clk没有新的上升沿，Q还保持1，直到下一个有效沿才取0。posedge指定事件，<=描述该沿采样后的更新；它不是高电平期间一直跟随D。",
+      "这里第一次把<=写进沿触发过程。先把它读成“在这个沿读取右边的值，随后更新左边的寄存器”。它不同于assign的持续连接：沿间D改变，Q不会跟着改变。下一课再用两个寄存器解释为什么同一沿仍读到旧值；本课只练一只DFF。"
     ],
     "code": "module dff(input wire clk,d, output reg q);\n always @(posedge clk) begin\n  q <= d;\n end\nendmodule",
     "notes": [
@@ -2150,7 +2860,7 @@ window.HDL_LESSONS=[
         "指出上升沿与一个完整周期",
         "预测D变化后Q何时更新"
       ],
-      "exerciseScope": "见docs/LESSON_QUALITY_MATRIX.md逐课语义审查"
+      "exerciseScope": "docs/COURSE_SEMANTIC_REVIEW.json#edges"
     },
     "conceptDependencies": [
       {
@@ -2161,6 +2871,43 @@ window.HDL_LESSONS=[
         "concept": "过程语法",
         "taughtIn": "branches"
       }
+    ],
+    "assessmentGoals": [
+      {
+        "id": "edges-task-1",
+        "description": "指出上升沿与一个完整周期",
+        "activities": [
+          0
+        ]
+      },
+      {
+        "id": "edges-task-2",
+        "description": "预测D变化后Q何时更新",
+        "activities": [
+          1
+        ]
+      },
+      {
+        "id": "edges-task-3",
+        "description": "把采样时钟与被采数据分开",
+        "activities": [
+          2
+        ]
+      },
+      {
+        "id": "edges-task-4",
+        "description": "预测D变化后Q何时更新",
+        "activities": [
+          3
+        ]
+      },
+      {
+        "id": "edges-task-5",
+        "description": "预测D变化后Q何时更新",
+        "activities": [
+          4
+        ]
+      }
     ]
   },
   {
@@ -2169,7 +2916,8 @@ window.HDL_LESSONS=[
     "title": "阻塞 = 与非阻塞 <=",
     "concept": [
       "来看两级寄存器：a<=d，b<=a。上升沿前d=1、a=0，那么这个沿过后b是1，还是仍为0？先别按源码从上到下“把值传过去”。",
-      "沿到来时，第一句读到d=1，第二句读到的是尚未更新的a=0。随后安排的非阻塞更新提交，所以a=1而b=0。下一沿b才有机会采到已经保存为1的a。两份DFF的D端在同一沿各自拍快照，这比单独背“NBA区域”更容易理解。"
+      "沿到来时，第一句读到d=1，第二句读到的是尚未更新的a=0。随后安排的非阻塞更新提交，所以a=1而b=0。下一沿b才有机会采到已经保存为1的a。两份DFF的D端在同一沿各自拍快照，这比单独背“NBA区域”更容易理解。",
+      "我们不用“同时”两个字跳过推导。令沿前a=0、b=0、d=1：第一条安排a的新值为1，第二条读到的a仍为0，安排b为0；两条安排完成后才提交。因此沿后是1、0。下一沿保持d=1，第二条才读到a的1。若将a=d写成阻塞赋值，后面的b=a当场看到1，这段过程的仿真便失去两级延迟，不能再用原来的逐拍表解释。"
     ],
     "code": "module pipeline2(input wire clk,d,\n output reg a,b);\n always @(posedge clk) begin\n  a <= d;\n  b <= a;\n end\nendmodule",
     "notes": [
@@ -2267,12 +3015,49 @@ window.HDL_LESSONS=[
         "读出同一沿各寄存器采到的旧值",
         "区分=和<=在例子中的结果"
       ],
-      "exerciseScope": "见docs/LESSON_QUALITY_MATRIX.md逐课语义审查"
+      "exerciseScope": "docs/COURSE_SEMANTIC_REVIEW.json#nba"
     },
     "conceptDependencies": [
       {
         "concept": "边沿采样与保持",
         "taughtIn": "edges"
+      }
+    ],
+    "assessmentGoals": [
+      {
+        "id": "nba-task-1",
+        "description": "读出同一沿各寄存器采到的旧值",
+        "activities": [
+          0
+        ]
+      },
+      {
+        "id": "nba-task-2",
+        "description": "区分=和<=在例子中的结果",
+        "activities": [
+          1
+        ]
+      },
+      {
+        "id": "nba-task-3",
+        "description": "用旧寄存器位实现正确移位方向",
+        "activities": [
+          2
+        ]
+      },
+      {
+        "id": "nba-task-4",
+        "description": "区分=和<=在例子中的结果",
+        "activities": [
+          3
+        ]
+      },
+      {
+        "id": "nba-task-5",
+        "description": "区分=和<=在例子中的结果",
+        "activities": [
+          4
+        ]
       }
     ]
   },
@@ -2378,7 +3163,7 @@ window.HDL_LESSONS=[
         "区分同步与异步复位",
         "解释复位、使能、保持的优先级"
       ],
-      "exerciseScope": "见docs/LESSON_QUALITY_MATRIX.md逐课语义审查"
+      "exerciseScope": "docs/COURSE_SEMANTIC_REVIEW.json#reset"
     },
     "conceptDependencies": [
       {
@@ -2389,6 +3174,43 @@ window.HDL_LESSONS=[
         "concept": "分支优先级",
         "taughtIn": "branches"
       }
+    ],
+    "assessmentGoals": [
+      {
+        "id": "reset-task-1",
+        "description": "区分同步与异步复位",
+        "activities": [
+          0
+        ]
+      },
+      {
+        "id": "reset-task-2",
+        "description": "解释复位、使能、保持的优先级",
+        "activities": [
+          1
+        ]
+      },
+      {
+        "id": "reset-task-3",
+        "description": "按同步复位规格选择事件列表",
+        "activities": [
+          2
+        ]
+      },
+      {
+        "id": "reset-task-4",
+        "description": "解释复位、使能、保持的优先级",
+        "activities": [
+          3
+        ]
+      },
+      {
+        "id": "reset-task-5",
+        "description": "解释复位、使能、保持的优先级",
+        "activities": [
+          4
+        ]
+      }
     ]
   },
   {
@@ -2397,7 +3219,8 @@ window.HDL_LESSONS=[
     "title": "从规格到完整计数器",
     "concept": [
       "计数器为什么不会沿后立刻一口气加到最大？把它画成Q经过加法器回到D，就能看出中间还隔着一份寄存器。",
-      "沿前Q=7、en=1时，加法器算出8，这个沿把8存回Q。沿后组合D可能又算出9，但Q要等下一个沿才接收它。4位从15再加1只留下低四位回0；en=0则D端选择旧Q，复位仍具有最高优先级。"
+      "沿前Q=7、en=1时，加法器算出8，这个沿把8存回Q。沿后组合D可能又算出9，但Q要等下一个沿才接收它。4位从15再加1只留下低四位回0；en=0则D端选择旧Q，复位仍具有最高优先级。",
+      "现在不看代码，先写规格表：复位请求→0；非复位且en=0→旧值；非复位且en=1→旧值+1并截到4位。把三种情况按优先级排进一个if/else if，才得到右边的过程。若独立设计模6计数器，不能只缩为3位：3位自然回绕在7→0，模6还要在旧值5时提前清零。"
     ],
     "code": "module counter(input wire clk, rst_n, en,\n output reg [3:0] q);\n always @(posedge clk) begin\n  if (!rst_n) q <= 4'd0;\n  else if (en) q <= q + 4'd1;\n end\nendmodule",
     "notes": [
@@ -2507,7 +3330,7 @@ window.HDL_LESSONS=[
         "从自然语言规格写完整RTL",
         "预测复位、暂停和回绕"
       ],
-      "exerciseScope": "见docs/LESSON_QUALITY_MATRIX.md逐课语义审查"
+      "exerciseScope": "docs/COURSE_SEMANTIC_REVIEW.json#counter"
     },
     "conceptDependencies": [
       {
@@ -2517,6 +3340,43 @@ window.HDL_LESSONS=[
       {
         "concept": "有限位宽回绕",
         "taughtIn": "width-sign"
+      }
+    ],
+    "assessmentGoals": [
+      {
+        "id": "counter-task-1",
+        "description": "从自然语言规格写完整RTL",
+        "activities": [
+          0
+        ]
+      },
+      {
+        "id": "counter-task-2",
+        "description": "预测复位、暂停和回绕",
+        "activities": [
+          1
+        ]
+      },
+      {
+        "id": "counter-task-3",
+        "description": "在模6终值处回绕且保留使能",
+        "activities": [
+          2
+        ]
+      },
+      {
+        "id": "counter-task-4",
+        "description": "预测复位、暂停和回绕",
+        "activities": [
+          3
+        ]
+      },
+      {
+        "id": "counter-task-5",
+        "description": "预测复位、暂停和回绕",
+        "activities": [
+          4
+        ]
       }
     ]
   },
@@ -2593,7 +3453,7 @@ window.HDL_LESSONS=[
         "画出sig依次0、1、1、0时pulse序列。",
         "非阻塞赋值让pulse读到旧prev，而不是刚安排的新值。"
       ],
-      "exerciseScope": "见docs/LESSON_QUALITY_MATRIX.md逐课语义审查"
+      "exerciseScope": "docs/COURSE_SEMANTIC_REVIEW.json#shift-pulse"
     },
     "conceptDependencies": [
       {
@@ -2603,6 +3463,43 @@ window.HDL_LESSONS=[
       {
         "concept": "移位和拼接",
         "taughtIn": "vectors"
+      }
+    ],
+    "assessmentGoals": [
+      {
+        "id": "shift-pulse-task-1",
+        "description": "画出sig依次0、1、1、0时pulse序列。",
+        "activities": [
+          0
+        ]
+      },
+      {
+        "id": "shift-pulse-task-2",
+        "description": "非阻塞赋值让pulse读到旧prev，而不是刚安排的新值。",
+        "activities": [
+          1
+        ]
+      },
+      {
+        "id": "shift-pulse-task-3",
+        "description": "将变化检测迁移为下降沿检测",
+        "activities": [
+          2
+        ]
+      },
+      {
+        "id": "shift-pulse-task-4",
+        "description": "非阻塞赋值让pulse读到旧prev，而不是刚安排的新值。",
+        "activities": [
+          3
+        ]
+      },
+      {
+        "id": "shift-pulse-task-5",
+        "description": "非阻塞赋值让pulse读到旧prev，而不是刚安排的新值。",
+        "activities": [
+          4
+        ]
       }
     ]
   },
@@ -2679,7 +3576,7 @@ window.HDL_LESSONS=[
         "给每个op至少设计一组测试，并加上全0和最大值边界。",
         "先扩展输入再加，保留第5位。"
       ],
-      "exerciseScope": "见docs/LESSON_QUALITY_MATRIX.md逐课语义审查"
+      "exerciseScope": "docs/COURSE_SEMANTIC_REVIEW.json#alu"
     },
     "conceptDependencies": [
       {
@@ -2690,6 +3587,43 @@ window.HDL_LESSONS=[
         "concept": "扩位与进位",
         "taughtIn": "width-sign"
       }
+    ],
+    "assessmentGoals": [
+      {
+        "id": "alu-task-1",
+        "description": "给每个op至少设计一组测试，并加上全0和最大值边界。",
+        "activities": [
+          0
+        ]
+      },
+      {
+        "id": "alu-task-2",
+        "description": "先扩展输入再加，保留第5位。",
+        "activities": [
+          1
+        ]
+      },
+      {
+        "id": "alu-task-3",
+        "description": "用反例区分异或与或",
+        "activities": [
+          2
+        ]
+      },
+      {
+        "id": "alu-task-4",
+        "description": "先扩展输入再加，保留第5位。",
+        "activities": [
+          3
+        ]
+      },
+      {
+        "id": "alu-task-5",
+        "description": "先扩展输入再加，保留第5位。",
+        "activities": [
+          4
+        ]
+      }
     ]
   },
   {
@@ -2698,7 +3632,8 @@ window.HDL_LESSONS=[
     "title": "有限状态机：当前状态与下一状态",
     "concept": [
       "IDLE时start变1，next_state已经指向RUN，state是不是也立刻变了？先在纸上画开“候选下一状态”和“当前保存状态”两栏。",
-      "组合块根据state和输入计算next_state，但state由时钟过程保存，要等有效沿才接收它。busy来自state==RUN，所以它不会只因start沿间变化就提前拉高。这是输出只依赖当前状态的Moore写法；下一课再比较直接依赖输入时会怎样。"
+      "组合块根据state和输入计算next_state，但state由时钟过程保存，要等有效沿才接收它。busy来自state==RUN，所以它不会只因start沿间变化就提前拉高。这是输出只依赖当前状态的Moore写法；下一课再比较直接依赖输入时会怎样。",
+      "假设空闲时在两个沿之间拉高start：下一状态逻辑立刻算出RUN，但state还保存IDLE，所以busy仍0。给一个上升沿，state装入RUN，busy才变1。接下来start撤销、finish仍0，默认next=state让控制器继续RUN。这三步分别对应“组合算候选”“寄存保存”“状态译码输出”；把busy改接next会让沿前就报忙，改变了接口时刻。"
     ],
     "code": "module controller(input wire clk,rst_n,start,finish,\n output wire busy);\n localparam IDLE=1'b0, RUN=1'b1;\n reg state,next_state;\n always @(*) begin\n  next_state = state;\n  case(state)\n   IDLE: if(start) next_state = RUN;\n   RUN: if(finish) next_state = IDLE;\n   default: next_state = IDLE;\n  endcase\n end\n always @(posedge clk) begin\n  if(!rst_n) state <= IDLE;\n  else state <= next_state;\n end\n assign busy = (state == RUN);\nendmodule",
     "notes": [
@@ -2803,7 +3738,7 @@ window.HDL_LESSONS=[
         "区分state与next_state",
         "按转移表预测沿后状态"
       ],
-      "exerciseScope": "见docs/LESSON_QUALITY_MATRIX.md逐课语义审查"
+      "exerciseScope": "docs/COURSE_SEMANTIC_REVIEW.json#fsm"
     },
     "conceptDependencies": [
       {
@@ -2813,6 +3748,43 @@ window.HDL_LESSONS=[
       {
         "concept": "组合默认值",
         "taughtIn": "case-latch"
+      }
+    ],
+    "assessmentGoals": [
+      {
+        "id": "fsm-task-1",
+        "description": "区分state与next_state",
+        "activities": [
+          0
+        ]
+      },
+      {
+        "id": "fsm-task-2",
+        "description": "按转移表预测沿后状态",
+        "activities": [
+          1
+        ]
+      },
+      {
+        "id": "fsm-task-3",
+        "description": "让运行状态在完成条件前保持",
+        "activities": [
+          2
+        ]
+      },
+      {
+        "id": "fsm-task-4",
+        "description": "按转移表预测沿后状态",
+        "activities": [
+          3
+        ]
+      },
+      {
+        "id": "fsm-task-5",
+        "description": "按转移表预测沿后状态",
+        "activities": [
+          4
+        ]
       }
     ]
   },
@@ -2887,12 +3859,49 @@ window.HDL_LESSONS=[
         "区分沿间与沿后输出",
         "说明寄存输出的延迟代价"
       ],
-      "exerciseScope": "见docs/LESSON_QUALITY_MATRIX.md逐课语义审查"
+      "exerciseScope": "docs/COURSE_SEMANTIC_REVIEW.json#moore-mealy"
     },
     "conceptDependencies": [
       {
         "concept": "当前状态与下一状态",
         "taughtIn": "fsm"
+      }
+    ],
+    "assessmentGoals": [
+      {
+        "id": "moore-mealy-task-1",
+        "description": "区分沿间与沿后输出",
+        "activities": [
+          0
+        ]
+      },
+      {
+        "id": "moore-mealy-task-2",
+        "description": "说明寄存输出的延迟代价",
+        "activities": [
+          1
+        ]
+      },
+      {
+        "id": "moore-mealy-task-3",
+        "description": "用上一位和当前位共同检测11",
+        "activities": [
+          2
+        ]
+      },
+      {
+        "id": "moore-mealy-task-4",
+        "description": "说明寄存输出的延迟代价",
+        "activities": [
+          3
+        ]
+      },
+      {
+        "id": "moore-mealy-task-5",
+        "description": "说明寄存输出的延迟代价",
+        "activities": [
+          4
+        ]
       }
     ]
   },
@@ -2975,7 +3984,7 @@ window.HDL_LESSONS=[
         "区分四态logic和二态bit",
         "启用SV模式，保持单驱动规则"
       ],
-      "exerciseScope": "见docs/LESSON_QUALITY_MATRIX.md逐课语义审查"
+      "exerciseScope": "docs/COURSE_SEMANTIC_REVIEW.json#sv-logic"
     },
     "conceptDependencies": [
       {
@@ -2985,6 +3994,43 @@ window.HDL_LESSONS=[
       {
         "concept": "四态未知",
         "taughtIn": "four-state"
+      }
+    ],
+    "assessmentGoals": [
+      {
+        "id": "sv-logic-task-1",
+        "description": "区分四态logic和二态bit",
+        "activities": [
+          0
+        ]
+      },
+      {
+        "id": "sv-logic-task-2",
+        "description": "启用SV模式，保持单驱动规则",
+        "activities": [
+          1
+        ]
+      },
+      {
+        "id": "sv-logic-task-3",
+        "description": "保留未知值而非隐藏为两态",
+        "activities": [
+          2
+        ]
+      },
+      {
+        "id": "sv-logic-task-4",
+        "description": "启用SV模式，保持单驱动规则",
+        "activities": [
+          3
+        ]
+      },
+      {
+        "id": "sv-logic-task-5",
+        "description": "启用SV模式，保持单驱动规则",
+        "activities": [
+          4
+        ]
       }
     ]
   },
@@ -3067,7 +4113,7 @@ window.HDL_LESSONS=[
         "用always_comb/always_ff表达电路意图",
         "把熟悉的Verilog迁移到SV"
       ],
-      "exerciseScope": "见docs/LESSON_QUALITY_MATRIX.md逐课语义审查"
+      "exerciseScope": "docs/COURSE_SEMANTIC_REVIEW.json#sv-always"
     },
     "conceptDependencies": [
       {
@@ -3081,6 +4127,43 @@ window.HDL_LESSONS=[
       {
         "concept": "logic类型",
         "taughtIn": "sv-logic"
+      }
+    ],
+    "assessmentGoals": [
+      {
+        "id": "sv-always-task-1",
+        "description": "用always_comb/always_ff表达电路意图",
+        "activities": [
+          0
+        ]
+      },
+      {
+        "id": "sv-always-task-2",
+        "description": "把熟悉的Verilog迁移到SV",
+        "activities": [
+          1
+        ]
+      },
+      {
+        "id": "sv-always-task-3",
+        "description": "修复遗漏输入敏感性的组合仿真",
+        "activities": [
+          2
+        ]
+      },
+      {
+        "id": "sv-always-task-4",
+        "description": "把熟悉的Verilog迁移到SV",
+        "activities": [
+          3
+        ]
+      },
+      {
+        "id": "sv-always-task-5",
+        "description": "把熟悉的Verilog迁移到SV",
+        "activities": [
+          4
+        ]
       }
     ]
   },
@@ -3155,7 +4238,7 @@ window.HDL_LESSONS=[
         "解释锁存器的透明区间",
         "区分有意存储与组合漏赋值"
       ],
-      "exerciseScope": "见docs/LESSON_QUALITY_MATRIX.md逐课语义审查"
+      "exerciseScope": "docs/COURSE_SEMANTIC_REVIEW.json#sv-latch"
     },
     "conceptDependencies": [
       {
@@ -3165,6 +4248,43 @@ window.HDL_LESSONS=[
       {
         "concept": "组合/时序过程意图",
         "taughtIn": "sv-always"
+      }
+    ],
+    "assessmentGoals": [
+      {
+        "id": "sv-latch-task-1",
+        "description": "解释锁存器的透明区间",
+        "activities": [
+          0
+        ]
+      },
+      {
+        "id": "sv-latch-task-2",
+        "description": "区分有意存储与组合漏赋值",
+        "activities": [
+          1
+        ]
+      },
+      {
+        "id": "sv-latch-task-3",
+        "description": "按低有效规格实现透明锁存",
+        "activities": [
+          2
+        ]
+      },
+      {
+        "id": "sv-latch-task-4",
+        "description": "区分有意存储与组合漏赋值",
+        "activities": [
+          3
+        ]
+      },
+      {
+        "id": "sv-latch-task-5",
+        "description": "区分有意存储与组合漏赋值",
+        "activities": [
+          4
+        ]
       }
     ]
   },
@@ -3266,7 +4386,7 @@ window.HDL_LESSONS=[
         "分清元素数量与每个元素位宽",
         "正确访问数组元素和某一位"
       ],
-      "exerciseScope": "见docs/LESSON_QUALITY_MATRIX.md逐课语义审查"
+      "exerciseScope": "docs/COURSE_SEMANTIC_REVIEW.json#sv-arrays"
     },
     "conceptDependencies": [
       {
@@ -3276,6 +4396,43 @@ window.HDL_LESSONS=[
       {
         "concept": "logic声明",
         "taughtIn": "sv-logic"
+      }
+    ],
+    "assessmentGoals": [
+      {
+        "id": "sv-arrays-task-1",
+        "description": "分清元素数量与每个元素位宽",
+        "activities": [
+          0
+        ]
+      },
+      {
+        "id": "sv-arrays-task-2",
+        "description": "正确访问数组元素和某一位",
+        "activities": [
+          1
+        ]
+      },
+      {
+        "id": "sv-arrays-task-3",
+        "description": "同时确定元素宽度和元素个数",
+        "activities": [
+          2
+        ]
+      },
+      {
+        "id": "sv-arrays-task-4",
+        "description": "正确访问数组元素和某一位",
+        "activities": [
+          3
+        ]
+      },
+      {
+        "id": "sv-arrays-task-5",
+        "description": "正确访问数组元素和某一位",
+        "activities": [
+          4
+        ]
       }
     ]
   },
@@ -3358,7 +4515,7 @@ window.HDL_LESSONS=[
         "用typedef与enum表达状态类型",
         "计算packed struct总位数"
       ],
-      "exerciseScope": "见docs/LESSON_QUALITY_MATRIX.md逐课语义审查"
+      "exerciseScope": "docs/COURSE_SEMANTIC_REVIEW.json#sv-types"
     },
     "conceptDependencies": [
       {
@@ -3369,6 +4526,43 @@ window.HDL_LESSONS=[
         "concept": "状态编码",
         "taughtIn": "fsm"
       }
+    ],
+    "assessmentGoals": [
+      {
+        "id": "sv-types-task-1",
+        "description": "用typedef与enum表达状态类型",
+        "activities": [
+          0
+        ]
+      },
+      {
+        "id": "sv-types-task-2",
+        "description": "计算packed struct总位数",
+        "activities": [
+          1
+        ]
+      },
+      {
+        "id": "sv-types-task-3",
+        "description": "按声明顺序拼接结构字段",
+        "activities": [
+          2
+        ]
+      },
+      {
+        "id": "sv-types-task-4",
+        "description": "计算packed struct总位数",
+        "activities": [
+          3
+        ]
+      },
+      {
+        "id": "sv-types-task-5",
+        "description": "计算packed struct总位数",
+        "activities": [
+          4
+        ]
+      }
     ]
   },
   {
@@ -3376,27 +4570,29 @@ window.HDL_LESSONS=[
     "stage": 3,
     "title": "package、interface 与 modport：组织RTL接口",
     "concept": [
-      "三个模块都需要同一个字节类型，改宽度时却只改了两处，问题会出在哪里？先把共享声明集中到一个package，再用接口把成组端口连接起来。",
-      "types_pkg::byte_t表示包内类型，不是一条跨模块导线。link_if实例才包含实际valid、data和ready信号，modport从源或接收端视角限定方向。本课只把它们当“请求/允许”信号解释连接与方向，不要求掌握背压保持；完整Ready/Valid协议在后面的握手课专讲。"
+      "假设两个模块都要使用8位数据。复制一遍typedef能工作，但以后改成16位时容易只改一边。package types_pkg把byte_t放在一个共享命名空间里，types_pkg::byte_t表示“这个包中定义的类型”。包不是模块，不需要实例化，也没有运行的输入输出。",
+      "再看信号连接：若一个模块产生value，另一个读取value，能不能把相关信号组织成一个有名字的对象？interface sample_if定义这种连接集合；sample_if wires()在顶层创建这一份接口对象。注意类型定义sample_if与对象wires仍是两回事，与module和实例的区别相似。",
+      "modport producer(output value)从生产者模块的视角说明它可驱动value；observer(input value)允许观察者读取。它们没有复制两份value，而是限制对同一个wires.value的访问方向。x=8'hA5时，source驱动A5，sink读出A5；没有时钟、握手或保存行为。",
+      "先沿x→u_source→wires.value→u_sink→y画出路径，再看三处点号。types_pkg::byte_t用双冒号选择包内类型；.bus(wires)是命名端口连接；bus.value是接口对象的成员。不能因都带名字就互换写法。带valid/ready的流协议留到Ready/Valid课，在掌握这些组织语法后再学习传输时刻。"
     ],
-    "code": "package types_pkg;\n typedef logic [7:0] byte_t;\nendpackage\ninterface link_if;\n logic valid,ready;\n types_pkg::byte_t data;\n modport source(output valid,data,input ready);\n modport sink(input valid,data,output ready);\nendinterface\nmodule link_source(input logic req,input types_pkg::byte_t payload,link_if.source bus);\n assign bus.valid=req;\n assign bus.data=payload;\nendmodule\nmodule link_sink(link_if.sink bus,output logic [7:0] observed);\n assign bus.ready=1'b1;\n assign observed=bus.data;\nendmodule\nmodule link_demo(input logic req,input logic [7:0] payload,output logic [7:0] observed);\n link_if bus();\n link_source src(.req(req),.payload(payload),.bus(bus));\n link_sink dst(.bus(bus),.observed(observed));\nendmodule",
+    "code": "package types_pkg;\n  typedef logic [7:0] byte_t;\nendpackage\ninterface sample_if;\n  logic [7:0] value;\n  modport producer(output value);\n  modport observer(input value);\nendinterface\nmodule source(input types_pkg::byte_t x,sample_if.producer bus);\n  assign bus.value=x;\nendmodule\nmodule sink(sample_if.observer bus,output logic [7:0] y);\n  assign y=bus.value;\nendmodule\nmodule sample_top(input logic [7:0] x,output logic [7:0] y);\n  sample_if wires();\n  source u_source(.x(x),.bus(wires));\n  sink u_sink(.bus(wires),.y(y));\nendmodule",
     "notes": [
-      "types_pkg::byte_t引用共享声明；包不会因被引用而自动产生一个数据寄存器。",
-      "link_if bus()创建一组实际信号，模块连接的是同一份bus实例。",
-      "source视图输出valid/data、读取ready；sink视图相反。方向从使用该视图的模块看。",
-      "本例的ready固定为1，valid与data直接连线，只演示类型和连接；不讨论传输计数或背压保持。"
+      "types_pkg::byte_t引用共享8位类型；包不会自动产生硬件实例。",
+      "sample_if wires()创建一份接口对象，两个子模块都连接wires。",
+      "producer输出value，observer读取value；方向从使用视图的模块看。",
+      "本例是x到y的连续数据连接，没有存储或传输协议。"
     ],
     "trap": "modport限定读写方向，不会自动插入缓存、仲裁或实现协议。先检查每个信号谁驱动、谁读取。",
-    "q": "sink的ready方向是？",
+    "q": "sample_if.producer把value声明为output，这个方向是谁的视角？",
     "options": [
-      "input",
-      "output",
-      "无法确定"
+      "使用producer视图的模块",
+      "外部电脑",
+      "package本身"
     ],
-    "correct": 1,
-    "answer": "接收方通过输出ready告诉发送方自己能否接收。",
-    "task": "从source和sink各自的视角，列出valid、ready、data的读写方向，并解释package类型与interface实例的区别。",
-    "solution": "source输出valid/data、输入ready；sink相反。package给出共享类型声明，interface实例包含实际连接信号；它们都不自动实现传输协议。",
+    "correct": 0,
+    "answer": "source使用producer视图，负责驱动bus.value；sink使用observer视图，只读取它。包定义类型，不是信号驱动者。",
+    "task": "把sample_if改为16位sample，定义writer/reader两个视图，画出驱动者和读取者，不加入时钟或协议。",
+    "solution": "interface sample16_if;\n logic [15:0] sample;\n modport writer(output sample);\n modport reader(input sample);\nendinterface\n// 顶层内部：sample16_if wires();",
     "diagram": null,
     "context": "完整SystemVerilog编译单元；这里演示共享类型和端口方向，不实现缓存或Ready/Valid协议。",
     "optional": false,
@@ -3418,7 +4614,7 @@ window.HDL_LESSONS=[
         "声明中位于变量名前、打包成连续位的维度或结构。"
       ]
     ],
-    "minutes": 30,
+    "minutes": 45,
     "knowledge": [
       {
         "id": "concept",
@@ -3436,11 +4632,11 @@ window.HDL_LESSONS=[
     "language": "systemverilog",
     "narrative": true,
     "furtherReading": [
-      "package保存类型、常量和函数，不是一份实例硬件。types_pkg::byte_t用作用域操作符引用包内类型；import types_pkg::*可导入名字，但需避免同名冲突。",
-      "interface把valid/data/ready放在一起，modport从使用模块视角限制方向：source驱动valid/data读取ready，sink反向。方向声明不自动实现握手或缓存。",
-      "link_demo创建一份interface并连接源与接收器。文件列表先编译package，再interface及模块。不同综合器对interface端口支持不一，受限环境可展开为普通端口并保持协议不变。"
+      "types_pkg::byte_t用双冒号引用包内类型，import types_pkg::*可导入名字。导入不会创建硬件；不同包的同名标识符仍需明确作用域。",
+      "sample_if把value组织成一个接口，producer与observer从模块视角限制访问方向；它们共享同一个对象wires，而不是两个各自保存数据的对象。",
+      "文件表应先读package，再读interface和使用模块。若综合器不支持接口端口，可以展开为普通的8位输入/输出，保持驱动方向和组合关系一致。"
     ],
-    "quizRevision": 1,
+    "quizRevision": 3,
     "conceptReview": {
       "prior": [
         "sv-types",
@@ -3450,7 +4646,7 @@ window.HDL_LESSONS=[
         "使用包中的共享类型",
         "按角色读懂modport方向"
       ],
-      "exerciseScope": "见docs/LESSON_QUALITY_MATRIX.md逐课语义审查"
+      "exerciseScope": "docs/COURSE_SEMANTIC_REVIEW.json#sv-package"
     },
     "related": [],
     "conceptDependencies": [
@@ -3461,6 +4657,44 @@ window.HDL_LESSONS=[
       {
         "concept": "实例与端口方向",
         "taughtIn": "module"
+      }
+    ],
+    "learningTier": "进阶必学",
+    "assessmentGoals": [
+      {
+        "id": "sv-package-task-1",
+        "description": "从使用模块视角判断modport方向",
+        "activities": [
+          0
+        ]
+      },
+      {
+        "id": "sv-package-task-2",
+        "description": "引用包内共享类型",
+        "activities": [
+          1
+        ]
+      },
+      {
+        "id": "sv-package-task-3",
+        "description": "识别接口中的多驱动",
+        "activities": [
+          2
+        ]
+      },
+      {
+        "id": "sv-package-task-4",
+        "description": "定义接口并创建一份对象",
+        "activities": [
+          3
+        ]
+      },
+      {
+        "id": "sv-package-task-5",
+        "description": "区分接口对象与访问视图",
+        "activities": [
+          4
+        ]
       }
     ]
   },
@@ -3574,7 +4808,7 @@ window.HDL_LESSONS=[
         "识别DUT与测试台的职责",
         "避免激励与采样在同一沿竞争"
       ],
-      "exerciseScope": "见docs/LESSON_QUALITY_MATRIX.md逐课语义审查"
+      "exerciseScope": "docs/COURSE_SEMANTIC_REVIEW.json#testbench"
     },
     "conceptDependencies": [
       {
@@ -3584,6 +4818,43 @@ window.HDL_LESSONS=[
       {
         "concept": "可综合设计模块",
         "taughtIn": "module"
+      }
+    ],
+    "assessmentGoals": [
+      {
+        "id": "testbench-task-1",
+        "description": "识别DUT与测试台的职责",
+        "activities": [
+          0
+        ]
+      },
+      {
+        "id": "testbench-task-2",
+        "description": "避免激励与采样在同一沿竞争",
+        "activities": [
+          1
+        ]
+      },
+      {
+        "id": "testbench-task-3",
+        "description": "从半周期推导测试台时钟延迟",
+        "activities": [
+          2
+        ]
+      },
+      {
+        "id": "testbench-task-4",
+        "description": "避免激励与采样在同一沿竞争",
+        "activities": [
+          3
+        ]
+      },
+      {
+        "id": "testbench-task-5",
+        "description": "避免激励与采样在同一沿竞争",
+        "activities": [
+          4
+        ]
       }
     ]
   },
@@ -3660,7 +4931,7 @@ window.HDL_LESSONS=[
         "解释为什么在同沿立刻用if检查q可能误报。",
         "5ns沿处q<=d先读取d=1，q仍是旧0。"
       ],
-      "exerciseScope": "见docs/LESSON_QUALITY_MATRIX.md逐课语义审查"
+      "exerciseScope": "docs/COURSE_SEMANTIC_REVIEW.json#scheduling"
     },
     "conceptDependencies": [
       {
@@ -3671,6 +4942,43 @@ window.HDL_LESSONS=[
         "concept": "测试台激励与观察相位",
         "taughtIn": "testbench"
       }
+    ],
+    "assessmentGoals": [
+      {
+        "id": "scheduling-task-1",
+        "description": "解释为什么在同沿立刻用if检查q可能误报。",
+        "activities": [
+          0
+        ]
+      },
+      {
+        "id": "scheduling-task-2",
+        "description": "5ns沿处q<=d先读取d=1，q仍是旧0。",
+        "activities": [
+          1
+        ]
+      },
+      {
+        "id": "scheduling-task-3",
+        "description": "5ns沿处q<=d先读取d=1，q仍是旧0。",
+        "activities": [
+          2
+        ]
+      },
+      {
+        "id": "scheduling-task-4",
+        "description": "5ns沿处q<=d先读取d=1，q仍是旧0。",
+        "activities": [
+          3
+        ]
+      },
+      {
+        "id": "scheduling-task-5",
+        "description": "5ns沿处q<=d先读取d=1，q仍是旧0。",
+        "activities": [
+          4
+        ]
+      }
     ]
   },
   {
@@ -3679,7 +4987,8 @@ window.HDL_LESSONS=[
     "title": "自检、波形与第一次实际运行",
     "concept": [
       "假如DUT把加1写成加2，测试台会主动失败，还是只画出一条看起来也在递增的波形？先用这个错误检验检查器。",
-      "参考值按规格独立更新，再在安全采样相位用!==比较。失败调用$fatal，卡住由超时退出。检查复位、保持和回绕后，再故意改错一次，确认原用例能拒绝它；这样波形是定位首个分歧的工具，而不是唯一的正确性证据。"
+      "参考值按规格独立更新，再在安全采样相位用!==比较。失败调用$fatal，卡住由超时退出。检查复位、保持和回绕后，再故意改错一次，确认原用例能拒绝它；这样波形是定位首个分歧的工具，而不是唯一的正确性证据。",
+      "一个会写PASS的测试台不一定会抓错。我们把计数器的+1故意改成+2，预期模型仍每拍加1：首次允许计数后，实际2与预期1不同，测试应失败。若仍通过，先查是否重新编译、是否比较了独立预期、是否在正确相位观察、失败是否真的结束运行。恢复正确RTL后再运行，构成正例和反例两端的检查。"
     ],
     "code": "// 在上一课initial中、打印之后、$finish之前插入：\nif (q !== 4'd3) $fatal(1, \"count mismatch\");\n// 另加一个独立initial用于记录波形：\ninitial begin\n $dumpfile(\"counter.vcd\");\n $dumpvars(0,tb);\nend\n// 终端：\n// iverilog -g2012 -s tb -o sim counter.v tb.v\n// vvp sim\n// gtkwave counter.vcd",
     "notes": [
@@ -3751,7 +5060,7 @@ window.HDL_LESSONS=[
         "写主动失败的输出检查",
         "运行仿真、看波形并故意注入错误"
       ],
-      "exerciseScope": "见docs/LESSON_QUALITY_MATRIX.md逐课语义审查"
+      "exerciseScope": "docs/COURSE_SEMANTIC_REVIEW.json#checking"
     },
     "conceptDependencies": [
       {
@@ -3761,6 +5070,43 @@ window.HDL_LESSONS=[
       {
         "concept": "X/Z比较",
         "taughtIn": "four-state"
+      }
+    ],
+    "assessmentGoals": [
+      {
+        "id": "checking-task-1",
+        "description": "写主动失败的输出检查",
+        "activities": [
+          0
+        ]
+      },
+      {
+        "id": "checking-task-2",
+        "description": "运行仿真、看波形并故意注入错误",
+        "activities": [
+          1
+        ]
+      },
+      {
+        "id": "checking-task-3",
+        "description": "用四态比较捕获未知输出",
+        "activities": [
+          2
+        ]
+      },
+      {
+        "id": "checking-task-4",
+        "description": "运行仿真、看波形并故意注入错误",
+        "activities": [
+          3
+        ]
+      },
+      {
+        "id": "checking-task-5",
+        "description": "运行仿真、看波形并故意注入错误",
+        "activities": [
+          4
+        ]
       }
     ]
   },
@@ -3842,12 +5188,42 @@ window.HDL_LESSONS=[
         "标出采样前后的稳定窗口",
         "解释降频通常不能直接解决保持违例"
       ],
-      "exerciseScope": "见docs/LESSON_QUALITY_MATRIX.md逐课语义审查"
+      "exerciseScope": "docs/COURSE_SEMANTIC_REVIEW.json#setup-hold"
     },
     "conceptDependencies": [
       {
         "concept": "DFF采样沿",
         "taughtIn": "edges"
+      }
+    ],
+    "assessmentGoals": [
+      {
+        "id": "setup-hold-task-1",
+        "description": "标出采样前后的稳定窗口",
+        "activities": [
+          0
+        ]
+      },
+      {
+        "id": "setup-hold-task-2",
+        "description": "解释降频通常不能直接解决保持违例",
+        "activities": [
+          1
+        ]
+      },
+      {
+        "id": "setup-hold-task-3",
+        "description": "解释降频通常不能直接解决保持违例",
+        "activities": [
+          2
+        ]
+      },
+      {
+        "id": "setup-hold-task-4",
+        "description": "解释降频通常不能直接解决保持违例",
+        "activities": [
+          3
+        ]
       }
     ]
   },
@@ -3964,7 +5340,7 @@ window.HDL_LESSONS=[
         "算一条简化路径的建立裕量",
         "区分流水线延迟与吞吐率"
       ],
-      "exerciseScope": "见docs/LESSON_QUALITY_MATRIX.md逐课语义审查"
+      "exerciseScope": "docs/COURSE_SEMANTIC_REVIEW.json#timing-path"
     },
     "conceptDependencies": [
       {
@@ -3974,6 +5350,36 @@ window.HDL_LESSONS=[
       {
         "concept": "跨周期样本",
         "taughtIn": "nba"
+      }
+    ],
+    "assessmentGoals": [
+      {
+        "id": "timing-path-task-1",
+        "description": "算一条简化路径的建立裕量",
+        "activities": [
+          0
+        ]
+      },
+      {
+        "id": "timing-path-task-2",
+        "description": "区分流水线延迟与吞吐率",
+        "activities": [
+          1
+        ]
+      },
+      {
+        "id": "timing-path-task-3",
+        "description": "区分流水线延迟与吞吐率",
+        "activities": [
+          2
+        ]
+      },
+      {
+        "id": "timing-path-task-4",
+        "description": "区分流水线延迟与吞吐率",
+        "activities": [
+          3
+        ]
       }
     ]
   },
@@ -4050,7 +5456,7 @@ window.HDL_LESSONS=[
         "分别计算Setup与Hold裕量",
         "解释正偏斜的两种作用"
       ],
-      "exerciseScope": "见docs/LESSON_QUALITY_MATRIX.md逐课语义审查"
+      "exerciseScope": "docs/COURSE_SEMANTIC_REVIEW.json#clock-skew"
     },
     "conceptDependencies": [
       {
@@ -4060,6 +5466,36 @@ window.HDL_LESSONS=[
       {
         "concept": "建立/保持检查",
         "taughtIn": "setup-hold"
+      }
+    ],
+    "assessmentGoals": [
+      {
+        "id": "clock-skew-task-1",
+        "description": "分别计算Setup与Hold裕量",
+        "activities": [
+          0
+        ]
+      },
+      {
+        "id": "clock-skew-task-2",
+        "description": "解释正偏斜的两种作用",
+        "activities": [
+          1
+        ]
+      },
+      {
+        "id": "clock-skew-task-3",
+        "description": "解释正偏斜的两种作用",
+        "activities": [
+          2
+        ]
+      },
+      {
+        "id": "clock-skew-task-4",
+        "description": "解释正偏斜的两种作用",
+        "activities": [
+          3
+        ]
       }
     ]
   },
@@ -4134,7 +5570,7 @@ window.HDL_LESSONS=[
         "证明多周期的功能前提",
         "核对捕获边沿与Hold关系"
       ],
-      "exerciseScope": "见docs/LESSON_QUALITY_MATRIX.md逐课语义审查"
+      "exerciseScope": "docs/COURSE_SEMANTIC_REVIEW.json#multicycle"
     },
     "conceptDependencies": [
       {
@@ -4144,6 +5580,37 @@ window.HDL_LESSONS=[
       {
         "concept": "同沿hold与跨沿setup",
         "taughtIn": "clock-skew"
+      }
+    ],
+    "learningTier": "进阶专题（可先跳过）",
+    "assessmentGoals": [
+      {
+        "id": "multicycle-task-1",
+        "description": "证明多周期的功能前提",
+        "activities": [
+          0
+        ]
+      },
+      {
+        "id": "multicycle-task-2",
+        "description": "核对捕获边沿与Hold关系",
+        "activities": [
+          1
+        ]
+      },
+      {
+        "id": "multicycle-task-3",
+        "description": "核对捕获边沿与Hold关系",
+        "activities": [
+          2
+        ]
+      },
+      {
+        "id": "multicycle-task-4",
+        "description": "核对捕获边沿与Hold关系",
+        "activities": [
+          3
+        ]
       }
     ]
   },
@@ -4220,7 +5687,7 @@ window.HDL_LESSONS=[
         "判断双FF的适用边界",
         "为脉冲与多位数据选择协议"
       ],
-      "exerciseScope": "见docs/LESSON_QUALITY_MATRIX.md逐课语义审查"
+      "exerciseScope": "docs/COURSE_SEMANTIC_REVIEW.json#cdc"
     },
     "conceptDependencies": [
       {
@@ -4231,96 +5698,35 @@ window.HDL_LESSONS=[
         "concept": "两级寄存器",
         "taughtIn": "nba"
       }
-    ]
-  },
-  {
-    "id": "async-fifo",
-    "title": "异步FIFO：数据留在RAM，指针跨域",
-    "stage": 5,
-    "prerequisites": [
-      "cdc",
-      "sv-arrays"
     ],
-    "code": "module gray_step #(parameter A=3)(input wire [A:0] binary,output wire [A:0] gray);\n assign gray=(binary>>1)^binary;\nendmodule",
-    "concept": [
-      "读写两边用不同时钟，怎样知道还有多少数据可读，而不把每一位数据都各自同步一遍？先把数据通道与状态通知分开。",
-      "数据保存在支持双时钟访问的存储结构中，本地二进制指针选地址，Gray指针同步给对端帮助判断满空。远端看到指针有延迟，因此标志可能保守。这里的Gray模块只演示编码，不是完整异步FIFO；首字直通还是寄存读，也仍是另需说明的接口选择。",
-      "先算一次Gray：binary=0011右移得0001，异或得到0010；下一值0100右移0010，异或得0110。这两个Gray码只差一位。同步器仍不能代替跨域物理约束，指针比较也必须按具体深度与额外回绕位设计。"
-    ],
-    "notes": [
-      "Gray=(binary>>1)^binary，相邻计数只变一位；这不取消同步链或位间偏差约束。",
-      "这段只实现Gray编码，不是完整异步FIFO。真实工程应使用经过验证的IP并检查CDC、复位及约束。"
-    ],
-    "trap": "各位可能在不同拍完成，无法保证字一致。",
-    "goals": [
-      "解释数据与指针跨域路径",
-      "计算Gray并说明约束边界"
-    ],
-    "q": "异步FIFO通常把哪类状态跨域同步给对端？",
-    "options": [
-      "每个数据位各自双FF",
-      "寄存后的Gray指针",
-      "未寄存的地址加法结果"
-    ],
-    "correct": 1,
-    "answer": "数据经存储传递，指针用于满空判断，仍需约束和同步链。",
-    "task": "列出binary0..7与Gray，并说明异步FIFO为何同步指针不逐位同步数据。",
-    "solution": "000,001,011,010,110,111,101,100；数据靠受控存储转移，指针用于安全判定可读写。",
-    "terms": [
-      [
-        "规格",
-        "约定输入、输出、时钟、复位和边界行为。"
-      ]
-    ],
-    "context": "完整模块，保存为.v；测试平台与工具命令另外提供。",
-    "minutes": 30,
-    "optional": false,
-    "language": "verilog",
-    "knowledge": [
+    "assessmentGoals": [
       {
-        "id": "concept",
-        "title": "异步FIFO有独立写时钟和读时钟"
+        "id": "cdc-task-1",
+        "description": "判断双FF的适用边界",
+        "activities": [
+          0
+        ]
       },
       {
-        "id": "code",
-        "title": "语法、完整示例与错误修正"
+        "id": "cdc-task-2",
+        "description": "为脉冲与多位数据选择协议",
+        "activities": [
+          1
+        ]
       },
       {
-        "id": "practice",
-        "title": "分层练习与验证"
-      }
-    ],
-    "narrative": true,
-    "furtherReading": [
-      "写域按wr_en&&!full更新写指针，读域按rd_en&&!empty更新读指针。存储地址用低A位，指针额外一位识别绕圈；深度2^A的常见Gray方案不能直接改成任意深度。",
-      "Gray相邻编码仅一位变化，发送前先寄存，接收域同步；还需约束跨域位间偏差/最大延迟，不能认为Gray无条件解决一切。远端指针同步延迟使full/empty可能保守保持。",
-      "Empty在本域读指针追上同步写指针时成立；常见反射Gray Full检测需翻转对端高两位再比较，细节依指针宽度与下一状态方案。课程只编译Gray转换模块，完整双时钟FIFO优先用受验证IP并审查复位与CDC。"
-    ],
-    "previousCorrect": 0,
-    "quizRevision": 2,
-    "conceptReview": {
-      "prior": [
-        "cdc",
-        "sv-arrays"
-      ],
-      "introduced": [
-        "解释数据与指针跨域路径",
-        "计算Gray并说明约束边界"
-      ],
-      "exerciseScope": "见docs/LESSON_QUALITY_MATRIX.md逐课语义审查"
-    },
-    "conceptDependencies": [
-      {
-        "concept": "跨域同步边界",
-        "taughtIn": "cdc"
+        "id": "cdc-task-3",
+        "description": "为脉冲与多位数据选择协议",
+        "activities": [
+          2
+        ]
       },
       {
-        "concept": "位运算与异或",
-        "taughtIn": "operators"
-      },
-      {
-        "concept": "数组存储",
-        "taughtIn": "sv-arrays"
+        "id": "cdc-task-4",
+        "description": "为脉冲与多位数据选择协议",
+        "activities": [
+          3
+        ]
       }
     ]
   },
@@ -4407,7 +5813,7 @@ window.HDL_LESSONS=[
         "独立完成可复用计数器与自检",
         "让故意错误触发检查失败"
       ],
-      "exerciseScope": "见docs/LESSON_QUALITY_MATRIX.md逐课语义审查"
+      "exerciseScope": "docs/COURSE_SEMANTIC_REVIEW.json#capstone"
     },
     "conceptDependencies": [
       {
@@ -4421,6 +5827,43 @@ window.HDL_LESSONS=[
       {
         "concept": "自检失败判据",
         "taughtIn": "checking"
+      }
+    ],
+    "assessmentGoals": [
+      {
+        "id": "capstone-task-1",
+        "description": "独立完成可复用计数器与自检",
+        "activities": [
+          0
+        ]
+      },
+      {
+        "id": "capstone-task-2",
+        "description": "让故意错误触发检查失败",
+        "activities": [
+          1
+        ]
+      },
+      {
+        "id": "capstone-task-3",
+        "description": "让故意错误触发检查失败",
+        "activities": [
+          2
+        ]
+      },
+      {
+        "id": "capstone-task-4",
+        "description": "让故意错误触发检查失败",
+        "activities": [
+          3
+        ]
+      },
+      {
+        "id": "capstone-task-5",
+        "description": "让故意错误触发检查失败",
+        "activities": [
+          4
+        ]
       }
     ]
   },
@@ -4497,7 +5940,7 @@ window.HDL_LESSONS=[
         "从RTL推断资源并检查报告",
         "完成Lint到综合的回归闭环"
       ],
-      "exerciseScope": "见docs/LESSON_QUALITY_MATRIX.md逐课语义审查"
+      "exerciseScope": "docs/COURSE_SEMANTIC_REVIEW.json#synthesis-lab"
     },
     "conceptDependencies": [
       {
@@ -4512,6 +5955,43 @@ window.HDL_LESSONS=[
         "concept": "物理路径预算",
         "taughtIn": "clock-skew"
       }
+    ],
+    "assessmentGoals": [
+      {
+        "id": "synthesis-lab-task-1",
+        "description": "从RTL推断资源并检查报告",
+        "activities": [
+          0
+        ]
+      },
+      {
+        "id": "synthesis-lab-task-2",
+        "description": "完成Lint到综合的回归闭环",
+        "activities": [
+          1
+        ]
+      },
+      {
+        "id": "synthesis-lab-task-3",
+        "description": "完成Lint到综合的回归闭环",
+        "activities": [
+          2
+        ]
+      },
+      {
+        "id": "synthesis-lab-task-4",
+        "description": "完成Lint到综合的回归闭环",
+        "activities": [
+          3
+        ]
+      },
+      {
+        "id": "synthesis-lab-task-5",
+        "description": "完成Lint到综合的回归闭环",
+        "activities": [
+          4
+        ]
+      }
     ]
   },
   {
@@ -4525,7 +6005,8 @@ window.HDL_LESSONS=[
     "code": "module ram16(input logic clk,we,input logic [3:0] addr,\n input logic [7:0] wdata,output logic [7:0] rdata);\n logic [7:0] mem[0:15];\n always_ff @(posedge clk) begin\n  if(we) mem[addr]<=wdata;\n  rdata<=mem[addr];\n end\nendmodule",
     "concept": [
       "地址2里原来是5A，同一沿写A5又读地址2，rdata应先看到哪个值？沿内先读取右值，再提交非阻塞更新，就能推出来。",
-      "rdata<=mem[addr]读到旧5A，mem写入A5在稍后提交；下一沿只读时才看到A5。没有写过的地址则可能为X，不应假定自动清0。同步读、同址冲突和复位方式都影响器件RAM推断，读延迟必须成为接口的一部分。"
+      "rdata<=mem[addr]读到旧5A，mem写入A5在稍后提交；下一沿只读时才看到A5。没有写过的地址则可能为X，不应假定自动清0。同步读、同址冲突和复位方式都影响器件RAM推断，读延迟必须成为接口的一部分。",
+      "用两沿追踪地址2：沿E前mem[2]=5A、wdata=A5、we=1。写操作安排mem[2]变A5，读操作此时仍读旧5A，所以沿E后rdata=5A。沿E+1关闭we但地址仍2，读到现存A5，沿后rdata才变A5。若另一个时序模块同沿读取rdata，它还会多看到一拍旧输出；不能把RAM输出延迟和消费者采样混成一步。"
     ],
     "notes": [
       "没有复位或初始化的mem在四态仿真中可能为X，测试应先写再读。",
@@ -4587,7 +6068,7 @@ window.HDL_LESSONS=[
         "预测同步读与同址冲突",
         "核对RAM推断的工具边界"
       ],
-      "exerciseScope": "见docs/LESSON_QUALITY_MATRIX.md逐课语义审查"
+      "exerciseScope": "docs/COURSE_SEMANTIC_REVIEW.json#memory"
     },
     "conceptDependencies": [
       {
@@ -4597,6 +6078,43 @@ window.HDL_LESSONS=[
       {
         "concept": "数组索引",
         "taughtIn": "sv-arrays"
+      }
+    ],
+    "assessmentGoals": [
+      {
+        "id": "memory-task-1",
+        "description": "预测同步读与同址冲突",
+        "activities": [
+          0
+        ]
+      },
+      {
+        "id": "memory-task-2",
+        "description": "核对RAM推断的工具边界",
+        "activities": [
+          1
+        ]
+      },
+      {
+        "id": "memory-task-3",
+        "description": "核对RAM推断的工具边界",
+        "activities": [
+          2
+        ]
+      },
+      {
+        "id": "memory-task-4",
+        "description": "核对RAM推断的工具边界",
+        "activities": [
+          3
+        ]
+      },
+      {
+        "id": "memory-task-5",
+        "description": "核对RAM推断的工具边界",
+        "activities": [
+          4
+        ]
       }
     ]
   },
@@ -4613,7 +6131,8 @@ window.HDL_LESSONS=[
     "concept": [
       "队列非空，dout在读请求之前就是队首，还是要等成功读沿后才出现？两种FIFO都可以正确，但测试台不能混用它们的时刻。",
       "本课首字直通：!empty时沿前dout已经是队首，读沿消费它，沿后指针指向下一字。本工程选择满时同时请求只读、空时只写。FPGA扩展课的寄存读FIFO则在成功读沿后更新dout并给out_valid；同样的队列参考关系，要换正确的比较相位。",
-      "本例是首字直通（FWFT）接口：非空时rdata组合指向当前队头，pop在上升沿表示消费沿前的队头。FPGA实践的fifo4使用寄存读输出，合法读请求后数据才在沿后更新。两者不能共用同一采样相位的检查器；先读清接口，再决定何时比对数据。"
+      "本例是首字直通（FWFT）接口：非空时rdata组合指向当前队头，pop在上升沿表示消费沿前的队头。FPGA实践的fifo4使用寄存读输出，合法读请求后数据才在沿后更新。两者不能共用同一采样相位的检查器；先读清接口，再决定何时比对数据。",
+      "写入一个A后，队列非空，FWFT的dout在下一次读沿之前已经显示A。读沿接受pop时，接收者取得沿前的A，随后rp前进，dout可显示下一项。本例满且push、pop同时请求时，wr=0、rd=1，只读不写；这是保守接受策略，不要把另一种支持满时替换的FIFO预期照搬进来。"
     ],
     "notes": [
       "count范围0到4，需要3位，读写指针各2位自动回绕。",
@@ -4676,7 +6195,7 @@ window.HDL_LESSONS=[
         "按规格实现深度4同步FIFO",
         "验证满空、并发与回绕"
       ],
-      "exerciseScope": "见docs/LESSON_QUALITY_MATRIX.md逐课语义审查"
+      "exerciseScope": "docs/COURSE_SEMANTIC_REVIEW.json#fifo-project"
     },
     "conceptDependencies": [
       {
@@ -4690,6 +6209,162 @@ window.HDL_LESSONS=[
       {
         "concept": "独立参考检查",
         "taughtIn": "checking"
+      }
+    ],
+    "assessmentGoals": [
+      {
+        "id": "fifo-project-task-1",
+        "description": "按规格实现深度4同步FIFO",
+        "activities": [
+          0
+        ]
+      },
+      {
+        "id": "fifo-project-task-2",
+        "description": "验证满空、并发与回绕",
+        "activities": [
+          1
+        ]
+      },
+      {
+        "id": "fifo-project-task-3",
+        "description": "在写指针的旧地址保存队列数据",
+        "activities": [
+          2
+        ]
+      },
+      {
+        "id": "fifo-project-task-4",
+        "description": "验证满空、并发与回绕",
+        "activities": [
+          3
+        ]
+      },
+      {
+        "id": "fifo-project-task-5",
+        "description": "验证满空、并发与回绕",
+        "activities": [
+          4
+        ]
+      }
+    ]
+  },
+  {
+    "id": "async-fifo",
+    "title": "异步FIFO：数据留在RAM，指针跨域",
+    "stage": 6,
+    "prerequisites": [
+      "cdc",
+      "fifo-project"
+    ],
+    "code": "module gray_step #(parameter A=3)(input wire [A:0] binary,output wire [A:0] gray);\n assign gray=(binary>>1)^binary;\nendmodule",
+    "concept": [
+      "先回到同步FIFO：写沿把字节放进mem[wp]，读沿消费mem[rp]，count由同一个时钟更新。若写时钟和读时钟不同，不能让两个过程共同修改一个count。我们改成每个时钟域只拥有自己的指针，并接收对方延后同步来的指针副本。数据留在双端口存储里，跨域的是“读到哪里、写到哪里”的进度。",
+      "读写两边用不同时钟，怎样知道还有多少数据可读，而不把每一位数据都各自同步一遍？先把数据通道与状态通知分开。",
+      "数据保存在支持双时钟访问的存储结构中，本地二进制指针选地址，Gray指针同步给对端帮助判断满空。远端看到指针有延迟，因此标志可能保守。这里的Gray模块只演示编码，不是完整异步FIFO；首字直通还是寄存读，也仍是另需说明的接口选择。",
+      "先算一次Gray：binary=0011右移得0001，异或得到0010；下一值0100右移0010，异或得0110。这两个Gray码只差一位。同步器仍不能代替跨域物理约束，指针比较也必须按具体深度与额外回绕位设计。"
+    ],
+    "notes": [
+      "Gray=(binary>>1)^binary，相邻计数只变一位；这不取消同步链或位间偏差约束。",
+      "这段只实现Gray编码，不是完整异步FIFO。真实工程应使用经过验证的IP并检查CDC、复位及约束。"
+    ],
+    "trap": "各位可能在不同拍完成，无法保证字一致。",
+    "goals": [
+      "解释数据与指针跨域路径",
+      "计算Gray并说明约束边界"
+    ],
+    "q": "异步FIFO通常把哪类状态跨域同步给对端？",
+    "options": [
+      "每个数据位各自双FF",
+      "寄存后的Gray指针",
+      "未寄存的地址加法结果"
+    ],
+    "correct": 1,
+    "answer": "数据经存储传递，指针用于满空判断，仍需约束和同步链。",
+    "task": "列出binary0..7与Gray，并说明异步FIFO为何同步指针不逐位同步数据。",
+    "solution": "000,001,011,010,110,111,101,100；数据靠受控存储转移，指针用于安全判定可读写。",
+    "terms": [
+      [
+        "规格",
+        "约定输入、输出、时钟、复位和边界行为。"
+      ]
+    ],
+    "context": "完整模块，保存为.v；测试平台与工具命令另外提供。",
+    "minutes": 30,
+    "optional": false,
+    "language": "verilog",
+    "knowledge": [
+      {
+        "id": "concept",
+        "title": "异步FIFO有独立写时钟和读时钟"
+      },
+      {
+        "id": "code",
+        "title": "语法、完整示例与错误修正"
+      },
+      {
+        "id": "practice",
+        "title": "分层练习与验证"
+      }
+    ],
+    "narrative": true,
+    "furtherReading": [
+      "写域按wr_en&&!full更新写指针，读域按rd_en&&!empty更新读指针。存储地址用低A位，指针额外一位识别绕圈；深度2^A的常见Gray方案不能直接改成任意深度。",
+      "Gray相邻编码仅一位变化，发送前先寄存，接收域同步；还需约束跨域位间偏差/最大延迟，不能认为Gray无条件解决一切。远端指针同步延迟使full/empty可能保守保持。",
+      "Empty在本域读指针追上同步写指针时成立；常见反射Gray Full检测需翻转对端高两位再比较，细节依指针宽度与下一状态方案。课程只编译Gray转换模块，完整双时钟FIFO优先用受验证IP并审查复位与CDC。"
+    ],
+    "previousCorrect": 0,
+    "quizRevision": 2,
+    "conceptReview": {
+      "prior": [
+        "cdc",
+        "fifo-project"
+      ],
+      "introduced": [
+        "解释数据与指针跨域路径",
+        "计算Gray并说明约束边界"
+      ],
+      "exerciseScope": "docs/COURSE_SEMANTIC_REVIEW.json#async-fifo"
+    },
+    "conceptDependencies": [
+      {
+        "concept": "本域指针、满空与先进先出顺序",
+        "taughtIn": "fifo-project"
+      },
+      {
+        "concept": "跨域电平同步及多位总线限制",
+        "taughtIn": "cdc"
+      }
+    ],
+    "learningTier": "进阶必学",
+    "assessmentGoals": [
+      {
+        "id": "async-fifo-task-1",
+        "description": "解释数据与指针跨域路径",
+        "activities": [
+          0
+        ]
+      },
+      {
+        "id": "async-fifo-task-2",
+        "description": "计算Gray并说明约束边界",
+        "activities": [
+          1
+        ]
+      },
+      {
+        "id": "async-fifo-task-3",
+        "description": "计算Gray并说明约束边界",
+        "activities": [
+          2
+        ]
+      },
+      {
+        "id": "async-fifo-task-4",
+        "description": "计算Gray并说明约束边界",
+        "activities": [
+          3
+        ]
       }
     ]
   },
@@ -4768,7 +6443,7 @@ window.HDL_LESSONS=[
         "实现8N1低位先发发送器",
         "验证帧位序和每位持续周期"
       ],
-      "exerciseScope": "见docs/LESSON_QUALITY_MATRIX.md逐课语义审查"
+      "exerciseScope": "docs/COURSE_SEMANTIC_REVIEW.json#uart-project"
     },
     "conceptDependencies": [
       {
@@ -4783,6 +6458,43 @@ window.HDL_LESSONS=[
         "concept": "自检与超时",
         "taughtIn": "checking"
       }
+    ],
+    "assessmentGoals": [
+      {
+        "id": "uart-project-task-1",
+        "description": "实现8N1低位先发发送器",
+        "activities": [
+          0
+        ]
+      },
+      {
+        "id": "uart-project-task-2",
+        "description": "验证帧位序和每位持续周期",
+        "activities": [
+          1
+        ]
+      },
+      {
+        "id": "uart-project-task-3",
+        "description": "验证帧位序和每位持续周期",
+        "activities": [
+          2
+        ]
+      },
+      {
+        "id": "uart-project-task-4",
+        "description": "验证帧位序和每位持续周期",
+        "activities": [
+          3
+        ]
+      },
+      {
+        "id": "uart-project-task-5",
+        "description": "验证帧位序和每位持续周期",
+        "activities": [
+          4
+        ]
+      }
     ]
   },
   {
@@ -4790,7 +6502,8 @@ window.HDL_LESSONS=[
     "title": "Ready / Valid：传输、背压与保持",
     "concept": [
       "valid已经拉高三拍，究竟传了三笔还是一笔？还要把每个采样沿的ready写在旁边。",
-      "只有valid&&ready的沿才接受一笔。ready=0时源必须保持当前valid和data，不能因为“已经举手”就换下一字节。此前interface只说明谁驱动哪些信号，这里才给出握手的行为约定；协议不会自动提供缓存，也不自动解决跨时钟域。"
+      "只有valid&&ready的沿才接受一笔。ready=0时源必须保持当前valid和data，不能因为“已经举手”就换下一字节。此前interface只说明谁驱动哪些信号，这里才给出握手的行为约定；协议不会自动提供缓存，也不自动解决跨时钟域。",
+      "设发送方提出5A并保持valid=1。接收方ready在三个上升沿分别为0、0、1：前两沿没有交易，5A仍是待交付字节；第三沿才被接收一次。若发送方在第二沿把data换成A5，虽然计数器只加了一次，原来的5A却丢失了。检查传输数与检查背压保持是两个独立目标。"
     ],
     "code": "// 同一时钟域中的传输计数示意\nalways_ff @(posedge clk) begin\n if(!rst_n) transfers <= 8'd0;\n else if(valid && ready) transfers <= transfers + 8'd1;\nend\n// valid=1, ready=0：没有接收，发送方保持data\n// valid=1, ready=1：在该上升沿接收一次",
     "notes": [
@@ -4891,7 +6604,7 @@ window.HDL_LESSONS=[
         "逐沿判断一次有效传输",
         "解释背压时为何必须保持数据"
       ],
-      "exerciseScope": "见docs/LESSON_QUALITY_MATRIX.md逐课语义审查"
+      "exerciseScope": "docs/COURSE_SEMANTIC_REVIEW.json#sv-handshake"
     },
     "conceptDependencies": [
       {
@@ -4901,6 +6614,43 @@ window.HDL_LESSONS=[
       {
         "concept": "使能与保持",
         "taughtIn": "reset"
+      }
+    ],
+    "assessmentGoals": [
+      {
+        "id": "sv-handshake-task-1",
+        "description": "逐沿判断一次有效传输",
+        "activities": [
+          0
+        ]
+      },
+      {
+        "id": "sv-handshake-task-2",
+        "description": "解释背压时为何必须保持数据",
+        "activities": [
+          1
+        ]
+      },
+      {
+        "id": "sv-handshake-task-3",
+        "description": "在背压时保持待交付字节",
+        "activities": [
+          2
+        ]
+      },
+      {
+        "id": "sv-handshake-task-4",
+        "description": "解释背压时为何必须保持数据",
+        "activities": [
+          3
+        ]
+      },
+      {
+        "id": "sv-handshake-task-5",
+        "description": "解释背压时为何必须保持数据",
+        "activities": [
+          4
+        ]
       }
     ]
   },
@@ -4981,7 +6731,7 @@ window.HDL_LESSONS=[
         "实现背压下保持的弹性寄存器",
         "用事务检查证明集成不丢不重"
       ],
-      "exerciseScope": "见docs/LESSON_QUALITY_MATRIX.md逐课语义审查"
+      "exerciseScope": "docs/COURSE_SEMANTIC_REVIEW.json#integration"
     },
     "conceptDependencies": [
       {
@@ -4995,6 +6745,43 @@ window.HDL_LESSONS=[
       {
         "concept": "串口忙闲接口",
         "taughtIn": "uart-project"
+      }
+    ],
+    "assessmentGoals": [
+      {
+        "id": "integration-task-1",
+        "description": "实现背压下保持的弹性寄存器",
+        "activities": [
+          0
+        ]
+      },
+      {
+        "id": "integration-task-2",
+        "description": "用事务检查证明集成不丢不重",
+        "activities": [
+          1
+        ]
+      },
+      {
+        "id": "integration-task-3",
+        "description": "允许缓冲同时消费和替换",
+        "activities": [
+          2
+        ]
+      },
+      {
+        "id": "integration-task-4",
+        "description": "用事务检查证明集成不丢不重",
+        "activities": [
+          3
+        ]
+      },
+      {
+        "id": "integration-task-5",
+        "description": "用事务检查证明集成不丢不重",
+        "activities": [
+          4
+        ]
       }
     ]
   },
@@ -5070,7 +6857,7 @@ window.HDL_LESSONS=[
         "用task安排测试激励",
         "正确操作期望值队列"
       ],
-      "exerciseScope": "见docs/LESSON_QUALITY_MATRIX.md逐课语义审查"
+      "exerciseScope": "docs/COURSE_SEMANTIC_REVIEW.json#sv-tasks"
     },
     "conceptDependencies": [
       {
@@ -5084,6 +6871,43 @@ window.HDL_LESSONS=[
       {
         "concept": "自检比较",
         "taughtIn": "checking"
+      }
+    ],
+    "assessmentGoals": [
+      {
+        "id": "sv-tasks-task-1",
+        "description": "用task安排测试激励",
+        "activities": [
+          0
+        ]
+      },
+      {
+        "id": "sv-tasks-task-2",
+        "description": "正确操作期望值队列",
+        "activities": [
+          1
+        ]
+      },
+      {
+        "id": "sv-tasks-task-3",
+        "description": "从参考队头提取最早预期项",
+        "activities": [
+          2
+        ]
+      },
+      {
+        "id": "sv-tasks-task-4",
+        "description": "正确操作期望值队列",
+        "activities": [
+          3
+        ]
+      },
+      {
+        "id": "sv-tasks-task-5",
+        "description": "正确操作期望值队列",
+        "activities": [
+          4
+        ]
       }
     ]
   },
@@ -5162,7 +6986,7 @@ window.HDL_LESSONS=[
         "区分类、句柄和对象",
         "检查随机化返回值和约束边界"
       ],
-      "exerciseScope": "见docs/LESSON_QUALITY_MATRIX.md逐课语义审查"
+      "exerciseScope": "docs/COURSE_SEMANTIC_REVIEW.json#sv-verification"
     },
     "conceptDependencies": [
       {
@@ -5172,6 +6996,43 @@ window.HDL_LESSONS=[
       {
         "concept": "类型与字段",
         "taughtIn": "sv-types"
+      }
+    ],
+    "assessmentGoals": [
+      {
+        "id": "sv-verification-task-1",
+        "description": "区分类、句柄和对象",
+        "activities": [
+          0
+        ]
+      },
+      {
+        "id": "sv-verification-task-2",
+        "description": "检查随机化返回值和约束边界",
+        "activities": [
+          1
+        ]
+      },
+      {
+        "id": "sv-verification-task-3",
+        "description": "用闭区间允许两个随机边界",
+        "activities": [
+          2
+        ]
+      },
+      {
+        "id": "sv-verification-task-4",
+        "description": "检查随机化返回值和约束边界",
+        "activities": [
+          3
+        ]
+      },
+      {
+        "id": "sv-verification-task-5",
+        "description": "检查随机化返回值和约束边界",
+        "activities": [
+          4
+        ]
       }
     ]
   },
@@ -5250,7 +7111,7 @@ window.HDL_LESSONS=[
         "解释非重叠蕴含的采样点",
         "区分性质检查与场景覆盖"
       ],
-      "exerciseScope": "见docs/LESSON_QUALITY_MATRIX.md逐课语义审查"
+      "exerciseScope": "docs/COURSE_SEMANTIC_REVIEW.json#sv-assert"
     },
     "conceptDependencies": [
       {
@@ -5260,6 +7121,36 @@ window.HDL_LESSONS=[
       {
         "concept": "背压保持条件",
         "taughtIn": "sv-handshake"
+      }
+    ],
+    "assessmentGoals": [
+      {
+        "id": "sv-assert-task-1",
+        "description": "解释非重叠蕴含的采样点",
+        "activities": [
+          0
+        ]
+      },
+      {
+        "id": "sv-assert-task-2",
+        "description": "区分性质检查与场景覆盖",
+        "activities": [
+          1
+        ]
+      },
+      {
+        "id": "sv-assert-task-3",
+        "description": "区分性质检查与场景覆盖",
+        "activities": [
+          2
+        ]
+      },
+      {
+        "id": "sv-assert-task-4",
+        "description": "区分性质检查与场景覆盖",
+        "activities": [
+          3
+        ]
       }
     ]
   },
@@ -5338,7 +7229,7 @@ window.HDL_LESSONS=[
         "建立规格到覆盖的验证计划",
         "说明UVM、ASIC与PPA学习边界"
       ],
-      "exerciseScope": "见docs/LESSON_QUALITY_MATRIX.md逐课语义审查"
+      "exerciseScope": "docs/COURSE_SEMANTIC_REVIEW.json#advanced-map"
     },
     "conceptDependencies": [
       {
@@ -5348,6 +7239,36 @@ window.HDL_LESSONS=[
       {
         "concept": "断言/覆盖用途",
         "taughtIn": "sv-assert"
+      }
+    ],
+    "assessmentGoals": [
+      {
+        "id": "advanced-map-task-1",
+        "description": "建立规格到覆盖的验证计划",
+        "activities": [
+          0
+        ]
+      },
+      {
+        "id": "advanced-map-task-2",
+        "description": "说明UVM、ASIC与PPA学习边界",
+        "activities": [
+          1
+        ]
+      },
+      {
+        "id": "advanced-map-task-3",
+        "description": "说明UVM、ASIC与PPA学习边界",
+        "activities": [
+          2
+        ]
+      },
+      {
+        "id": "advanced-map-task-4",
+        "description": "说明UVM、ASIC与PPA学习边界",
+        "activities": [
+          3
+        ]
       }
     ]
   }

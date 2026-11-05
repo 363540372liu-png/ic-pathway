@@ -11,7 +11,7 @@ test('56 lessons: unique checkpoints, real task schemas, earlier prerequisites a
   assert.deepEqual(Array.from(l.conceptReview.prior),Array.from(l.prerequisites));
   assert.ok(l.lab.exercises.length>=2&&l.lab.exercises.length<=5,l.id);
   for(const x of l.lab.exercises){
-   assert.ok(!prompts.has(canon(x.prompt)),l.id+' repeated activity');prompts.add(canon(x.prompt));assert.ok(x.revision===2);assert.ok(x.prompt.trim());
+   assert.ok(!prompts.has(canon(x.prompt)),l.id+' repeated activity');prompts.add(canon(x.prompt));assert.ok(Number.isInteger(x.revision)&&x.revision>=2);assert.ok(x.prompt.trim());
    assert.ok(['choice','fill','repair','answer','implementation','analysis'].includes(x.kind),l.id);
    if(x.kind==='choice'){assert.ok(x.options?.length>=2);assert.ok(x.correct>=0&&x.correct<x.options.length);assert.ok(x.explain);}
    else assert.equal(x.options,undefined,l.id+' non-choice has options');
@@ -27,7 +27,7 @@ test('closed tasks require actual answers; old multiple-choice responses remain 
  for(const l of L)for(const [i,x] of l.lab.exercises.entries()){
   if(['implementation','analysis'].includes(x.kind))continue;
   const wrong={revision:2,choice:99,answers:['wrong'],response:'wrong'};assert.equal(M.evaluate(x,wrong),false,l.id);
-  const a={revision:2,choice:x.correct,answers:x.blanks?.map(b=>b.accepted[0]),response:x.accepted?.[0],passed:true};assert.equal(M.evaluate(x,a),true,l.id);
+  const a={revision:x.revision,choice:x.correct,answers:x.blanks?.map(b=>b.accepted[0]),response:x.accepted?.[0],passed:true};assert.equal(M.evaluate(x,a),true,l.id);
   assert.equal(M.normalizeActivities(l,{[i]:a})[i].passed,true);
   const old={choice:0,passed:true,draft:'older answer',reviewed:true};const restored=M.normalizeActivities(l,{[i]:old})[i];assert.equal(restored.passed,false);assert.equal(restored.reviewed,false);assert.equal(restored.history.draft,'older answer');
  }
