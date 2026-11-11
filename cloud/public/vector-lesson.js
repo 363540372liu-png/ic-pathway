@@ -24,14 +24,55 @@ const swapSpec=width=>`module swap${width}(input wire [${width-1}:0] bus,
               output wire [${width-1}:0] result);
   // 在这里连接 result
 endmodule`;
-const answers=['','0','0101','','6'];
-const questions=[
- ['图上哪一格是 bit5？点中它再检查。','把格子上方的编号读出来。最左是7，向右依次减1。'],
- ['固定样本 <code>1010_0101</code> 中，<code>bus[1]</code> 是几？','从最右读起，编号0在第一格，编号1在第二格。'],
- ['固定样本 <code>1010_0101</code> 中，<code>bus[3:0]</code> 是什么？','找到编号3和0，保留两端，再按原来的顺序读出四格。'],
- ['调整上方的拼接顺序，让原来的低四位去结果左边，再检查。','看结果左边的来源标签。原来的低四位应当占结果的高位。'],
- ["补全 <code>{__{1'b1}}</code>，让输出恰好有六位。",'被重复的部分只有一位。它出现几次，结果就有几位。']
+const prompts=[
+ '图上哪一格是 bit5？点中它再检查。',
+ '用当前输入作答。预测所选位，再用位选验证。',
+ '用当前输入作答。预测下方所选切片，再对照高亮位。',
+ '调整拼接顺序，让原来的低四位去结果左边。',
+ "补全 {__{1'b1}}，让输出恰好有六位。"
 ];
+const hints=['从图上找到编号5。','从右端编号0开始，找到题目要求的那一格。','从左端编号读到右端编号，两端都要算。','看结果左边的来源标签。','每份只有一位，复制次数就是总位数。'];
+function question(index,{bits,hi,lo,selected=1}){
+ if(index===1)return {expression:`bus[${selected}]`,answer:bit(bits,selected),explain:`编号 ${selected} 对应的格子读到 ${bit(bits,selected)}。`};
+ if(index===2)return {expression:`bus[${hi}:${lo}]`,answer:slice(bits,hi,lo),explain:`从 bit${hi} 到 bit${lo} 共 ${hi-lo+1} 位，依次读作 ${slice(bits,hi,lo)}。`};
+ return null;
+}
+const signature=(i,learning)=>learning.bits+':'+question(i,learning).expression;
+function alignSteps(steps,learning){
+ for(const i of [1,2])if(steps[i]&&learning.checked[i]!==signature(i,learning)){
+  delete steps[i];learning.review[i]=true;
+ }
+ return steps;
+}
+const complete=(steps,learning)=>titles.every((_,i)=>steps?.[i]===true)&&Boolean(learning?.draft?.trim());
+function mergeProgress(old,incoming){
+ if(!old)return incoming;
+ const merged={...(old.done&&!incoming.done?old:incoming)};
+ const snapshot=old.done&&!incoming.done&&old.vectorLearning?old:incoming.vectorLearning?incoming:old.vectorLearning?old:null;
+ if(snapshot){
+  merged.vectorLearning=snapshot.vectorLearning;
+  merged.vectorSteps=snapshot.vectorSteps||{};
+ }else if(old.vectorSteps||incoming.vectorSteps){
+  merged.vectorSteps={...old.vectorSteps,...incoming.vectorSteps};
+ }
+ merged.activities={...old.activities,...incoming.activities};
+ if(old.historicalMastery||incoming.historicalMastery)merged.historicalMastery=true;
+ const extra=merged.vectorExtra??incoming.vectorExtra??old.vectorExtra;
+ if(extra!==undefined)merged.vectorExtra=extra;
+ return merged;
+}
+function normalizeLearning(raw){
+ const flags=s=>Object.fromEntries(titles.flatMap((_,i)=>s?.[i]===true?[[i,true]]:[]));
+ const hi=Number.isInteger(raw?.hi)&&raw.hi>=0&&raw.hi<=7?raw.hi:7;
+ const lo=Number.isInteger(raw?.lo)&&raw.lo>=0&&raw.lo<=hi?raw.lo:Math.min(hi,4);
+ return {bits:/^[01]{8}$/.test(raw?.bits||'')?raw.bits:seed,
+  hi,lo,selected:Number.isInteger(raw?.selected)&&raw.selected>=0&&raw.selected<=7?raw.selected:1,
+  checked:Object.fromEntries([1,2].flatMap(i=>typeof raw?.checked?.[i]==='string'?[[i,raw.checked[i].slice(0,30)]]:[])),
+  bridge:Array.from({length:2},(_,i)=>typeof raw?.bridge?.[i]==='string'?raw.bridge[i].slice(0,40):''),
+  visited:flags(raw?.visited),review:flags(raw?.review),
+  draft:typeof raw?.draft==='string'?raw.draft.slice(0,15000):'',
+  zeroDraft:typeof raw?.zeroDraft==='string'?raw.zeroDraft.slice(0,15000):''};
+}
 const prose=[
  `<p>如果有八根信号线一起传一个数，逐根起名字会很麻烦。我们用同一个名字 <code>bus</code> 表示这组线，再给每一根编号。这组有顺序的位就是一个<strong>向量</strong>。</p>
  <dl class="vector-declaration"><dt><code>wire</code></dt><dd>声明连接用的信号线。这里一组线共用一个名字。</dd><dt><code>[7:0]</code></dt><dd>编号从7到0，两个端点都算在内，共8位。图上左边是7，右边是0。</dd><dt><code>bus</code></dt><dd>这组信号的名字。</dd><dt><code>8'b1010_0101</code></dt><dd><code>8</code>是位宽，<code>'b</code>表示后面用二进制。下划线只是把八位分成两组，便于阅读。</dd></dl>
@@ -45,12 +86,22 @@ const prose=[
 function render({api,host,header,state,lesson}){
  const {persist,refreshNav}=api;
  state.vectorSteps=normalize(state.vectorSteps);
+ const firstUpgrade=!state.vectorLearning;
+ const learning=state.vectorLearning=normalizeLearning(state.vectorLearning);
+ if(firstUpgrade){
+  if(state.done)state.historicalMastery=true;
+  if(state.draft){
+   if(state.vectorSteps[5]||!state.historicalMastery)learning.draft=state.draft;
+   else learning.zeroDraft=state.draft;
+  }
+  for(const i of [1,2,5])if(state.vectorSteps[i]){delete state.vectorSteps[i];learning.review[i]=true;}
+ }
  let step=Array.from({length:6},(_,i)=>i).find(i=>!state.vectorSteps[i])??5;
- let bits=seed, selected=0, hi=7,lo=4,swapped=false,count=4,line=0;
+ let bits=learning.bits, selected=learning.selected, hi=learning.hi,lo=learning.lo,swapped=false,count=4,line=0;
  host.innerHTML=header+`<article class="vector-lesson">
  <p>从读懂八根线开始，练到独立交换高低两组位。</p>
  <p class="vector-note">前置知识 <a href="#hdl-numbers">二进制字面量</a> · <a href="#hdl-net-var">信号线与连续赋值</a> · <a href="#hdl-module">模块与端口</a></p>
- <button type="button" class="secondary-button" id="vector-size">大字阅读</button>
+ <div class="vector-controls"><button type="button" class="secondary-button" id="vector-size">大字阅读</button><button type="button" class="secondary-button" id="vector-focus" aria-pressed="false">专注阅读</button></div>
  <nav class="vector-steps" aria-label="本课小节">${titles.map((t,i)=>`<button type="button" data-step="${i}">${i+1}. ${t}</button>`).join('')}</nav>
  <p class="vector-note" id="vector-progress"></p>
  <section id="vector-current"></section>
@@ -61,16 +112,39 @@ function render({api,host,header,state,lesson}){
  try{document.body.classList.toggle('reading-large',localStorage.getItem('ic.reading-large')==='1');}catch{}
  syncSize();
  size.onclick=()=>{const large=document.body.classList.toggle('reading-large');try{localStorage.setItem('ic.reading-large',large?'1':'0');}catch{}syncSize();};
+ const focus=$('#vector-focus');
+ focus.setAttribute('aria-pressed',String(document.body.classList.contains('reading-focus')));
+ focus.onclick=()=>focus.setAttribute('aria-pressed',String(document.body.classList.toggle('reading-focus')));
+ const allDone=()=>complete(state.vectorSteps,learning);
+ function updateCompletion(){
+  const done=Boolean(state.historicalMastery||allDone());
+  if(done!==state.done){state.done=done;refreshNav();}
+ }
+ function invalidate(i){
+  if(state.vectorSteps[i]){delete state.vectorSteps[i];learning.review[i]=true;}
+  if(i===step){
+   const answer=$('#vector-answer'),feedback=$('#vector-feedback');
+   if(answer)answer.value='';
+   if(feedback)feedback.textContent='题目条件已更新，请重新作答。';
+  }
+  updateCompletion();persist();progress();
+ }
  const mark=i=>{
   state.vectorSteps[i]=true;
-  if(!state.done&&state.draft.trim()&&titles.every((_,n)=>state.vectorSteps[n])){
-   state.choice=lesson.correct;state.passed=true;state.quizRevision=lesson.quizRevision||1;state.done=true;refreshNav();
-  }
-  persist();progress();
+  if(i===1||i===2)learning.checked[i]=signature(i,learning);
+  delete learning.review[i];
+  updateCompletion();persist();progress();
  };
  function progress(){
-  $('#vector-progress').textContent=`已记录 ${Object.keys(state.vectorSteps).length} / 6 个小节`+(state.done?' · 课程完成记录已保存':'');
-  host.querySelectorAll('[data-step]').forEach(b=>{const i=Number(b.dataset.step);b.setAttribute('aria-current',i===step?'step':'false');b.textContent=`${i+1}. ${titles[i]}${state.vectorSteps[i]?' ✓':''}`;});
+  const next=titles.findIndex((_,i)=>!state.vectorSteps[i]);
+  $('#vector-progress').textContent=`已完成练习 ${Object.keys(state.vectorSteps).length} / ${titles.length}`+
+   (next<0?' · 本课练习已完成':` · 推荐继续：${titles[next]}`)+(state.historicalMastery?' · 保留旧版完成记录':'');
+  host.querySelectorAll('[data-step]').forEach(b=>{
+   const i=Number(b.dataset.step);
+   const label=state.vectorSteps[i]?'已完成练习':learning.review[i]?'需要复习':learning.visited[i]?'已阅读或操作':'未开始';
+   b.setAttribute('aria-current',i===step?'step':'false');
+   b.textContent=`${i+1}. ${titles[i]} · ${label}`;
+  });
  }
  function update(){
   const showBits=step<4||step===5;
@@ -83,6 +157,8 @@ function render({api,host,header,state,lesson}){
   const expressions=[`wire [7:0] bus = 8'b${group(bits)};`,`bus[${selected}]`,`bus[${hi}:${lo}]`,swapped?'{bus[3:0], bus[7:4]}':'{high, low}',`{${count}{1'b1}}`];
   $('#vector-expression').textContent=expressions[step];
   $('#vector-result').textContent=[`bit${selected} 的值是 ${bit(bits,selected)}`,`选中 bit${selected} → ${bit(bits,selected)}（1 位）`,`${slice(bits,hi,lo)}（${hi-lo+1} 位）`,group(join(bits,swapped))+'（8 位）',replicate('1',count)+`（${count} 位）`][step];
+  const q=question(step,learning);
+  if(q)$('#vector-question').textContent=`当前输入 ${group(bits)}，${q.expression} 的值是什么？`;
   if(step===2){$('#vector-hi').value=hi;$('#vector-lo').value=lo;}
   if(step===3){
    const halves=[['原高四位',bits.slice(0,4)],['原低四位',bits.slice(4)]];
@@ -92,36 +168,37 @@ function render({api,host,header,state,lesson}){
   }
  }
  function open(i,focus=true){
-  step=i;progress();
+  step=i;if(i===1)selected=learning.selected;learning.visited[i]=true;persist();progress();
   const options=(n,offset=0)=>Array.from({length:n},(_,i)=>`<option>${i+offset}</option>`).join('');
   panel.innerHTML=`<h2 tabindex="-1">${i+1}. ${titles[i]}</h2>${prose[i]}`+
    (i!==4?`<figure class="vector-figure">
     <label for="vector-input">修改输入的八位值</label> <input id="vector-input" inputmode="numeric" aria-describedby="vector-input-status" value="${group(bits)}" maxlength="9" autocomplete="off" spellcheck="false">
     <p id="vector-input-status" class="vector-note" role="status"></p>
-    <div class="vector-group-labels"><span>高四位</span><span>低四位</span></div>
+    <div class="vector-viewport" tabindex="0" role="region" aria-label="八位输入，可横向滚动"><div class="vector-group-labels"><span>高四位</span><span>低四位</span></div>
     <div class="vector-bits">${Array.from({length:8},(_,n)=>`<button type="button" data-bit="${7-n}"><span>bit${7-n}</span><strong></strong></button>`).join('')}</div>
-    <figcaption id="vector-value"></figcaption></figure>`:'')+
+    </div><figcaption id="vector-value"></figcaption></figure>`:'')+
    (i===2?`<div class="vector-controls"><label>左端 <select id="vector-hi">${options(8)}</select></label><label>右端 <select id="vector-lo">${options(8)}</select></label></div><p class="vector-note" id="vector-range-note" role="status"></p>`:'')+
    (i===3?`<button type="button" class="secondary-button" id="vector-swap">交换两组的位置</button><div class="vector-group-labels vector-output"><span data-half></span><span data-half></span></div>`:'')+
    (i===4?`<label>复制次数 <select id="vector-count">${options(8,1)}</select></label>`:'')+
    (i<5?`<p class="vector-expression"><code id="vector-expression"></code></p><p id="vector-result" role="status"></p>
-    <form class="vector-exercise"><h3>现在试一试</h3>${[1,2,4].includes(i)?'<label for="vector-answer">'+questions[i][0]+'</label>':'<p>'+questions[i][0]+'</p>'}
+    <form class="vector-exercise"><h3>现在试一试</h3>${[1,2,4].includes(i)?'<label id="vector-question" for="vector-answer">'+prompts[i]+'</label>':'<p>'+prompts[i]+'</p>'}
     ${[1,2,4].includes(i)?'<input id="vector-answer" inputmode="numeric" maxlength="8" autocomplete="off">':''}
     <button class="secondary-button">检查</button><p id="vector-feedback" role="status">${state.vectorSteps[i]?'这一步已练过，可以再试一次。':''}</p></form>
     <button type="button" class="primary-button" id="vector-next">下一小节 · ${titles[i+1]}</button>`:full());
   if(i!==4){
    const input=$('#vector-input');
-   input.oninput=()=>{const next=input.value.replaceAll('_','');const valid=/^[01]{8}$/.test(next);input.setAttribute('aria-invalid',String(!valid));$('#vector-input-status').textContent=valid?'':'需要恰好八个 0 或 1。图中仍显示上一个有效值。';if(valid){bits=next;update();}};
+   input.oninput=()=>{const next=input.value.replaceAll('_','');const valid=/^[01]{8}$/.test(next);input.setAttribute('aria-invalid',String(!valid));$('#vector-input-status').textContent=valid?'':'需要恰好八个 0 或 1。图中仍显示上一个有效值。';if(valid&&next!==bits){bits=learning.bits=next;invalidate(1);invalidate(2);update();}};
    panel.querySelectorAll('[data-bit]').forEach(b=>b.onclick=()=>{
     const n=Number(b.dataset.bit);
-    if(i===2){hi=Math.max(lo,n);lo=Math.min(lo,n);$('#vector-range-note').textContent='以当前右端和点击的位作为两端。';}
+    if(i===2){setRange(Math.max(lo,n),Math.min(lo,n));$('#vector-range-note').textContent='以当前右端和点击的位作为两端。';}
     else if(i===5){line=n===0?0:n>=4?1:2;setLine();}
-    else selected=n;
+    else {selected=n;if(i===1&&learning.selected!==n){learning.selected=n;invalidate(1);}}
     update();
    });
   }
+  function setRange(left,right){if(hi!==left||lo!==right){hi=learning.hi=left;lo=learning.lo=right;invalidate(2);}}
   if(i===2){
-   function range(isHigh,value){if(isHigh){hi=value;lo=Math.min(lo,hi);}else{lo=value;hi=Math.max(hi,lo);}$('#vector-range-note').textContent=`当前范围从 ${hi} 到 ${lo}，包含两端。`;update();}
+   function range(isHigh,value){if(isHigh)setRange(value,Math.min(lo,value));else setRange(Math.max(hi,value),value);$('#vector-range-note').textContent=`当前范围从 ${hi} 到 ${lo}，包含两端。`;update();}
    $('#vector-hi').onchange=ev=>range(true,Number(ev.target.value));$('#vector-lo').onchange=ev=>range(false,Number(ev.target.value));
   }
   if(i===3)$('#vector-swap').onclick=()=>{swapped=!swapped;update();};
@@ -130,10 +207,18 @@ function render({api,host,header,state,lesson}){
    $('.vector-exercise').onsubmit=ev=>{
     ev.preventDefault();
     const answer=$('#vector-answer')?.value.trim().replaceAll('_','');
-    const ok=i===0?selected===5:i===3?swapped:answer===answers[i];
-    $('#vector-feedback').textContent=ok?['选对了。编号5是从左数第三格。','答对了。右端两位是01，编号1读到0。','答对了。从编号3读到0依次是0、1、0、1。','顺序正确。先接低四位，再接高四位。','答对了。六份一位信号形成111111。'][i]:questions[i][1];
+    if($('#vector-input')?.getAttribute('aria-invalid')==='true'){
+     $('#vector-feedback').textContent='先把输入修正为八个二进制位。';return;
+    }
+    const q=question(i,learning);
+    const ok=i===0?selected===5:i===3?swapped:i===4?answer==='6':answer===q.answer;
+    $('#vector-feedback').textContent=ok?(q?'答对了。'+q.explain:
+     i===0?'选对了。编号5是从左数第三格。':i===3?'顺序正确。先接低四位，再接高四位。':'答对了。六份一位信号形成111111。'):hints[i];
+    if(!ok&&state.vectorSteps[i]){delete state.vectorSteps[i];learning.review[i]=true;updateCompletion();persist();progress();}
     if(ok)mark(i);
    };
+   const answer=$('#vector-answer');
+   if(answer)answer.oninput=()=>{$('#vector-feedback').textContent='';if(state.vectorSteps[i]){delete state.vectorSteps[i];learning.review[i]=true;updateCompletion();persist();progress();}};
    $('#vector-next').onclick=()=>open(i+1);
   }else bindFull();
   update();
@@ -144,6 +229,12 @@ function render({api,host,header,state,lesson}){
   <p><code>module vector_demo(</code> 开始声明模块。接下来的五行各声明一个端口，逗号隔开，<code>);</code> 结束端口列表。<code>endmodule</code> 结束整个模块。</p>
   <p id="vector-line-note"></p><p id="vector-module-result" role="status"></p>
   <button type="button" class="secondary-button" id="vector-copy">复制完整模块</button>
+  <form id="vector-bridge" class="vector-exercise"><h3>先改一行，再补表达式</h3>
+  <label for="vector-change">把 <code>assign low_bit = bus[0];</code> 改成读取 bit2，只填方括号内的编号。</label>
+  <input id="vector-change" inputmode="numeric" maxlength="2">
+  <label for="vector-fill">现在补出中间两位的表达式。<code>assign mid = ___;</code>，mid 为两位，左侧接 bit4，右侧接 bit3。</label>
+  <input id="vector-fill" spellcheck="false" maxlength="40">
+  <button class="secondary-button">核对两个空缺</button><p id="vector-bridge-feedback" role="status"></p></form>
   <div class="vector-exercise"><h3>自己写一个8位交换模块</h3>
   <p>输入和输出各有八位。让输入右边四位出现在输出左边，再把输入左边四位放到输出右边。</p>
   <p>用三组输入自查。<code>1010_0101 → 0101_1010</code>，<code>0011_0000 → 0000_0011</code>，<code>1111_0000 → 0000_1111</code>。</p>
@@ -158,6 +249,11 @@ function render({api,host,header,state,lesson}){
   <p>试用 <code>0001_0010_1010_0101 → 1010_0101_0001_0010</code>，再用全零和仅最高位为1的输入测试。</p>
   <label for="vector-extra">16位练习草稿</label><textarea id="vector-extra" class="exercise-input" maxlength="15000" spellcheck="false"></textarea>
   <details><summary>写过后对照参考连接</summary><pre><code>assign result = {bus[7:0], bus[15:8]};</code></pre></details></details>
+  <section id="vector-review" class="vector-exercise"><h3>巩固练习</h3>
+  <label for="vector-zero">把 4 位无符号输入 <code>a</code> 补零扩展成 8 位输出。先画出新添的四根线，再写一条连续赋值。</label>
+  <textarea id="vector-zero" class="exercise-input" maxlength="15000" spellcheck="false"></textarea>
+  <details><summary>写过后对照参考</summary><pre><code>wire [7:0] wide = {4'b0000, a};</code></pre></details>
+  <div id="vector-original"></div></section>
   <h3>把三个写法分清</h3><p>名字后面的单个编号取一位，两个端点取一段。大括号按从左到右的顺序连接各段。</p>
   <p><a href="#hdl-four-state">下一课 · 0、1、X 与 Z</a></p>`;
  }
@@ -170,20 +266,42 @@ function render({api,host,header,state,lesson}){
   panel.querySelectorAll('[data-line]').forEach(b=>b.onclick=()=>{line=Number(b.dataset.line);setLine();update();});
   $('#vector-copy').onclick=async()=>{try{await navigator.clipboard.writeText(moduleCode);api.toast('代码已复制');}catch{api.toast('请选中代码手动复制');}};
   const draft=$('#hdl-draft'),extra=$('#vector-extra');
-  draft.value=state.draft||swapSpec(8);extra.value=state.vectorExtra||swapSpec(16);
-  [draft,extra].forEach(el=>window.IC_EDITING?.bind(el));
+  draft.value=learning.draft||swapSpec(8);extra.value=state.vectorExtra||swapSpec(16);
+  const zero=$('#vector-zero');
+  zero.value=learning.zeroDraft;
+  zero.oninput=()=>{learning.zeroDraft=zero.value;persist();};
+  const change=$('#vector-change'),fill=$('#vector-fill');
+  [change.value,fill.value]=learning.bridge;
+  const bridgeCorrect=()=>change.value.trim()==='2'&&['bus[4:3]','{bus[4],bus[3]}'].includes(fill.value.replace(/\s+/g,''));
+  $('#vector-bridge').onsubmit=ev=>{
+   ev.preventDefault();
+   const index=change.value.trim();
+   const bridged=bridgeCorrect();
+   $('#vector-bridge-feedback').textContent=bridged?'两处都符合题意。现在试着写完整交换模块。':
+    index!=='2'?'先核对第一行。方括号内填信号编号。':'试着用一个连续切片；其他表达式写法尚不能自动判定。';
+  };
+  $('#vector-bridge').oninput=()=>{learning.bridge=[change.value,fill.value];invalidate(5);status();$('#vector-bridge-feedback').textContent='';};
+  if(state.draft&&state.historicalMastery){
+   const record=document.createElement('details');
+   record.innerHTML='<summary>旧版草稿记录</summary><pre></pre>';
+   record.querySelector('pre').textContent=state.draft;
+   $('#vector-review').append(record);
+  }
+  window.IC_TEXTBOOK?.mountExercises({...api,refreshStatus:()=>{}},lesson,state,{target:$('#vector-original'),indices:[2,3,4],reviewTarget:$('#vector-current')});
+  [draft,extra,zero].forEach(el=>window.IC_EDITING?.bind(el));
   const status=()=>{$('#vector-completion').textContent=state.vectorSteps[5]?'已记录自查。本站未运行你的代码。':state.done?'历史课程完成记录已保留。':'三组用例都检查过后，可以记录自查。';};
-  draft.oninput=()=>{state.draft=draft.value;delete state.vectorSteps[5];if(!state.historicalMastery){state.done=false;refreshNav();}persist();progress();status();$('#vector-draft-note').textContent='草稿已保存到本机。';};
+  draft.oninput=()=>{learning.draft=draft.value;invalidate(5);status();$('#vector-draft-note').textContent='草稿已保存到本机。';};
   extra.oninput=()=>{state.vectorExtra=extra.value;persist();};
   $('#vector-self').onclick=()=>{
    if(!draft.value.trim()||draft.value.trim()===swapSpec(8).trim()){$('#vector-completion').textContent='先写出输出的接线，再用三组输入核对。';return;}
+   if(!bridgeCorrect()&&!state.vectorSteps[5]){$('#vector-completion').textContent='先核对上方两道过渡练习。';return;}
    mark(5);
    status();
   };
   status();
  }
  host.querySelectorAll('[data-step]').forEach(b=>b.onclick=()=>open(Number(b.dataset.step)));
- open(step,false);
+ alignSteps(state.vectorSteps,learning);updateCompletion();open(step,false);
 }
-window.IC_VECTOR_LESSON={render,normalize,moduleCode,bit,slice,join,replicate};
+window.IC_VECTOR_LESSON={render,normalize,normalizeLearning,mergeProgress,question,alignSteps,complete,moduleCode,bit,slice,join,replicate};
 })();

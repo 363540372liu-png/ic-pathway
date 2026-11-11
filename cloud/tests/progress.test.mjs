@@ -136,3 +136,14 @@ test('an older client updating a vector record preserves micro-lesson progress',
  assert.deepEqual(stored.vectorSteps,vectors.vectorSteps);
  assert.equal(stored.vectorExtra,vectors.vectorExtra);
 });
+test('legacy vector writes preserve the question snapshot and its matching passes',async()=>{
+ const vectorLearning={bits:'11111111',hi:7,lo:4,selected:1,checked:{1:'11111111:bus[1]'},draft:'new RTL'};
+ const vectors={draft:'legacy notes',vectorSteps:{1:true},vectorLearning};
+ assert.equal((await call('vector-snapshot','PUT',{revision:0,data:{...data,hdl:{vectors}}})).status,200);
+ const old={...data,hdl:{vectors:{draft:'old client edit',vectorSteps:{2:true}}}};
+ assert.equal((await call('vector-snapshot','PUT',{revision:1,data:old})).status,200);
+ const stored=(await(await call('vector-snapshot')).json()).data.hdl.vectors;
+ assert.deepEqual(stored.vectorLearning,vectorLearning);
+ assert.deepEqual(stored.vectorSteps,{1:true});
+ assert.equal(stored.draft,'old client edit');
+});

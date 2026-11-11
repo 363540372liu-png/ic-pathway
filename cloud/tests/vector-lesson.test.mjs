@@ -40,3 +40,40 @@ test('old vector completions and drafts survive; new fields are scoped and bound
  assert.equal(updated.module.vectorSteps,undefined);
  assert.equal(H.normalize(JSON.parse(JSON.stringify(updated))).vectors.vectorExtra.length,15000);
 });
+
+test('vector questions read the current input and selection, and imported mismatched passes require review',()=>{
+ const first=V.normalizeLearning({bits:'10100101',selected:1,hi:5,lo:2});
+ assert.equal(V.question(1,first).answer,'0');
+ assert.equal(V.question(2,first).answer,'1001');
+ const changed=V.normalizeLearning({...first,bits:'11111111',selected:3,checked:{1:'10100101:bus[1]',2:'10100101:bus[5:2]'}});
+ assert.equal(V.question(1,changed).expression,'bus[3]');
+ assert.equal(V.question(1,changed).answer,'1');
+ assert.equal(V.question(2,changed).answer,'1111');
+ const steps={0:true,1:true,2:true};
+ V.alignSteps(steps,changed);
+ assert.deepEqual(steps,{0:true});
+ assert.equal(changed.review[1],true);
+ assert.equal(changed.review[2],true);
+});
+
+test('new vector completion requires the six practices and a draft without marking the old quiz passed',()=>{
+ const steps={0:true,1:true,2:true,3:true,4:true,5:true};
+ const vectorLearning={bits:'11111111',selected:1,hi:7,lo:4,draft:'my swap',checked:{1:'11111111:bus[1]',2:'11111111:bus[7:4]'}};
+ assert.equal(V.complete(steps,{draft:''}),false);
+ const state=H.normalize({vectors:{vectorSteps:steps,vectorLearning}}).vectors;
+ assert.equal(state.done,true);
+ assert.equal(state.passed,false);
+ assert.equal(state.historicalMastery,false);
+ assert.equal(H.normalize({vectors:{...state,vectorLearning:{...vectorLearning,lo:2}}}).vectors.done,false);
+});
+
+test('import retains a completed vector snapshot and merges disjoint old exercise records',()=>{
+ const old={done:true,vectorLearning:{bits:'11111111'},vectorSteps:{1:true},activities:{2:{response:'existing'}},vectorExtra:'keep 16-bit'};
+ const incoming={done:false,vectorLearning:{bits:'00000000'},vectorSteps:{2:true},activities:{4:{choice:1}}};
+ const kept=V.mergeProgress(old,incoming);
+ assert.equal(kept.vectorLearning.bits,'11111111');
+ assert.equal(kept.vectorSteps[1],true);
+ assert.equal(kept.activities[2].response,'existing');
+ assert.equal(kept.activities[4].choice,1);
+ assert.equal(kept.vectorExtra,'keep 16-bit');
+});
