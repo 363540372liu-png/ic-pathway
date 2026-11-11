@@ -7,7 +7,7 @@ permissions:
   contents: read
 jobs:
   validate:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v6
         with:
@@ -20,9 +20,32 @@ jobs:
         run: node tests/validate.mjs
       - name: Verify the lab archive is current
         run: python3 tools/package_lab.py --check
-      - name: Install Icarus Verilog
+      - name: Test and build the Sites application
+        working-directory: cloud
         run: |
-          sudo apt-get update
-          sudo apt-get install -y iverilog
+          npm ci
+          npm run lint
+          npm test
+          npm run build
+      - name: Provision Icarus Verilog
+        id: icarus
+        run: |
+          if command -v iverilog >/dev/null && command -v vvp >/dev/null; then
+            exit 0
+          fi
+          if sudo apt-get -o Acquire::Retries=1 -o Acquire::http::Timeout=10 -o Acquire::https::Timeout=10 -o APT::Update::Error-Mode=any update && sudo apt-get -o Acquire::Retries=1 -o Acquire::http::Timeout=10 -o Acquire::https::Timeout=10 install -y iverilog; then
+            exit 0
+          fi
+          echo "::warning title=Ubuntu package provisioning failed::Trying the pinned OSS CAD Suite release instead."
+          archive="$RUNNER_TEMP/oss-cad-suite.tgz"
+          curl --fail --location --retry 3 --retry-all-errors --connect-timeout 15 --max-time 300 --output "$archive" 'https://github.com/YosysHQ/oss-cad-suite-build/releases/download/2026-11-05/oss-cad-suite-linux-x64-20261105.tgz'
+          echo 'c64d557848d57fad96a5bea7461e12b3ddfb49514658f7301f7e1a5476128a88  '"$archive" | sha256sum --check
+          tar -xzf "$archive" -C "$RUNNER_TEMP"
+          echo "$RUNNER_TEMP/oss-cad-suite/bin" >> "$GITHUB_PATH"
       - name: Run actual HDL and defect-rejection checks
-        run: python3 tests/hdl.py
+        run: |
+          iverilog -V
+          python3 tests/hdl.py
+      - name: Simulate the published vector lesson
+        working-directory: cloud
+        run: node tools/verify-vector-lesson.mjs
