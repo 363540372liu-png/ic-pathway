@@ -14,6 +14,7 @@ function step(kind,s,input){
 }
 const stateLabels={'not-started':'未开始',learning:'学习中',understood:'已完成基础理解',practiced:'已完成练习（含自查）','automatic-checked':'已通过封闭题自动检查',legacy:'保留的旧版完成（自评）'};
 function level(l,s={}){
+ if(l.id==='vectors'&&s.done&&window.IC_VECTOR_LESSON?.complete(s.vectorSteps,s.vectorLearning))return 'practiced';
  if(s.historicalMastery&&s.done&&!canComplete(l,s))return 'legacy';
  if(canComplete(l,s)&&s.passed)return milestones(l,s).automatic?'automatic-checked':'practiced';
  if(Object.values(s.activities||{}).some(a=>a.reviewed||a.passed))return 'practiced';

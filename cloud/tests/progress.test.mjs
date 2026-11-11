@@ -126,3 +126,24 @@ test('older FPGA and activity clients retain LED drafts and newer assessment rev
  const stored=(await(await call('new-project-protection')).json()).data;
  assert.equal(stored.fpga.projects.led.draft,'new LED RTL');assert.equal(stored.hdl.module.activities[2].revision,3);assert.equal(stored.hdl.module.activities[2].legacyClientAnswer.response,'old repair');
 });
+test('an older client updating a vector record preserves micro-lesson progress',async()=>{
+ const vectors={draft:'8-bit work',choice:1,passed:true,vectorSteps:{0:true,2:true},vectorExtra:'16-bit work'};
+ assert.equal((await call('vector-backcompat','PUT',{revision:0,data:{...data,hdl:{vectors}}})).status,200);
+ const old={...data,hdl:{vectors:{draft:'old client edit',choice:1,passed:true}}};
+ assert.equal((await call('vector-backcompat','PUT',{revision:1,data:old})).status,200);
+ const stored=(await(await call('vector-backcompat')).json()).data.hdl.vectors;
+ assert.equal(stored.draft,'old client edit');
+ assert.deepEqual(stored.vectorSteps,vectors.vectorSteps);
+ assert.equal(stored.vectorExtra,vectors.vectorExtra);
+});
+test('legacy vector writes preserve the question snapshot and its matching passes',async()=>{
+ const vectorLearning={bits:'11111111',hi:7,lo:4,selected:1,checked:{1:'11111111:bus[1]'},draft:'new RTL'};
+ const vectors={draft:'legacy notes',vectorSteps:{1:true},vectorLearning};
+ assert.equal((await call('vector-snapshot','PUT',{revision:0,data:{...data,hdl:{vectors}}})).status,200);
+ const old={...data,hdl:{vectors:{draft:'old client edit',vectorSteps:{2:true}}}};
+ assert.equal((await call('vector-snapshot','PUT',{revision:1,data:old})).status,200);
+ const stored=(await(await call('vector-snapshot')).json()).data.hdl.vectors;
+ assert.deepEqual(stored.vectorLearning,vectorLearning);
+ assert.deepEqual(stored.vectorSteps,{1:true});
+ assert.equal(stored.draft,'old client edit');
+});

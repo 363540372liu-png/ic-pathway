@@ -24,6 +24,13 @@ export default {async fetch(request,env){
       for(const [lesson,record] of Object.entries(previous.hdl)){
        if(!Object.hasOwn(data.hdl,lesson))data.hdl[lesson]=record;
        else if(data.hdl[lesson]&&typeof data.hdl[lesson]==='object'&&!Array.isArray(data.hdl[lesson])&&record&&typeof record==='object'){
+        if(lesson==='vectors'&&record.vectorLearning&&!Object.hasOwn(data.hdl[lesson],'vectorLearning')){
+         data.hdl[lesson].vectorLearning=record.vectorLearning;
+         data.hdl[lesson].vectorSteps=record.vectorSteps||{};
+        }
+        if(lesson==='vectors')for(const key of ['vectorSteps','vectorExtra']){
+         if(!Object.hasOwn(data.hdl[lesson],key)&&Object.hasOwn(record,key))data.hdl[lesson][key]=record[key];
+        }
         const incoming=data.hdl[lesson].activities;
         if(incoming&&typeof incoming==='object'&&record.activities)for(const [i,activity]of Object.entries(record.activities)){if(!Object.hasOwn(incoming,i))incoming[i]=activity;else if((incoming[i]?.revision||1)<(activity?.revision||1))incoming[i]={...activity,legacyClientAnswer:incoming[i]};}
         if(!Object.hasOwn(data.hdl[lesson],'activities')&&Object.hasOwn(record,'activities'))data.hdl[lesson].activities=record.activities;

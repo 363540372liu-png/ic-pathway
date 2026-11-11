@@ -25,8 +25,17 @@ function normalize(raw){
   const choice=Number.isInteger(s.choice)&&s.choice>=0&&s.choice<l.options.length?s.choice:null;
   const revision=s.quizRevision||1;
   const passed=s.passed===true&&choice===l.correct&&revision===(l.quizRevision||1);
-  const historicalMastery=s.historicalMastery===true||(s.done===true&&s.passed===true&&!!draft.trim()&&choice===(revision===1&&l.previousCorrect!==undefined?l.previousCorrect:l.correct));
+  const historicalMastery=s.historicalMastery===true||(!s.vectorSteps&&s.done===true&&s.passed===true&&!!draft.trim()&&choice===(revision===1&&l.previousCorrect!==undefined?l.previousCorrect:l.correct));
   out[l.id]={draft,choice,passed,done:s.done===true&&(historicalMastery||passed)&&!!draft.trim(),historicalMastery,quizRevision:revision,viewedAt:Number.isSafeInteger(s.viewedAt)&&s.viewedAt>0?s.viewedAt:0,activities:window.IC_TEXTBOOK_MODEL?.normalizeActivities(l,s.activities)||{}};
+  if(l.id==='vectors'&&window.IC_VECTOR_LESSON){
+   if(Object.hasOwn(s,'vectorSteps'))out[l.id].vectorSteps=window.IC_VECTOR_LESSON.normalize(s.vectorSteps);
+   if(s.vectorLearning&&typeof s.vectorLearning==='object'){
+    const learning=out[l.id].vectorLearning=window.IC_VECTOR_LESSON.normalizeLearning(s.vectorLearning);
+    if(out[l.id].vectorSteps)window.IC_VECTOR_LESSON.alignSteps(out[l.id].vectorSteps,learning);
+    out[l.id].done=historicalMastery||window.IC_VECTOR_LESSON.complete(out[l.id].vectorSteps,learning);
+   }else if(s.done===true&&passed&&draft.trim())out[l.id].historicalMastery=true;
+   if(typeof s.vectorExtra==='string')out[l.id].vectorExtra=s.vectorExtra.slice(0,15000);
+  }
  }
  return out;
 }
@@ -75,15 +84,15 @@ function prerequisiteHtml(l,p){
  const pre=L.find(x=>x.id===id);return '<a href="'+href(id)+'">'+e(pre.title)+' <span>'+ (lessonState(p,pre).done?'已完成':'回看')+'</span></a>';
  }).join('')+'</div>';
 }
-function lessonHeader(l,ix,p){
- return '<header class="lesson-header study-header"><div class="lesson-topline"><a href="#hdl">← 学习路线</a><span>'+e(STAGES[l.stage][0])+' / '+String(ix+1).padStart(2,'0')+'</span></div><h1>'+e(l.title)+'</h1><p class="study-estimate">'+(l.optional?'进阶选修':'核心主线')+' · 初读约 '+l.minutes+' 分钟，动手时间另计</p><ul class="study-goals">'+l.goals.map(t=>'<li>'+e(t)+'</li>').join('')+'</ul><nav class="knowledge-points" aria-label="本课知识点">'+(l.knowledge||[]).map(k=>'<button data-jump="'+({concept:'study-concept',code:'study-code',practice:'study-practice'}[k.id])+'">'+e(k.title)+'</button>').join('')+'</nav><details class="prereq-box"><summary>前置知识 · '+l.prerequisites.length+' 课</summary>'+prerequisiteHtml(l,p)+(l.conceptDependencies?.length?'<p>做题时会用到：</p><ul class="concept-links">'+l.conceptDependencies.map(d=>'<li>'+link(d.taughtIn,d.concept)+'</li>').join('')+'</ul>':'')+'</details></header>';
+function lessonHeader(l,ix,p,micro=false){
+ return '<header class="lesson-header study-header"><div class="lesson-topline"><a href="#hdl">← 学习路线</a><span>'+e(STAGES[l.stage][0])+' / '+String(ix+1).padStart(2,'0')+'</span></div><h1>'+e(l.title)+'</h1><p class="study-estimate">'+(l.optional?'进阶选修':'核心主线')+' · 初读约 '+l.minutes+' 分钟，动手时间另计</p><ul class="study-goals">'+l.goals.map(t=>'<li>'+e(t)+'</li>').join('')+'</ul>'+(micro?'':'<nav class="knowledge-points" aria-label="本课知识点">'+(l.knowledge||[]).map(k=>'<button data-jump="'+({concept:'study-concept',code:'study-code',practice:'study-practice'}[k.id])+'">'+e(k.title)+'</button>').join('')+'</nav><details class="prereq-box" open><summary>前置知识 · '+l.prerequisites.length+' 课</summary>'+prerequisiteHtml(l,p)+(l.conceptDependencies?.length?'<p>做题时会用到：</p><ul class="concept-links">'+l.conceptDependencies.map(d=>'<li>'+link(d.taughtIn,d.concept)+'</li>').join('')+'</ul>':'')+'</details>')+'</header>';
 }
 function courseMap(api,host){
  const p=api.progress,r=resume(p),done=core.filter(l=>lessonState(p,l).done).length;
  document.title='学习路线 · 芯路';
  host.innerHTML='<header class="course-map-header"><p class="eyebrow">芯路 / 数字 IC 学习室</p><h1>Verilog → SystemVerilog</h1><p class="course-map-intro">从真值表到可验证的 RTL，一步一步学会描述电路。</p></header>'+
  '<section class="resume-panel" aria-label="学习进度"><div><span class="eyebrow">你的核心主线</span><h2>'+ (r.viewed?(r.target.id===r.viewed.id?'接着上次，继续理解。':'沿着路线，补齐下一步。'):'从这里开始，不需要编程基础。')+'</h2><p>'+(r.viewed?'最近学习：'+link(r.viewed.id,r.viewed.title)+'<br>本次建议：'+e(r.target.title):'先看学习方法，再认识二进制和逻辑门。')+'</p><a class="primary-button" href="'+href(r.target.id)+'">'+(r.viewed?'继续学习':'开始第一课')+' <span aria-hidden="true">→</span></a></div><div class="resume-progress"><strong>'+done+'<small> / '+core.length+'</small></strong><span>核心课已记录完成</span><progress value="'+done+'" max="'+core.length+'" aria-label="核心课程完成进度"></progress><p>另有 '+L.filter(l=>l.optional).length+' 课进阶选修，按需学习。</p></div></section>'+
- '<div class="map-guide"><p><strong>每课四步</strong> 理解概念 → 拆解代码 → 预测结果 → 独立练习</p><a href="#hdl-orientation">第一次来？先看学习方法 ↗</a></div>'+
+ '<div class="map-guide"><p><strong>按本课方式动手</strong> 可以先操作信号、逐拍观察，或在工具里完成一个工程步骤</p><a href="#hdl-orientation">第一次来？先看学习方法 ↗</a></div>'+
  '<section class="course-finder" aria-label="查找课程"><label class="search-wrap" for="hdl-search"><span aria-hidden="true">⌕</span><input id="hdl-search" type="search" placeholder="查课程、语法或术语，例如 always_ff" autocomplete="off"><span class="sr-only">搜索课程与语法</span></label><div class="course-filters" role="group" aria-label="课程范围"><button data-filter="core" aria-pressed="true">核心主线</button><button data-filter="optional" aria-pressed="false">进阶选修</button><button data-filter="all" aria-pressed="false">全部</button></div><p id="hdl-search-count" role="status"></p></section>'+
  '<div id="hdl-map">'+STAGES.map((stage,i)=>{
  const ls=L.filter(l=>l.stage===i),complete=ls.filter(l=>lessonState(p,l).done).length;
@@ -119,6 +128,10 @@ function render(api,id){
  if(!l){document.body.classList.remove('reading-focus');courseMap(api,host);return;}
  const ix=L.indexOf(l),st=p.hdl[l.id]||(p.hdl[l.id]={draft:'',choice:null,passed:false,done:false,viewedAt:0});
  st.viewedAt=Date.now();persist();document.title=l.title+' · 芯路';
+ if(l.id==='vectors'&&window.IC_VECTOR_LESSON){
+  window.IC_VECTOR_LESSON.render({api,host,header:lessonHeader(l,ix,p,true),state:st,lesson:l});
+  return;
+ }
  const sections=[['study-concept','理解概念'],...(l.diagram||l.trace||l.lab?.timing?[['study-example','看图与推演']]:[]),['study-code','逐步拆代码'],['study-quiz','预测与检查'],['study-practice','独立练习']];
  host.innerHTML=lessonHeader(l,ix,p)+'<div class="study-layout"><div class="study-article">'+
  (l.learningTier?'<p class="learning-tier">'+e(l.learningTier)+' · 可按前置提示返回基础，所有课程均可直接阅读。</p>':'')+'<section id="study-concept" class="study-section"><p class="section-number">01 / 理解概念</p><h2>'+e(l.goals[0])+'</h2>'+l.concept.map(t=>'<p>'+e(t)+'</p>').join('')+'</section>'+

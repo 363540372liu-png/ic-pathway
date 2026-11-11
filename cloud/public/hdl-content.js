@@ -1039,8 +1039,8 @@ window.HDL_LESSONS=[
     "stage": 1,
     "title": "向量、位选、切片与拼接",
     "concept": [
-      "bus=8'hA5，取bus[0]、bus[7:4]，再把高低半字节交换，各得到什么？先把A5写成1010_0101。",
-      "索引0对应最右侧一位，所以bus[0]=1；[7:4]取高四位1010，即A。拼接{bus[3:0],bus[7:4]}把低半放到高半，得到5A。大括号是在排列已有的线，不是先后执行两次读取；复制则把同一个位串重复连接。"
+      "八根信号线可以共用一个名字。先给它们编号，再从这组线里选出你需要的一根。",
+      "掌握选一位之后，再取一段连续的线。最后用拼接改变接线顺序，并用复制接出多份相同的位串。"
     ],
     "code": "module slices(output wire low,\n output wire [3:0] hi,ones, output wire [7:0] swap);\n wire [7:0] bus;\n assign bus = 8'hA5;\n assign low = bus[0];\n assign hi = bus[7:4];\n assign swap = {bus[3:0],bus[7:4]};\n assign ones = {4{1'b1}};\nendmodule",
     "notes": [
