@@ -3,7 +3,7 @@ window.HDL_LESSONS=[
     "id": "orientation",
     "title": "怎么学：先认识电路，再认识语言",
     "concept": [
-      "两个开关都打开，灯才亮。这句话已经是一份很小的设计需求。先不碰工具：输入是什么，输出是什么，四种输入各会得到什么结果？",
+      "想象桌上只有两个开关和一盏灯。我们能拨动开关，所以开关的位置叫输入；我们想观察灯，所以灯的亮灭叫输出。给开关起名 a、b，约定 1 表示打开、0 表示关上。写 10 时，左边说 a 已打开，右边说 b 还关着。规则是两个都打开才亮。现在只拨开 a，灯该亮吗？",
       "把a、b当输入，y当灯的状态，列出00、01、10、11后，只有最后一行y=1。我们先把这种输入输出关系说清，再学习怎样写成HDL。以后每个实验也沿用这个习惯：先预测，再用代码和测试核对，遇到分歧回到最初的规则。"
     ],
     "code": "// 先用一句规格描述电路：\n// 输入：开关 a、开关 b\n// 规则：两个开关都打开，灯才亮\n// 输出：灯 y（0=灭，1=亮）",
@@ -57,7 +57,7 @@ window.HDL_LESSONS=[
     ],
     "narrative": true,
     "furtherReading": [
-      "学习顺序是规格→真值表或逐拍表→RTL→测试平台→仿真→综合。规格规定可观察行为，RTL描述结构与更新规则，测试平台产生输入并核对输出；它们承担不同职责。",
+      "把 10 写在纸上，再在旁边单独写一个 0。前两个数字记录你怎样拨开关，最后一个数字记录按规则灯该怎样。这一行就是一个可以拿去检验电路的小实验。",
       "每节课先预测一个具体结果，再运行或核对。能背代码但不能解释输入改变后哪个输出在何时变化，说明还需要回到电路模型。遇到新术语先用前置链接补课。",
       "学习状态分未开始、学习中、已练习、已掌握（自评）。浏览器封闭题只证明该题回答正确；开放代码须记录实际仿真与测试条件，未运行可以如实写“尚未运行”。"
     ],
@@ -93,8 +93,8 @@ window.HDL_LESSONS=[
     "stage": 0,
     "title": "bit、二进制与常量写法",
     "concept": [
-      "四根只能表示0或1的线，能给多少个不同编号？不是4个，也不是从0数到16；先把每根线代表的位权写出来。",
-      "四位从高到低的权是8、4、2、1，所以1010表示8+2=10。所有位都为1时是15，一共16种编码。4'b1010、4'd10和4'hA是同一个四位值的不同写法；本课只要求读懂这些数，下面完整模块的外壳在模块课再拆。"
+      "一根线能表示 0 或 1。给它旁边再添一根线，两根就有 00、01、10、11 四种排列。怎样用它们顺次表示零、一、二、三？约定右边的 1 算一份，左边的 1 算两份。因此 10 是一个二加零个一。每向左移一格，一格所代表的份数翻倍，这个份数叫位权。",
+      "从两位扩到四位，四个位权依次是 8、4、2、1。把 1010 中为 1 的位权相加，就是 8＋2＝10。最高编号是 1111，等于 15；因为从零开始，共有 16 种。写成 Verilog 时，4'b1010 里的 4 是位数，单引号后的 b 表示二进制。4'd10 用十进制写同一个数，4'hA 用十六进制写；其中 A 代表十。"
     ],
     "code": "// 4位数的位权，从左到右：8、4、2、1\n// 1010 = 8 + 0 + 2 + 0 = 10\n// 4'b1010、4'd10、4'hA 表示同一个4位数\n// 1111 = 15；10000需要5位才能保留",
     "notes": [
@@ -212,7 +212,7 @@ window.HDL_LESSONS=[
     "id": "logic-gates",
     "title": "与、或、非、异或：先画真值表",
     "concept": [
-      "一个控制器有两种要求：“两个条件都满足才开灯”和“只要有一个满足就报警”。同样两个输入，为什么要接不同的门？",
+      "把电源开关和盖子合上的开关都接到机器上。规定两个都闭合才允许启动。用 1 表示闭合，只看此刻两个开关的位置就能决定结果，这叫组合逻辑。把每种输入和对应的输出各写一行，这张表叫真值表。实现这个“都满足”规则的电路叫与门。",
       "取a=1、b=0来比较：与门输出0，或门输出1。再把另外三组输入补齐，就得到完整真值表。异或只在两输入不同时输出1，取反把0和1交换；先用这些关系写逻辑式，不急着背模块语法。"
     ],
     "code": "// a b | 与 AND | 或 OR | 异或 XOR\n// 0 0 |   0    |  0    |    0\n// 0 1 |   0    |  1    |    1\n// 1 0 |   0    |  1    |    1\n// 1 1 |   1    |  1    |    0\n// Verilog对应符号：&、|、^；单比特取反用 ~",
@@ -356,7 +356,7 @@ window.HDL_LESSONS=[
     ],
     "code": "// 输入：使能en，以及两位地址a1、a0\n// en=0：y3 y2 y1 y0 = 0000\n// en=1，地址00：0001；01：0010\n// en=1，地址10：0100；11：1000\n// y0 = en 与 非a1 与 非a0\n// y3 = en 与 a1 与 a0",
     "concept": [
-      "地址a=10时，只想选中四条输出中的第2条，其余都关掉。怎样从真值表一步步得到这四个输出？",
+      "有四个抽屉，各装一盏灯，编号从 0 到 3。你手里却只有两根选择线。把这两位合起来当编号，也就是地址：左线为 1、右线为 0，编号就是二。译码器把一个编号变成一组开关，只点亮同号的灯。下文的 y[2] 就是编号 2 的灯，四灯按 3、2、1、0 排列。",
       "对y[2]来说，条件是使能有效、a[1]=1、a[0]=0，所以它的逻辑式是en & a[1] & ~a[0]。另外三位各自照着对应行写。这样地址不是直接“复制到输出”，而是被展开为独热选择。本课用真值表和门表达式推导，移位写法留到运算符课以后。"
     ],
     "notes": [
@@ -452,8 +452,8 @@ window.HDL_LESSONS=[
     "stage": 0,
     "title": "先懂电路，再读代码",
     "concept": [
-      "把两条assign交换位置，y和z会不会交换先后？先想一下：图上的与门和或门会因为我们换了两行字就先后开始工作吗？",
-      "a=1、b从0变1时，两路组合输出各按自己的连接重新求值：y由0变1，z仍为1。两条assign描述两路同时存在的关系，并不轮流占用一个软件执行位置。后面遇到always时，我们会再分清“过程内怎样计算”与“多个过程并发存在”。"
+      "把同一对开关同时接到两块电路上：一块要求都闭合，另一块只要求至少一个闭合。只闭合左边的开关，前一盏灯灭，后一盏亮。画图时先画哪一块都不影响接线。HDL 也能用两行文字分别写下这两条长期存在的连接关系。",
+      "把与门输出叫 y，或门输出叫 z。a=1、b 从 0 变 1 时，y 从 0 变 1，z 一直是 1。后面会用 & 表示与、| 表示或；今天先能把两种接法画出来，再用四行真值表核对。"
     ],
     "code": "// 两个输入：a、b；两个独立输出：y、z\n// y = a 与 b\n// z = a 或 b\n// a=1、b=0：y=0，同时z=1\n// 改变书写顺序，不改变这两条关系",
     "notes": [
@@ -514,7 +514,7 @@ window.HDL_LESSONS=[
     ],
     "narrative": true,
     "furtherReading": [
-      "软件通常用顺序指令更新一份机器状态，HDL用模块、网络和过程描述同时存在的结构。两个assign分别驱动y和z，两路电路并行工作。",
+      "把 y 那一行盖住，仍然能算出 z 的四种结果。两条规则都只依赖 a、b，所以交换纸上两行的位置，接线和结果仍然相同。",
       "仿真器会按事件队列求值以得到一致状态，但事件处理顺序不意味着物理硬件先后制造。组合过程内部的语句顺序定义计算关系，多个过程之间不能依靠隐含顺序通信。",
       "硬件资源取决于表达式、状态和综合优化，而不是源文件行数。把同一个组合模块实例化两次通常表达两份逻辑；把它当作函数先后调用会误解吞吐与面积。"
     ],
@@ -570,7 +570,7 @@ window.HDL_LESSONS=[
     "id": "storage",
     "title": "电平与边沿：锁存器、触发器、寄存器",
     "concept": [
-      "输入D在时钟高电平期间先变1、再变0。输出Q是一路跟着变，还是只在某个时刻取一次值？这个问题把组合电路、锁存器和触发器区分开了。",
+      "先看同一个输入怎样得到两种输出。把一根线叫 D，把观察点叫 Q。如果直接连线，D 变成 1，Q 也会随它变。如果只允许在铃响的一刻记下 D，铃声过后 D 再变，Q 仍保留记下的值。数字电路用一根反复在 0、1 之间变化的时钟线规定这种时刻。从 0 变到 1 的瞬间叫上升沿；一直为 1 的那段时间叫高电平。",
       "组合连接随当前输入变化；高有效锁存器在gate=1期间跟随，gate=0后保存；上升沿DFF只在clk从0变1时取样。若DFF在那个沿读到1，沿后D再变0，Q仍保持1。本课先用图和取值表辨认三种行为，暂不要求写if/else或复位代码。"
     ],
     "code": "// 不需编译的电路规格\n// 组合MUX：en=1选d，否则选固定0\n// 锁存器：en=1跟随d，否则保存上次值\n// DFF：仅在clk上升沿保存d\n// 8位寄存器：8份DFF，共用时钟",
@@ -669,7 +669,7 @@ window.HDL_LESSONS=[
       "现在要让两个开关都打开时灯才亮。真值表已经给出规则，但怎样把这个规则交给工具？先只写一份电路，不放第二个模块：module and2 开始一个名叫and2的定义，endmodule结束定义。它们之间写接口和逻辑关系。这里的“结束”是文件结构结束，不是电路停止运行。",
       "input从当前模块看是输入，output是输出；wire表示一条由电路驱动的信号连接。input wire a与input wire b是两个一位输入，output wire y是一个一位输出。逗号分开端口，右括号后的分号结束模块头。信号默认一位；暂时不需要reg或always。",
       "assign y = a & b;读作“始终用a与b的结果驱动y”。&是已经学过的与运算，=在这条连续赋值中连接等式两边，分号结束语句。a或b改变，组合关系重新求值；没有时钟，也没有保存过去值的要求。先遮住示例，自己写出这三行，再检查00、01、10、11得到0、0、0、1。",
-      "如果改成assign y = a | b;，仅10输入就能点亮；改成^时11反而熄灭。请先根据真值表预测，再改运算符。能自己写完单个模块后，才继续看下面的top：我们要计算(x与z)再与enable。",
+      "如果改成assign y = a | b;，只开第一个开关（10）也能点亮；改成^时11反而熄灭。请先根据真值表预测，再改运算符。能自己写完单个模块后，才继续看下面的top：我们要计算(x与z)再与enable。",
       "定义and2只提供图纸；and2 u_pair(...)在top中放一份实际电路。and2是类型，u_pair是这份实例的名字。第二份叫u_mask，不能在同一层也叫u_pair。两份电路并行存在，实例化不是软件函数调用，不会先运行第一份再创建第二份。",
       "wire pair是top内部的一条线，没有出现在top端口里。.a(x)左边a是and2的端口名，括号中x是top中的信号；.y(pair)把第一份电路输出接到内部线pair。第二份的.a(pair)接收它，.b(enable)接开关，.y(result)连到顶层输出。x=z=1但enable=0时，pair=1而result=0。命名端口可以调换书写次序，但不能交换端口含义。"
     ],
@@ -796,7 +796,7 @@ window.HDL_LESSONS=[
     "id": "tool-start",
     "title": "第一次编译与四组输入仿真",
     "concept": [
-      "文件里有一个and2模块，第一次运行工具最值得确认什么？先别同时处理波形和综合，先让工具确实读到这个文件、找到这个顶层。",
+      "刚写好的 and2 是一段文本。把它存成 and2.v，打开终端，也就是输入工具命令的窗口，进入这个文件所在的目录。下面先让工具读取文件并找到模块名，再给它四组开关输入。第一步能抓到少写分号，第二步才能发现把与门写成了或门。",
       "在终端运行iverilog -V确认程序可用，再用-g2005 -s and2 -tnull编译检查。这里-s选的是模块名，-tnull不生成运行程序。通过说明语法和展开过关，下一步仍需给输入并检查输出；编译与仿真不是同一件事。"
     ],
     "code": "# 以下在终端执行，不要粘进 .v 文件\niverilog -V\niverilog -g2005 -s and2 -tnull and2.v\n# -g2005：Verilog语言模式\n# -s and2：选择顶层模块\n# -tnull：只检查，不输出仿真程序",
@@ -912,7 +912,7 @@ window.HDL_LESSONS=[
     "stage": 1,
     "title": "wire、reg 与 assign",
     "concept": [
-      "与门已能用assign写出。现在把y2放进always @(*)里，为什么output必须从wire改成reg？always建立一个独立仿真过程，@(*)等待过程所读的a、b发生变化；变化后重新执行块中的y2=a&b。这里的=先算右侧再写过程变量。没有延迟和沿触发，最终仍然是与门。reg只说明赋值途径，不能单凭名字断言存在寄存器。",
+      "在与门里动一下输入，输出就该跟着变。熟悉的 assign y = a & b; 把关系一直连到线上。还有一种写法：每当输入变化，就重新算一次，把结果写到变量。Verilog 用 always @(*) 表达这样的组合过程，用 reg 声明过程写入的变量。两种写法都给每种输入一个明确输出，所以这里都用不到存储。",
       "同样计算a&b，一种输出声明wire，另一种写reg，为什么综合出来仍可能是同一个与门？",
       "y1由assign持续驱动，y2在完整的always @(*)里每次求值都被赋成a&b。两者都没有“记住过去”的要求，所以都能形成组合电路。wire与reg先规定在Verilog中怎样连接、怎样赋值；是否需要触发器或锁存器，还要看触发条件和漏没漏分支。"
     ],
@@ -1191,7 +1191,7 @@ window.HDL_LESSONS=[
     "stage": 1,
     "title": "0、1、X、Z 与初始化",
     "concept": [
-      "刚开始仿真，为什么有的线是X，有的却是Z？先找它有没有驱动，再看保存的状态有没有被初始化。",
+      "仿真刚开始，工具可能还不知道一盏灯应该亮还是灭。波形上的 X 表示它现在无法确定是 0 还是 1。另一种情况是引脚没有任何东西在驱动，普通 wire 在仿真里会显示 Z，表示高阻。可以拿未知位分别当 0、1 试算：若两种可能得到同一结果，输出就仍然确定。",
       "未赋值的过程变量q通常是X，表示还不知道它的值；没有驱动源的wire通常是Z，表示高阻。它们不是另一种“随机0或1”。例如0 & X仍为0，因为无论未知位是哪种值，与0相与都不可能为1；1 & X则仍无法确定。"
     ],
     "code": "module unknown_demo(output wire undriven);\n reg q; // 尚未给初值的过程变量\n // undriven没有驱动源，四态仿真通常为Z\n // q尚未赋值，四态仿真通常为X\nendmodule",
@@ -1313,8 +1313,9 @@ window.HDL_LESSONS=[
     "stage": 1,
     "title": "算术、位运算、逻辑与比较",
     "concept": [
-      "a=1010、b=0101，a&b、a&&b和&a为什么给出三个不同结果？它们虽然都带&，处理的对象不同。",
-      "逐位与把对应位相与，得到0000；逻辑与先判断两个向量是否非零，二者都非零所以结果1；归约与要求a所有位为1，结果0。先说明自己要的是“几位结果”和“怎样组合输入”，再选运算符，括号也要把分组写清。"
+      "先只算一种与。令 a 的四位为 1010，b 的四位为 0101，把每一列单独送进一个与门。四列里没有一列同时为 1，所以四位结果是 0000。写进 Verilog 时，二进制数要标明进制，例如 4'b1010；裸写 1010 是十进制整数。接下来比较三个问题：哪些位同时为 1？两个数是否都非零？一个数是否每位都为 1？",
+      "逐位与把对应位相与，得到0000；逻辑与先判断两个向量是否非零，二者都非零所以结果1；归约与要求a所有位为1，结果0。先说明自己要的是“几位结果”和“怎样组合输入”，再选运算符，括号也要把分组写清。",
+      "归约或 |a 把所有位做或，有一位为 1 就得到 1；归约异或 ^a 则在 1 的个数为奇数时得到 1。左移一位把每位移到左邻，低位补 0：四位 0101 变成 1010；若原最高位是 1 而输出仍只有四位，这一位就移出了。"
     ],
     "code": "module choose_max(input wire [3:0] a,b,\n output wire [3:0] y);\n // a=1010,b=0101时：\n // a&b=0000，a&&b=1，&a=0\n assign y = (a > b) ? a : b;\nendmodule",
     "notes": [
@@ -1324,7 +1325,7 @@ window.HDL_LESSONS=[
       "复杂条件主动加括号，避免依赖你尚未记牢的运算符优先级。"
     ],
     "trap": "位运算和逻辑运算位宽不同；不要用&&替换多位数据通路里的&。",
-    "q": "a=1010、b=0101，a&&b是多少？",
+    "q": "已知 a=4'b1010、b=4'b0101，a && b 的一位结果是多少？",
     "options": [
       "0000",
       "1",
@@ -1467,8 +1468,8 @@ window.HDL_LESSONS=[
     "stage": 1,
     "title": "位宽、截断与补码",
     "concept": [
-      "4位最大数15再加1，数学上是16，为什么输出却可能回到0？把16写成二进制10000，答案就在多出来的那一位里。",
-      "四根输出线只能留下低四位，所以10000被截为0000。若要保留进位，先把两个操作数扩到5位再相加。signed又是另一层解释：四位1000可表示-8，扩展时要复制符号位；不能把零扩展和符号扩展混着用。",
+      "用四盏灯显示计数，从 1110 再加一，变成 1111。再加一需要第五盏灯，完整结果是 10000；如果只接了低四位，看到的就是 0000。把多出来的高位丢掉叫截断。先按无符号数算清楚这一次，再问同样四根线怎样表示负数。",
+      "现在仍看同样的四根线，把最高位的位权从 +8 改为 −8，其余三位仍为 4、2、1，这就是四位补码。例如 1000 是 −8，1111 是 −8＋4＋2＋1＝−1。要把 −1 写成八位，八位都应为 1；补零会得到正的 15。这解释了有符号扩展为什么复制最高位。",
       "把a=b=15代入：两个输入各是1111，显式补零后为01111，相加11110，需要5位。若输出只声明4位，最终只能留下1110，即14。这里把“数学运算结果”和“端口能保留的位”分开，才能定位错误究竟发生在表达式还是写回位置。下面交互将相同宽度的输入先解释再运算；真实Verilog还要检查整个表达式的上下文。"
     ],
     "code": "module extend_demo(input wire [3:0] a,b,\n input wire signed [3:0] s,\n output wire [4:0] sum,\n output wire signed [7:0] extended);\n assign sum = {1'b0,a} + {1'b0,b};\n assign extended = {{4{s[3]}},s};\nendmodule",
@@ -1593,7 +1594,7 @@ window.HDL_LESSONS=[
     "id": "casts",
     "title": "符号转换：位串不变，解释可能变",
     "concept": [
-      "raw=4'hF，同一串1111怎样会一边得到15，另一边得到-1？这里没有改变线上的位，而是改变了运算如何解释它。",
+      "用四根线表示 1111。按普通无符号位权计算是 8＋4＋2＋1＝15。若约定用四位补码表示有符号数，最高位的权改为 −8，另外三位不变，就得到 −1。扩大到八位时，怎样填上新出现的四个位置，才能仍表示原来的数？",
       "把raw转成$signed后，它仍是4位，但按补码解释为-1；再赋给8位signed输出时复制最高位，得到FF。$unsigned(raw)按15解释，扩大为0F。先转换、后扩展这两个步骤分开想，就不会误以为转换本身替你增加了位宽。"
     ],
     "code": "module cast_demo(input wire [3:0] raw,\n output wire signed [7:0] sx,\n output wire [7:0] zx,\n output wire negative);\n assign sx=$signed(raw);\n assign zx=$unsigned(raw);\n assign negative=($signed(raw) < 4'sd0);\nendmodule",
@@ -1710,7 +1711,7 @@ window.HDL_LESSONS=[
     "stage": 1,
     "title": "begin/end、if/else 与组合逻辑",
     "concept": [
-      "sel=0选a、sel=1选b。写if之前，先问一句：两个分支是不是都能给y一个明确值？",
+      "手里有两组数据 a 和 b，输出端 y 只能接其中一组。另用一根线 sel 当开关，0 接 a，1 接 b；这种电路叫选择器。若 a=2、b=7，拨动 sel 时你应该看到 2 或 7。现在用 if 表示“条件为真时这样接”，用 else 表示另一种情况。",
       "例子先令y=a，再在sel=1时用y=b覆盖它。因此sel为0时也有输出，不需要记忆。若只留下if(sel) y=b，sel=0时程序没给新值，硬件就得保存旧结果；这已经不是原本的纯MUX规格。",
       "试着让sel从1变0：原来b=7，所以y=7；现在a=2，默认赋值先让y=2，if条件为假，不再覆盖，最终y=2。若删掉默认行，sel=0时根本没有给y新值，电路便需要记住7。不是少写了一种语法风格，而是把无记忆的选择器改成了带存储的行为。"
     ],
@@ -1864,7 +1865,7 @@ window.HDL_LESSONS=[
     "stage": 1,
     "title": "case、优先级与意外锁存器",
     "concept": [
-      "有三个输入却用两位选择码，00、01、10都安排好了，剩下的11该输出什么？这个空缺不能交给工具猜。",
+      "两根选择线有四种可能，而你只有 a、b、c 三个可选输入。把 00、01、10 分别分配给它们后，第四种 11 依然可能在线上出现。先规定这时输出零，再用 case 把选择码与各条输出规则一一配对。",
       "本例让11和其他未匹配情况输出0。case按项匹配，不像某些软件switch那样自动落入后续分支。若某个选择值没有给y赋值，就要求它保留上次结果；补default或先给默认值，是在补完整电路关系。"
     ],
     "code": "module select3(input wire [3:0] a,b,c,\n input wire [1:0] sel, output reg [3:0] y);\n always @(*) begin\n  case(sel)\n   2'b00: y = a;\n   2'b01: y = b;\n   2'b10: y = c;\n   default: y = 4'b0000;\n  endcase\n end\nendmodule",
@@ -2004,7 +2005,7 @@ window.HDL_LESSONS=[
     "id": "casez",
     "title": "casez：通配规则与优先级",
     "concept": [
-      "req=1010时两个请求同时有效，编码器该报告3还是1？只有先规定“高位优先”，代码的第一项才有依据。",
+      "四根请求线中可能同时有两根为 1。若规定编号大的先响应，最高位一旦为 1，低三位是什么就都无关了。把这一组输入写成 1???，问号表示这个位置不参与本项匹配。casez 从上往下找第一条匹配项，排列顺序因此也是设计的一部分。",
       "1???先接住最高位置1的所有情况；再检查01??，然后001?和0001。本例把有效性valid与编号index分开，因为无请求和只有位0请求时index都可能为0。casez的?是匹配通配，不是运行时随机数；输入Z也会参与通配，验证时要另查未知。"
     ],
     "code": "module priority4(input wire [3:0] req,output reg valid,\n output reg [1:0] index);\n always @(*) begin\n  valid=1'b1; index=2'd0;\n  casez(req)\n   4'b1???: index=2'd3;\n   4'b01??: index=2'd2;\n   4'b001?: index=2'd1;\n   4'b0001: index=2'd0;\n   default: valid=1'b0;\n  endcase\n end\nendmodule",
@@ -2125,7 +2126,7 @@ window.HDL_LESSONS=[
     "id": "loops",
     "title": "for 循环：展开的是硬件还是时间？",
     "concept": [
-      "for循环四次，是做四拍，还是做一段组合计算？先看循环里面有没有等待时钟的事件。",
+      "要判断四个输入里有奇数个 1，可以拿着一个初始值 0，从最低位开始，每遇到一个 1 就翻转一次。这正是异或。试着把 0011 的四次异或写出来。for 让我们用一个编号反复描述这些连接；这里没有等待时钟，四次描述共同构成一次组合计算。",
       "这里parity先清0，再依次与data[0]到data[3]异或。整个过程没有时钟等待，描述的是这一次组合求值，等价于四位归约异或。若忘记每次清初值，就会把旧parity带进来，输出不再只由当前data决定。"
     ],
     "code": "module parity4(input wire [3:0] data, output reg parity);\n integer i;\n always @(*) begin\n  parity = 1'b0;\n  for(i=0; i<4; i=i+1) begin\n   parity = parity ^ data[i];\n  end\n end\nendmodule",
@@ -2284,7 +2285,7 @@ window.HDL_LESSONS=[
     "stage": 1,
     "title": "parameter、localparam 与 generate",
     "concept": [
-      "同一份反相器写成4位或8位，需要复制两份源码吗？参数让我们在展开电路前决定尺寸。",
+      "做两版按位取反的电路，一版两根输入线，一版五根。每根线上的规则都一样，差别只是重复多少份。把这个数命名为参数 W，在放入每个实例时选定它；W=2 时位号是 1、0，所以端口范围写作 [W-1:0]。",
       "父实例用#(.W(4))选择四位，generate循环随之展开四份位逻辑。电路运行后W不会随时钟改变；运行时改变的是输入信号，不是参数。localparam适合内部推导出的常量，和供父层覆盖的parameter分工不同。"
     ],
     "code": "module invert #(parameter W=8)(\n input wire [W-1:0] a, output wire [W-1:0] y);\n genvar i;\n generate for(i=0;i<W;i=i+1) begin: g\n   assign y[i] = ~a[i];\n end endgenerate\nendmodule",
@@ -2413,7 +2414,7 @@ window.HDL_LESSONS=[
     "stage": 1,
     "title": "function：给组合计算起一个名字",
     "concept": [
-      "很多地方都要算“加1”，能不能把这段组合计算取个名字？函数正好适合这种不等待时间的计算。",
+      "许多地方都要把一个四位数加一，并且各自只取低四位。我们可以给这条计算规则起名 inc，让调用处只给出输入。Verilog 的 function 在这里表示一段能返回计算值的描述；计算 1111 加一时，返回口的四位只装得下 0000。",
       "inc(a)把输入交给同一规则，本例用给函数名inc赋值来表示返回值。a=15时结果仍只有4位，所以回到0；函数没有自动扩宽。它也不替我们等待五纳秒或一个沿，想跨周期保存结果仍要写寄存器过程。"
     ],
     "code": "module use_function(input wire [3:0] a,\n output wire [3:0] y);\n function [3:0] inc;\n  input [3:0] x;\n  begin inc = x + 4'd1; end\n endfunction\n assign y = inc(a);\nendmodule",
@@ -2535,7 +2536,7 @@ window.HDL_LESSONS=[
     "id": "directives",
     "title": "编译指令、宏与多文件边界",
     "concept": [
-      "希望同一份源码在一个配置里直通、另一个配置里反相，应该用输入sel还是`ifdef？先区分“运行时切换”和“构建时选择”。",
+      "有的产品需要输入直通，有的需要取反。如果开机后仍能切换，就需要选择器。如果做的是两种固定版本，可以在编译前只留下其中一段文字。以反引号开头的编译指令就作用在这个阶段，运行时拨动输入不会重新选择源码。",
       "sel进入电路形成MUX，运行中可改变；`ifdef在编译前选出一段文本，本次构建只留下对应写法。`include也是把文本放到当前位置，因此同一模块既include又列进文件表可能重复定义。多文件组织要看哪些声明被工具读了几次。"
     ],
     "code": "`define WIDTH 4\nmodule macro_demo(input wire [`WIDTH-1:0] a,\n output wire [`WIDTH-1:0] y);\n`ifdef INVERT\n assign y=~a;\n`else\n assign y=a;\n`endif\nendmodule\n`undef WIDTH",
@@ -2664,7 +2665,7 @@ window.HDL_LESSONS=[
     ],
     "code": "module nibble_add(input wire [3:0] a,b,output wire [4:0] sum);\n assign sum={1'b0,a}+{1'b0,b};\nendmodule\nmodule pair_add(input wire [7:0] a,b,output wire [9:0] sums);\n nibble_add lo(.a(a[3:0]),.b(b[3:0]),.sum(sums[4:0]));\n nibble_add hi(.a(a[7:4]),.b(b[7:4]),.sum(sums[9:5]));\nendmodule",
     "concept": [
-      "把两个4位加法器接在一起，就自动成为8位加法器了吗？试一试0F加01，看看低半字节的进位有没有送到高半。",
+      "用十进制想一次 09＋01：个位写 0，还得往十位送一个 1。换成十六进制，道理相同，0F＋01 的低四位归零，需要给高四位送进位。两个各算各的四位加法器若没有这根线，高组就永远看不到低组多出来的 1。",
       "本例lo和hi各算自己的半字节，低组得到16，高组得到0，它们是两个独立结果。要做完整8位加法，必须连接进位或直接扩位后相加。模块名字相同不代表工具替你补上缺失的连线；层次检查要沿接口追数据。"
     ],
     "notes": [
@@ -2787,7 +2788,7 @@ window.HDL_LESSONS=[
     "stage": 2,
     "title": "时钟边沿、D 触发器与逐拍读图",
     "concept": [
-      "D在一个周期里变了几次，Q到底取哪一次？我们只看clk从0跳到1前，D已经稳定成了什么。",
+      "把时钟想成一列交替的 0 和 1，只有由 0 变到 1 的瞬间取样。D 是待记的值，Q 是已经记住的值。假设 D 在第一个上升沿前已稳定为 1，沿后改回 0，试着在时间轴上指出 Q 第一次能变回 0 的时刻。",
       "假设Q原来0，第一上升沿前D=1，沿后Q更新成1。接着D变0但clk没有新的上升沿，Q还保持1，直到下一个有效沿才取0。posedge指定事件，<=描述该沿采样后的更新；它不是高电平期间一直跟随D。",
       "这里第一次把<=写进沿触发过程。先把它读成“在这个沿读取右边的值，随后更新左边的寄存器”。它不同于assign的持续连接：沿间D改变，Q不会跟着改变。下一课再用两个寄存器解释为什么同一沿仍读到旧值；本课只练一只DFF。"
     ],
@@ -2915,7 +2916,7 @@ window.HDL_LESSONS=[
     "stage": 2,
     "title": "阻塞 = 与非阻塞 <=",
     "concept": [
-      "来看两级寄存器：a<=d，b<=a。上升沿前d=1、a=0，那么这个沿过后b是1，还是仍为0？先别按源码从上到下“把值传过去”。",
+      "把两个触发器首尾相接，第一个叫 a，第二个叫 b。时钟沿前 d=1，a=0，b=0。遮住沿后的两格，只填各自输入端现在接到什么：第一级接 d，读到 1；第二级接 a，读到 0。同一个沿各记各的输入，于是沿后是 a=1、b=0。Verilog 用 a<=d 和 b<=a 来描述这种采样后更新。",
       "沿到来时，第一句读到d=1，第二句读到的是尚未更新的a=0。随后安排的非阻塞更新提交，所以a=1而b=0。下一沿b才有机会采到已经保存为1的a。两份DFF的D端在同一沿各自拍快照，这比单独背“NBA区域”更容易理解。",
       "我们不用“同时”两个字跳过推导。令沿前a=0、b=0、d=1：第一条安排a的新值为1，第二条读到的a仍为0，安排b为0；两条安排完成后才提交。因此沿后是1、0。下一沿保持d=1，第二条才读到a的1。若将a=d写成阻塞赋值，后面的b=a当场看到1，这段过程的仿真便失去两级延迟，不能再用原来的逐拍表解释。"
     ],
@@ -3066,7 +3067,7 @@ window.HDL_LESSONS=[
     "stage": 2,
     "title": "同步复位、异步复位与使能",
     "concept": [
-      "复位拉低的一瞬间，Q一定马上清零吗？答案取决于规格是同步复位还是异步复位，不取决于信号名里有没有_n。",
+      "计数从哪里开始？用一根复位线要求寄存器回到已知值。名字 rst_n 中的 n 提醒我们这里用 0 表示请求复位。假设 Q=5，在两个沿之间拉低它。若只在上升沿判断复位，眼下仍看见 5；若允许复位本身立即触发清零，眼下就会变 0。",
       "本例只在posedge clk检查rst_n，因此沿间拉低时Q先保持，到下一上升沿才清零。if(!rst_n)放在else if(en)前，表示两者同时有效时复位优先。使能无效且复位无效时没有更新，正是DFF保存旧值的用途。"
     ],
     "code": "module enabled_reg(input wire clk,rst_n,en,\n input wire [3:0] d, output reg [3:0] q);\n always @(posedge clk) begin\n  if(!rst_n) q <= 4'd0;\n  else if(en) q <= d;\n end\n // 异步版只替换上面的事件表达式为：\n // @(posedge clk or negedge rst_n)\nendmodule",
@@ -3218,7 +3219,7 @@ window.HDL_LESSONS=[
     "stage": 2,
     "title": "从规格到完整计数器",
     "concept": [
-      "计数器为什么不会沿后立刻一口气加到最大？把它画成Q经过加法器回到D，就能看出中间还隔着一份寄存器。",
+      "把寄存器的输出 Q 接到一个加一器，再把结果接回输入 D。沿前 Q=2，加一器已经算出 D=3，但寄存器要等上升沿才记住 3。沿后加一器又算出 4，新的 4 仍要等下一个沿。这就是一个每拍只前进一步的计数器。",
       "沿前Q=7、en=1时，加法器算出8，这个沿把8存回Q。沿后组合D可能又算出9，但Q要等下一个沿才接收它。4位从15再加1只留下低四位回0；en=0则D端选择旧Q，复位仍具有最高优先级。",
       "现在不看代码，先写规格表：复位请求→0；非复位且en=0→旧值；非复位且en=1→旧值+1并截到4位。把三种情况按优先级排进一个if/else if，才得到右边的过程。若独立设计模6计数器，不能只缩为3位：3位自然回绕在7→0，模6还要在旧值5时提前清零。"
     ],
@@ -3384,7 +3385,7 @@ window.HDL_LESSONS=[
     "id": "shift-pulse",
     "title": "移位寄存器与单周期边沿脉冲",
     "concept": [
-      "sig已经连续两拍为1，为什么我们只想在第一拍产生pulse？需要知道的不是“现在是否为1”，而是“现在与上一拍相比有没有从0变1”。",
+      "假设按钮已经按住三拍，只想在刚按下那一拍给出提示。单看现在的 1，分不出刚按还是一直按。另留一个寄存器 prev 记住上次采样，当前为 1 且 prev 为 0 才发脉冲。这里先用已经属于本时钟域的信号练习。",
       "prev保存上一次采样，pulse<=sig & ~prev在同沿读取旧prev。因此首次sig=1且旧prev=0时pulse为1，下一沿旧prev已经1，pulse回0。这里sig应已属于本时钟域；检测变化不等于替异步信号完成同步。"
     ],
     "code": "module rise_pulse(input wire clk,rst_n,sig,\n output reg pulse,output reg [3:0] history);\n reg prev;\n always @(posedge clk) begin\n  if(!rst_n) begin\n   prev<=1'b0; pulse<=1'b0; history<=4'd0;\n  end else begin\n   prev<=sig;\n   pulse<=sig & ~prev;\n   history<={history[2:0],sig};\n  end\n end\nendmodule",
@@ -3507,7 +3508,7 @@ window.HDL_LESSONS=[
     "id": "alu",
     "title": "小型 ALU：选择运算与保留进位",
     "concept": [
-      "同一组a、b有时相加、有时做异或，输出选择之后，carry应该留下加法时的旧值吗？先把每个操作的输出都写完整。",
+      "计算器上按加号和按异或键，输入可以相同，输出规则却要改变。ALU 就是能选择几种算术或逻辑操作的电路。先给四位数 1111 加 0001，五位完整结果为 10000。低四位送结果口，多出的 1 单独送进位口。若下一次选择异或，还需要给进位口一个明确值。",
       "a=15、b=1时加法得到5位10000，y=0、carry=1。切到异或后y=14，carry应按本例规则清0。组合块先给默认值，再在分支覆盖，能让标志与数据一起对应当前操作，避免只更新y却意外保存旧carry。"
     ],
     "code": "module alu4(input wire [3:0] a,b,input wire [1:0] op,\n output reg [3:0] y,output reg carry);\n reg [4:0] sum;\n always @(*) begin\n  sum={1'b0,a}+{1'b0,b};\n  y=4'd0; carry=1'b0;\n  case(op)\n   2'd0: begin y=sum[3:0]; carry=sum[4]; end\n   2'd1: y=a & b;\n   2'd2: y=a ^ b;\n   default: y=4'd0;\n  endcase\n end\nendmodule",
@@ -3631,7 +3632,7 @@ window.HDL_LESSONS=[
     "stage": 2,
     "title": "有限状态机：当前状态与下一状态",
     "concept": [
-      "IDLE时start变1，next_state已经指向RUN，state是不是也立刻变了？先在纸上画开“候选下一状态”和“当前保存状态”两栏。",
+      "电机接到 start 后持续运行，即使 start 已松开；接到 finish 后才停。同样是两个按钮都松开，电机可能在转，也可能已停，取决于过去发生过什么。我们只需记住“空闲”和“运行”两种状态。先问下一拍要去哪，再用一个寄存器在时钟沿保存这个选择。",
       "组合块根据state和输入计算next_state，但state由时钟过程保存，要等有效沿才接收它。busy来自state==RUN，所以它不会只因start沿间变化就提前拉高。这是输出只依赖当前状态的Moore写法；下一课再比较直接依赖输入时会怎样。",
       "假设空闲时在两个沿之间拉高start：下一状态逻辑立刻算出RUN，但state还保存IDLE，所以busy仍0。给一个上升沿，state装入RUN，busy才变1。接下来start撤销、finish仍0，默认next=state让控制器继续RUN。这三步分别对应“组合算候选”“寄存保存”“状态译码输出”；把busy改接next会让沿前就报忙，改变了接口时刻。"
     ],
@@ -3797,7 +3798,7 @@ window.HDL_LESSONS=[
     ],
     "code": "module detect11(input wire clk,rst_n,bit_in,output wire mealy,output reg moore);\n reg prev;\n assign mealy=prev & bit_in;\n always @(posedge clk) begin\n  if(!rst_n) begin prev<=0; moore<=0; end\n  else begin prev<=bit_in; moore<=prev & bit_in; end\n end\nendmodule",
     "concept": [
-      "同一个“连续两个1”的检测，为什么一个输出沿间就变了，另一个要等时钟？我们用prev=1、当前bit_in从0变1来比较。",
+      "要检测相邻两个 1，先用 prev 记住前一位。若 prev 已为 1，当前输入在两沿之间升为 1，组合与门会立即给出检测结果。若把这个结果再存进寄存器，观察者要等到下一沿。分清观察时刻，才能比较依赖当前输入的输出和只依赖已保存状态的输出。",
       "组合mealy=prev & bit_in立即成为1，寄存输出moore尚未遇到新沿则保持旧值。等到上升沿，moore才取本次检测结果。把输出寄存器当作扩展状态，就能用Moore形式解释它；代价是必须重新核对接口接收时刻，而非只替换一个名字。"
     ],
     "notes": [
@@ -3910,7 +3911,7 @@ window.HDL_LESSONS=[
     "stage": 3,
     "title": "迈入 SystemVerilog：logic 与 bit",
     "concept": [
-      "把reg换成logic后，电路会多出寄存器吗？还是回到我们已经用过的判断：这条赋值在什么事件下发生，需要保存过去吗？",
+      "把一个已经工作的与门改写为 SystemVerilog，先把输出声明为 logic，仍让同一条 assign 驱动它。输入一变输出就跟着算。再看时钟过程写入的 logic：它却能表示保存的状态。判断电路时先找驱动关系，单看声明中的类型名无法区分这两种情况。",
       "同样的MUX用assign驱动logic y，仍是组合选择；posedge过程中更新q，才描述沿触发状态。logic保留0/1/X/Z四态，bit只有两态。换类型不替代复位或单驱动设计，尤其不能用两态把未知来源藏起来。"
     ],
     "code": "module mux_sv(input logic a,b,sel,\n output logic y);\n assign y = sel ? b : a;\nendmodule",
@@ -4039,7 +4040,7 @@ window.HDL_LESSONS=[
     "stage": 3,
     "title": "always_comb、always_ff 与迁移",
     "concept": [
-      "已经会写always @(*)和posedge了，always_comb、always_ff还带来什么？它们让设计意图更明确，也让工具多一些机会指出写法与意图冲突。",
+      "要做一个带使能的寄存器，可以把工作拆开：先随时算好“下一次应装入什么”，再在上升沿装入。前半段用 always_comb 写组合计算，后半段用 always_ff 写沿触发更新。先停住时钟改变输入，观察候选值和寄存器输出哪一个会变。",
       "本例先在always_comb算next_q=en?d:q，再由always_ff沿上接收。next_q不是额外一级寄存器，而是D端选择结果。若组合块只写if(en) next_q=d，关键字不会自动补en=0路径；仍需我们把保持反馈或其他默认行为说明白。"
     ],
     "code": "module enabled_ff(input logic clk,rst_n,en,d,\n output logic q);\n logic next_q;\n always_comb begin\n  next_q = en ? d : q;\n end\n always_ff @(posedge clk) begin\n  if(!rst_n) q <= 1'b0;\n  else q <= next_q;\n end\nendmodule",
@@ -4176,7 +4177,7 @@ window.HDL_LESSONS=[
     ],
     "code": "module latch_example(input logic gate,d,output logic q);\n always_latch begin\n  if(gate) q<=d;\n end\nendmodule",
     "concept": [
-      "gate一直为1，D变了两次，Q会跟着两次变化吗？若规格要求“开门期间透明”，就不是DFF那种只拍一次快照。",
+      "锁存器的 gate 像一段开放的时间窗口。gate=1 期间，D 先变 1 再变 0，Q 跟着变两次；gate 关上时最后看到的是 0，此后 D 再变，Q 也保持 0。只有规格就要求这种行为时，才用 always_latch 把它明确写出来。",
       "always_latch里的if(gate)在有效电平期间允许q跟随，关闭后不赋新值，刻意要求保持。这里没有else是规格的一部分；相同遗漏若出现在本来要纯组合的always_comb里，就会成为错误。先决定要什么电路，再选过程关键字。"
     ],
     "notes": [
@@ -4292,7 +4293,7 @@ window.HDL_LESSONS=[
     "id": "sv-arrays",
     "title": "SystemVerilog 数组：位和元素要分清",
     "concept": [
-      "logic [7:0] mem[0:3]究竟是4位，8位，还是32位？把“每个字多少位”和“有几个字”分开就不难了。",
+      "把四张各有八个格子的纸条排成四行。第一次选择行号会取出整张纸条，第二次选择格号才得到一位。在 logic [7:0] mem [0:3] 里，名字右侧列出四个元素，名字左侧说明每个元素的八个位。mem[0] 因此取到八位。",
       "名字前[7:0]表示一个8位packed字，名字后[0:3]表示4个unpacked元素，总共32位。mem[2][3:0]先选第2个字，再取低4位。改写成多维packed后，整体位串操作和元素数组操作并不完全相同，不能只移动括号位置而不检查接口。"
     ],
     "code": "module table4(input logic [1:0] index,\n output logic [7:0] data);\n logic [7:0] mem [0:3];\n // 这里用四个固定常量当只读查找表\n assign mem[0] = 8'd10;\n assign mem[1] = 8'd20;\n assign mem[2] = 8'd30;\n assign mem[3] = 8'd40;\n assign data = mem[index];\nendmodule",
@@ -4441,7 +4442,7 @@ window.HDL_LESSONS=[
     "stage": 3,
     "title": "typedef、enum、struct：给数据明确类型",
     "concept": [
-      "一笔数据既有valid又有8位内容，把它们分散声明容易接错，能不能把这组含义写成一种类型？",
+      "一笔记录包括“这笔有效吗”和“它的八位数据”。先把它画成九个格子：最高一格叫 valid，其余八格合称 data。struct 给字段命名，packed 使它们合成一个连续位串，typedef 给这种排列起一个可复用的类型名。",
       "packed struct把valid放在高位、data放在低8位，整个beat_t共有9位；beat.data则按字段访问。enum同样给状态编码一个名字和类型，使IDLE/RUN/DONE比裸数字更容易追踪。类型帮助表达关系，但复位、合法状态和驱动规则仍由电路行为决定。"
     ],
     "code": "module type_demo;\n typedef enum logic [1:0] {\n  IDLE=2'd0, RUN=2'd1, DONE=2'd2\n } state_t;\n state_t state;\n typedef struct packed {\n  logic valid;\n  logic [7:0] data;\n } beat_t;\n beat_t beat;\nendmodule",
@@ -4460,8 +4461,8 @@ window.HDL_LESSONS=[
     ],
     "correct": 1,
     "answer": "1位valid加8位data，共9位。",
-    "task": "声明32个16位元素的数组。",
-    "solution": "logic [15:0] mem [0:31];",
+    "task": "将 valid=1、data=8位全零打包进 beat_t，写出九位结果和只取 data 的表达式。再把 valid 改成 0，哪些位会变？",
+    "solution": "beat_t beat；给 beat.valid 赋 1、beat.data 赋 8'h00 后，位串为 1_0000_0000。beat.data 只取低八位。单独清除 valid 后只改变 bit8。",
     "diagram": null,
     "context": "完整SV声明示例，可保存为type_demo.sv。它只演示类型组织，尚未实现状态更新或输出行为。",
     "optional": false,
@@ -4703,7 +4704,7 @@ window.HDL_LESSONS=[
     "stage": 4,
     "title": "测试台、时间单位与激励",
     "concept": [
-      "计数器接好后，谁来产生时钟、什么时候解除复位、又由谁判断它是否加对了？这些是测试台要承担的工作。",
+      "先假装你是来测试计数器的人。桌上一根线用来复位，一根用来允许计数，还有一根提供时钟。你要安排它们何时改变，并在约定时刻读出结果。把这个实验写成另一个模块就是测试台（TB）；被它连接、观察的计数器叫被测设计（DUT）。",
       "TB在下降沿改变复位和en，让它们有时间稳定到下一上升沿。三个使能沿后再到下降沿检查q=3，避开与DUT同沿活动处理的竞争。always #5是测试台的10ns周期时钟，不是可综合的片上振荡器；设计顶层与TB顶层因此要分开。"
     ],
     "code": "`timescale 1ns/1ps\nmodule tb;\n reg clk=0, rst_n=0, en=0;\n wire [3:0] q;\n counter dut(.clk(clk),.rst_n(rst_n),.en(en),.q(q));\n always #5 clk=~clk;\n initial begin\n  repeat(2) @(negedge clk);\n  rst_n=1; en=1;\n  repeat(3) @(negedge clk);\n  $display(\"q=%d\",q);\n  $finish;\n end\nendmodule",
@@ -4862,7 +4863,7 @@ window.HDL_LESSONS=[
     "id": "scheduling",
     "title": "事件调度、delta 与竞争：同一时刻不等于同时更新",
     "concept": [
-      "同一上升沿，$display和$strobe为什么可能把q打印成两个值？先把“现在读q”和“时间槽末再看q”分成两次观察。",
+      "时钟刚出现上升沿，q<=d 已经读到 d=1，却还没把原来的 q=0 改掉。此时打印 q 会读到旧值。仿真器会在当前时间槽稍后的非阻塞更新阶段提交新值，模拟时间仍可显示为同一个数。要理解日志，除了时间戳还要看打印发生在哪个阶段。",
       "q<=d先读取d并安排更新，紧随其后的$display仍读旧q。NBA更新提交后，$strobe在时间槽末看到新值。因此时间戳一样，不代表观察发生在相同调度区域；#0也不能简单当作“等NBA全部完成”。"
     ],
     "code": "`timescale 1ns/1ps\nmodule schedule_demo;\n reg clk=0,q=0,d=1;\n always #5 clk=~clk;\n always @(posedge clk) begin\n  q<=d;\n  $display(\"active q=%b\",q);\n  $strobe(\"end-slot q=%b\",q);\n end\n initial begin #6; $finish; end\nendmodule",
@@ -4986,7 +4987,7 @@ window.HDL_LESSONS=[
     "stage": 4,
     "title": "自检、波形与第一次实际运行",
     "concept": [
-      "假如DUT把加1写成加2，测试台会主动失败，还是只画出一条看起来也在递增的波形？先用这个错误检验检查器。",
+      "规格是每个允许沿加一。沿前为 0 时，你可以不用看设计代码，自己算出沿后应该为 1。把这个独立算出的数字叫预期值。如果设计误加了二，比较实际的 2 和预期的 1，就能在第一拍指出错误。",
       "参考值按规格独立更新，再在安全采样相位用!==比较。失败调用$fatal，卡住由超时退出。检查复位、保持和回绕后，再故意改错一次，确认原用例能拒绝它；这样波形是定位首个分歧的工具，而不是唯一的正确性证据。",
       "一个会写PASS的测试台不一定会抓错。我们把计数器的+1故意改成+2，预期模型仍每拍加1：首次允许计数后，实际2与预期1不同，测试应失败。若仍通过，先查是否重新编译、是否比较了独立预期、是否在正确相位观察、失败是否真的结束运行。恢复正确RTL后再运行，构成正例和反例两端的检查。"
     ],
@@ -5115,7 +5116,7 @@ window.HDL_LESSONS=[
     "stage": 5,
     "title": "建立/保持时间：边沿附近发生什么",
     "concept": [
-      "捕获沿在10ns，数据9ns才变稳，能不能放心采样？如果建立时间要求2ns，沿前只留1ns显然不够。",
+      "真实触发器在时钟沿附近需要输入保持稳定。沿前必须提前稳定的时间叫建立时间，沿后仍需保持的时间叫保持时间。假设沿在 10 ns，沿前需要 2 ns，沿后需要 1 ns。先在纸上标 10，再向左退到 8、向右走到 11；这段才是要检查的窗口。",
       "Setup要求沿前稳定，Hold要求沿后继续稳定。设setup=2ns、hold=1ns，窗口围绕10ns展开到8–11ns。理想RTL仍可能显示确定0/1，所以要在物理时序分析中检查这段窗口，不能靠给RTL加#delay来“修复”真实路径。"
     ],
     "code": "module sampled_data(input wire clk,d,\n output reg q);\n always @(posedge clk) q <= d;\n // RTL只表达逻辑行为；setup/hold由库和STA检查\n // 不在这里用#delay修复物理时序\nendmodule",
@@ -5232,7 +5233,7 @@ window.HDL_LESSONS=[
     "stage": 5,
     "title": "寄存器路径、流水线与延迟",
     "concept": [
-      "一条组合路径太长，插入一级寄存器后，第一笔结果晚了，为什么系统却可能每拍仍出一笔？分别给样本A、B、C编号看看。",
+      "一个时钟沿发出数据，下一个沿要在另一个寄存器收下它。数据先等发射寄存器的输出变化，再走过组合逻辑，还要提前满足接收端的建立时间。若周期 10 ns，这三段各用 1、6、2 ns，就剩 1 ns 的余量。最吃紧的路径决定还能不能缩短周期。",
       "第一阶段保存当前输入的计算，第二阶段同沿使用旧s1，因而不同样本可以同时占据不同级。数据延迟增加，但各级可每拍接新样本时吞吐仍每拍一笔。valid和命令标签也要经过相同边界，否则正确计算可能被贴到错误事务上。",
       "例如T=10ns，clock-to-Q=1ns，组合路径6ns，setup=1ns，忽略偏斜和不确定度：数据在7ns到达，必须在9ns前稳定，因此setup裕量为2ns。若把9ns组合路径拆成4ns和5ns两段，简化最小周期由最长一段决定：1+5+1=7ns；同时增加一级寄存器，也增加一个周期的样本延迟。"
     ],
@@ -5393,7 +5394,7 @@ window.HDL_LESSONS=[
     ],
     "code": "// 本课先读路径预算，不使用尚未学习的SDC命令\n// Setup: T + s - tCQmax - combmax - tsetup - Usetup\n// Hold: tCQmin + combmin - s - thold - Uhold\n// s = 捕获时钟到达 - 发射时钟到达\n// 约束命令请在 FPGA 工程实践的时钟与I/O约束课学习",
     "concept": [
-      "捕获寄存器的时钟比发射端晚到0.5ns，对设计是好事还是坏事？把最长路径与最短路径各算一次，你会得到不同答案。",
+      "想象同一个时钟沿分两路送到两个寄存器，接收端比发射端晚收到 0.5 ns。这种到达时间差叫时钟偏斜，本课把“捕获减发射”记为正。先画本拍的两个沿，再画下一拍的两个沿：建立看下一捕获沿，保持看本拍捕获沿。",
       "定义s=捕获到达−发射到达。下一捕获沿变成T+s，Setup多出s时间；同沿Hold却要求旧值维持到s+thold，因此更紧。这里先只读延迟、边沿和裕量数字，不提前引入SDC语法；具体命令到FPGA约束阶段再学。"
     ],
     "notes": [
@@ -5508,7 +5509,7 @@ window.HDL_LESSONS=[
     ],
     "code": "module slow_capture(input wire clk,rst_n,en3,\n input wire [7:0] d,output reg [7:0] q);\n always @(posedge clk) begin\n  if(!rst_n) q<=0;\n  else if(en3) q<=d;\n end\nendmodule",
     "concept": [
-      "目的寄存器每第三拍才允许更新，就能把任意慢路径写成“三周期”吗？还必须问：源数据在这三拍里有没有保持不变？",
+      "若源端只在第一拍送出 A，目的端只在第三拍接收，第二拍可以留给组合逻辑继续计算。但要是源端第二拍已换成 B，第三拍收到的就未必还是 A。多周期约束需要电路本身保证这个等待关系，工具中的例外只改变分析采用哪些沿。",
       "若源在发射后保持，目的只在第三拍采样，才有可能按更晚的捕获沿分析。约束只改变工具检查的关系，不会替RTL保存源数据。先画源值与使能表，再到工程约束课核对setup/hold配对和工具支持，不能靠放宽报告掩盖功能问题。"
     ],
     "notes": [
@@ -5624,7 +5625,7 @@ window.HDL_LESSONS=[
     ],
     "code": "module sync_bit(input wire dst_clk,rst_n,async_level,output wire synced);\n (* ASYNC_REG=\"TRUE\" *) reg meta,stable;\n always @(posedge dst_clk) begin\n  if(!rst_n) begin meta<=0;stable<=0;end\n  else begin meta<=async_level;stable<=meta;end\n end\n assign synced=stable;\nendmodule",
     "concept": [
-      "一个脉冲从20ns到30ns，而目的时钟只在0、100、200ns采样。即使加两级触发器，它有机会被看到吗？",
+      "两块电路各有自己的时钟；一边的上升沿和另一边没有固定关系，这就是两个时钟域。让信号从一边送去另一边叫跨时钟域，简称 CDC。先忽略物理延迟：目的端只在 0、100 ns 看输入，而源端只在 20 到 30 ns 为高，那么这两次观察读到的都是 0。",
       "没有目的沿落进高电平区间，理想采样就可能完全漏掉。双FF主要给单比特电平更多亚稳恢复时间，不是事件缓存。慢电平、快脉冲、多位数据需要不同协议；多位逐位同步还可能拼出不存在的字，不能一概套同一结构。"
     ],
     "notes": [
@@ -5735,7 +5736,7 @@ window.HDL_LESSONS=[
     "stage": 6,
     "title": "贯穿练习：写、预测、仿真、再迁移",
     "concept": [
-      "把位宽从4改到1，你的计数器和检查器还能一致工作吗？现在把前面分散学过的规则汇成一份完整规格。",
+      "把已经会做的四位计数器缩成一位。此时可表示的状态只有 0、1，从 1 再加一回到 0。先在纸上给复位、暂停、允许加一分别写出下一状态，再让同一份规格适用于不同位宽。检查器也要用所选位宽的范围计算预期。",
       "固定W>=1、上升沿更新、同步低有效复位优先、en=0保持、模2^W回绕。分别用W=1、3、4测试，检查器在安全相位比较预期。参数改变了范围，没改变协议；运行记录要能指出哪种参数、哪类输入已经检查过。"
     ],
     "code": "// counter_sv.sv\nmodule counter_sv #(parameter int W=4)(\n input logic clk,rst_n,en,\n output logic [W-1:0] q);\n always_ff @(posedge clk) begin\n  if(!rst_n) q <= '0;\n  else if(en) q <= q + {{(W-1){1'b0}},1'b1};\n end\nendmodule",
@@ -5877,7 +5878,7 @@ window.HDL_LESSONS=[
     ],
     "code": "module shared_add(input wire [7:0] a,b,c,input wire sel,output wire [8:0] y);\n wire [7:0] chosen=sel?b:c;\n assign y={1'b0,a}+{1'b0,chosen};\nendmodule",
     "concept": [
-      "同样计算a加上b或c，先选择再加法，与两路加完再选择，是否一定用相同资源？先把两种结构画出来。",
+      "要算 a+b 或 a+c，可以先算两个和再选一个，也可以先选 b 或 c 再做一次加法。在纸上分别圈出两种接法里的加法器和选择器。综合工具把代码变成相连的逻辑单元，清单和连接关系叫网表；它还可能把你画的结构优化成另一种等价结构。",
       "共享写法把MUX放在加法器前，并行写法把选择放到候选结果后。综合器可能继续合并或调整，实际资源与最长路径要在同一功能、器件和约束下比较。通用单元统计能帮助看结构，但不能直接当作实际工艺面积。"
     ],
     "notes": [
@@ -6004,7 +6005,7 @@ window.HDL_LESSONS=[
     ],
     "code": "module ram16(input logic clk,we,input logic [3:0] addr,\n input logic [7:0] wdata,output logic [7:0] rdata);\n logic [7:0] mem[0:15];\n always_ff @(posedge clk) begin\n  if(we) mem[addr]<=wdata;\n  rdata<=mem[addr];\n end\nendmodule",
     "concept": [
-      "地址2里原来是5A，同一沿写A5又读地址2，rdata应先看到哪个值？沿内先读取右值，再提交非阻塞更新，就能推出来。",
+      "想象有十六个各能存一字节的格子。地址是格子的编号，读地址 2 就是取第 2 号格的内容。本课的读口在时钟上升沿采地址，沿后才更新输出。先做一次只读，再考虑同一个沿恰好还向同一格写入新值时，输出会看到哪个版本。",
       "rdata<=mem[addr]读到旧5A，mem写入A5在稍后提交；下一沿只读时才看到A5。没有写过的地址则可能为X，不应假定自动清0。同步读、同址冲突和复位方式都影响器件RAM推断，读延迟必须成为接口的一部分。",
       "用两沿追踪地址2：沿E前mem[2]=5A、wdata=A5、we=1。写操作安排mem[2]变A5，读操作此时仍读旧5A，所以沿E后rdata=5A。沿E+1关闭we但地址仍2，读到现存A5，沿后rdata才变A5。若另一个时序模块同沿读取rdata，它还会多看到一拍旧输出；不能把RAM输出延迟和消费者采样混成一步。"
     ],
@@ -6129,10 +6130,10 @@ window.HDL_LESSONS=[
     ],
     "code": "module fifo4(input logic clk,rst_n,push,pop,input logic [7:0] din,\n output logic [7:0] dout,output logic full,empty);\n logic [7:0] mem[0:3];\n logic [1:0] wp,rp;\n logic [2:0] count;\n wire wr=push && !full, rd=pop && !empty;\n assign full=(count==4);\n assign empty=(count==0);\n assign dout=mem[rp];\n always_ff @(posedge clk) begin\n  if(!rst_n) begin wp<=0;rp<=0;count<=0;end\n  else begin\n   if(wr) begin mem[wp]<=din;wp<=wp+2'd1;end\n   if(rd) rp<=rp+2'd1;\n   case({wr,rd})\n    2'b10: count<=count+3'd1;\n    2'b01: count<=count-3'd1;\n    default: count<=count;\n   endcase\n  end\n end\nendmodule",
     "concept": [
-      "队列非空，dout在读请求之前就是队首，还是要等成功读沿后才出现？两种FIFO都可以正确，但测试台不能混用它们的时刻。",
+      "让字节 A、B 依次进入队列。第一次成功读取必须拿走 A，第二次才轮到 B，这就是先进先出（FIFO）。写指针指出下一次放入的位置，读指针指出最早尚未取走的位置。队首是哪一个字节，与它何时出现在输出线上，是两个分别需要规定的问题。",
       "本课首字直通：!empty时沿前dout已经是队首，读沿消费它，沿后指针指向下一字。本工程选择满时同时请求只读、空时只写。FPGA扩展课的寄存读FIFO则在成功读沿后更新dout并给out_valid；同样的队列参考关系，要换正确的比较相位。",
-      "本例是首字直通（FWFT）接口：非空时rdata组合指向当前队头，pop在上升沿表示消费沿前的队头。FPGA实践的fifo4使用寄存读输出，合法读请求后数据才在沿后更新。两者不能共用同一采样相位的检查器；先读清接口，再决定何时比对数据。",
-      "写入一个A后，队列非空，FWFT的dout在下一次读沿之前已经显示A。读沿接受pop时，接收者取得沿前的A，随后rp前进，dout可显示下一项。本例满且push、pop同时请求时，wr=0、rd=1，只读不写；这是保守接受策略，不要把另一种支持满时替换的FIFO预期照搬进来。"
+      "写入一个A后，队列非空，FWFT的dout在下一次读沿之前已经显示A。读沿接受pop时，接收者取得沿前的A，随后rp前进，dout可显示下一项。本例满且push、pop同时请求时，wr=0、rd=1，只读不写；这是保守接受策略，不要把另一种支持满时替换的FIFO预期照搬进来。",
+      "手写两个栏位当参考队列：空队列收到一次有效写 A，就在末尾记 A；读请求被接受时，把输出与纸上第一项比较，再划掉第一项。用数组和两个索引也能写出这个测试台，无须先学选修课中的队列方法。"
     ],
     "notes": [
       "count范围0到4，需要3位，读写指针各2位自动回绕。",
@@ -6260,7 +6261,7 @@ window.HDL_LESSONS=[
     "code": "module gray_step #(parameter A=3)(input wire [A:0] binary,output wire [A:0] gray);\n assign gray=(binary>>1)^binary;\nendmodule",
     "concept": [
       "先回到同步FIFO：写沿把字节放进mem[wp]，读沿消费mem[rp]，count由同一个时钟更新。若写时钟和读时钟不同，不能让两个过程共同修改一个count。我们改成每个时钟域只拥有自己的指针，并接收对方延后同步来的指针副本。数据留在双端口存储里，跨域的是“读到哪里、写到哪里”的进度。",
-      "读写两边用不同时钟，怎样知道还有多少数据可读，而不把每一位数据都各自同步一遍？先把数据通道与状态通知分开。",
+      "深度 8 的存储有 8 个位置，三位地址就够了。但绕一圈之后地址又回到 0，如果读写地址相同，究竟是空了还是写满一圈？常见做法多记一位圈数，所以此处跨域指针共四位，再编码送往另一域。",
       "数据保存在支持双时钟访问的存储结构中，本地二进制指针选地址，Gray指针同步给对端帮助判断满空。远端看到指针有延迟，因此标志可能保守。这里的Gray模块只演示编码，不是完整异步FIFO；首字直通还是寄存读，也仍是另需说明的接口选择。",
       "先算一次Gray：binary=0011右移得0001，异或得到0010；下一值0100右移0010，异或得0110。这两个Gray码只差一位。同步器仍不能代替跨域物理约束，指针比较也必须按具体深度与额外回绕位设计。"
     ],
@@ -6379,7 +6380,7 @@ window.HDL_LESSONS=[
     ],
     "code": "module uart_tx #(parameter CLKS_PER_BIT=4)(\n input logic clk,rst_n,start,input logic [7:0] data,output logic tx,busy);\n logic [9:0] frame;\n integer tick,bitno;\n always_ff @(posedge clk) begin\n  if(!rst_n) begin tx<=1;busy<=0;tick<=0;bitno<=0;frame<=10'h3ff;end\n  else if(!busy) begin\n   tx<=1;\n   if(start) begin frame<={1'b1,data,1'b0};tx<=0;busy<=1;tick<=0;bitno<=0;end\n  end else if(tick==CLKS_PER_BIT-1) begin\n   tick<=0;\n   if(bitno==9) begin tx<=1;busy<=0;end\n   else begin bitno<=bitno+1;tx<=frame[bitno+1];end\n  end else tick<=tick+1;\n end\nendmodule",
     "concept": [
-      "字符A5要在线上停留多久？先把一帧排成起始0、八个低位先发的数据、停止1，再给每一位标上N个系统周期。",
+      "现在要发送一个值为十六进制 A5 的字节。并排的八根线可一次给出全部八位，而串口只有一条发送数据线，只能分时给出各位。8N1 约定一位起始、八位数据、无校验、一位停止。先只发送数值 01：起始位为 0，随后最低的数据位是 1。",
       "start接受时锁存frame，busy期间外部data改变不影响当前字节。计数到N-1才换下一位，停止位也要保持完整N周期后才能释放busy。先检查位序和位长，再检查忙时start、复位中断与连续两帧，避免只在结尾对一次字节。"
     ],
     "notes": [
@@ -6501,7 +6502,7 @@ window.HDL_LESSONS=[
     "id": "sv-handshake",
     "title": "Ready / Valid：传输、背压与保持",
     "concept": [
-      "valid已经拉高三拍，究竟传了三笔还是一笔？还要把每个采样沿的ready写在旁边。",
+      "卖方手里有一份数据，买方这一拍却放不下。用 valid 表示卖方已经拿好，用 ready 表示买方可以接。双方只在同一个上升沿确认交接：两根线都为 1 才算一笔。等待期间卖方要把这份数据和 valid 稳住，直到它被接走。",
       "只有valid&&ready的沿才接受一笔。ready=0时源必须保持当前valid和data，不能因为“已经举手”就换下一字节。此前interface只说明谁驱动哪些信号，这里才给出握手的行为约定；协议不会自动提供缓存，也不自动解决跨时钟域。",
       "设发送方提出5A并保持valid=1。接收方ready在三个上升沿分别为0、0、1：前两沿没有交易，5A仍是待交付字节；第三沿才被接收一次。若发送方在第二沿把data换成A5，虽然计数器只加了一次，原来的5A却丢失了。检查传输数与检查背压保持是两个独立目标。"
     ],
@@ -6666,8 +6667,9 @@ window.HDL_LESSONS=[
     ],
     "code": "module rv_register(input logic clk,rst_n,s_valid,m_ready,input logic [7:0] s_data,\n output logic s_ready,m_valid,output logic [7:0] m_data);\n assign s_ready=!m_valid || m_ready;\n always_ff @(posedge clk) begin\n  if(!rst_n) begin m_valid<=0;m_data<=0;end\n  else if(s_ready) begin m_valid<=s_valid; if(s_valid) m_data<=s_data;end\n end\nendmodule",
     "concept": [
-      "一格缓冲装着A，下游这一沿拿走A，同时上游递来B，能不能原地换成B而不空一拍？",
-      "当本格为空，或下游准备消费旧值时，都有空间接收，所以s_ready=!m_valid||m_ready。背压时m_valid=1且m_ready=0，寄存器保持；同沿消费与替换时，则保存B并维持有效。把这张接受表写清，再接FIFO和UART，才知道在哪里计数一笔事务。"
+      "在两块电路中间放一个只能装一字节的格子，并用一个有效位表示格子里有没有数据。空格可以接收；装着 A 而下游没接时必须保持；下游本沿接走 A 时，又可以同时装入 B。先列清这三种情况，再连接两端的 ready 和 valid。",
+      "当本格为空，或下游准备消费旧值时，都有空间接收，所以s_ready=!m_valid||m_ready。背压时m_valid=1且m_ready=0，寄存器保持；同沿消费与替换时，则保存B并维持有效。把这张接受表写清，再接FIFO和UART，才知道在哪里计数一笔事务。",
+      "把电路接到 UART 时先定接受条件：队列非空，发送器空闲，本沿才给 start 并取走队首。假设队列有 A、B，接受 A 后 busy 拉高，即使 B 已是队首也不能再次弹出。等 busy 解除再启动 B。用这两笔字节即可检查是否因忙时多读而丢数据。"
     ],
     "notes": [
       "s_ready在本级为空或下游接收时为1，允许替换旧拍。",
@@ -6789,7 +6791,7 @@ window.HDL_LESSONS=[
     "id": "sv-tasks",
     "title": "选修：用 task 和队列组织测试",
     "concept": [
-      "测试台反复需要打一拍en，封装成task后是不是就不必再管驱动时刻？恰恰要把等待哪个沿写进接口习惯。",
+      "测试台每次发输入都要等到下降沿，再设置 en。把这几步命名为一个 task，就能从两个测试用例调用同一套操作。调用者会等这次任务里的事件等待结束再继续。若两个调用者同时启动，只让其中一个负责驱动同一根 en。",
       "automatic隔离每次调用的局部变量，却不替两个任务仲裁同一个en信号。参考队列也要按接受事件入队、按输出出队；若输出出现时队列为空，应该报告多余输出，而不是悄悄跳过比较。"
     ],
     "code": "task automatic pulse_enable;\n @(negedge clk); en = 1'b1;\n @(negedge clk); en = 1'b0;\nendtask\n// 下列声明位于测试模块内部、initial外部\nint expected[$];\n// 在initial内调用：\n// pulse_enable();\n// expected.push_back(3);\n// if(expected.size()>0) ref_value=expected.pop_front();",
@@ -6916,7 +6918,7 @@ window.HDL_LESSONS=[
     "stage": 7,
     "title": "选修：class、约束与随机输入",
     "concept": [
-      "随机十次0到9，能保证十个值都出现吗？很可能有重复，所以“输入随机过”还不能说明边界已经覆盖。",
+      "规定输入只能是 0 到 9。一轮随机测试抽到了 0、0、9、3，做了四次实验却只试到三个不同值。约束规定“允许取哪些值”，覆盖记录“实际见过哪些值”，检查器再回答“这些值的结果对不对”。把这三个问题分开，才能知道下一轮该补什么。",
       "rand字段由约束求解，inside限定合法集合，randomize的返回值告诉我们本次是否成功。先给0和9定向用例，再记录种子与每个值的命中情况。求解器不受支持时明确改用其他激励，不能把没执行的约束写成通过。"
     ],
     "code": "class item;\n rand bit [3:0] value;\n constraint small_values { value inside {[0:9]}; }\nendclass\nmodule tb_random;\n item t; // 对象句柄\n initial begin\n  t = new();\n  if (!t.randomize()) $fatal(1,\"random failed\");\n  $display(\"value=%0d\",t.value);\n end\nendmodule",
@@ -7041,7 +7043,7 @@ window.HDL_LESSONS=[
     "stage": 7,
     "title": "选修：断言与覆盖的采样语义",
     "concept": [
-      "同步复位这个沿才把q清0，为什么同沿断言仍可能读到旧q？先在图上标“断言采样”和“NBA提交”两个位置。",
+      "写一条可以反复检查的约定：某沿采到复位有效，到下一沿观察时，计数应已经为零。先把这句话画成相邻两格，再把前一格的条件和后一格的要求分别写进断言。这样就能区分在同沿检查旧 q 和在下一沿检查复位结果。",
       "并发性质按约定的时钟采样值判断。|->把后件放在同一采样周期，|=>放到下一周期；因此例子用下一采样沿检查前一沿复位提交的结果。先写清采样时间，再加disable iff或$past的初态保护，不能只凭箭头形状猜延迟。"
     ],
     "code": "property reset_check;\n @(posedge clk) !rst_n |=> (q == 4'd0);\nendproperty\nassert property(reset_check);\ncover property(@(posedge clk) q == 4'd15);",
@@ -7165,7 +7167,7 @@ window.HDL_LESSONS=[
     ],
     "code": "// 工程检查计划片段，不是可直接编译的模块\n// 规格：每个accepted请求最终完成，复位取消未完成事务\n// 断言：背压时valid和data保持\n// 覆盖：空/满/回绕/背压/复位组合\n// 总线：先确定握手，再研究地址、响应和突发\n// PPA：同一功能、约束和工艺下比较面积/功耗/性能",
     "concept": [
-      "测试命中了所有覆盖点，DUT却仍可能有错，缺的是什么？覆盖告诉我们发生过哪些场景，检查器才判断那些场景的结果对不对。",
+      "你把队列装到了满，测试记录里“满”这个格子就能打勾。但如果满时再写一个新字节，最早那笔悄悄被覆盖，光看打勾发现不了。还得把队列读空，按顺序同预期字节逐个比较。由这个例子区分覆盖记录和行为检查，再去读更大的验证流程。",
       "先把规格拆成激励、预期与覆盖关系，再用框架组织规模。UVM中的driver、monitor和scoreboard服务于这件事，不是初学RTL的门槛。总线和ASIC流程也沿用同样习惯：明确协议与约束，再讨论性能、资源和物理实现结果。"
     ],
     "notes": [

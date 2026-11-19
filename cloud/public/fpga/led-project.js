@@ -38,7 +38,7 @@ window.IC_FPGA_LED_PROJECT={
     [
       "约束：告诉工具电路连到哪里",
       [
-        "先从板卡原理图查器件、振荡器频率、LED引脚和电压。50MHz时周期20ns；只有实际频率也是50MHz才使用这个周期。周期错误会同时影响时序检查与肉眼闪烁速度。",
+        "先从板卡原理图查器件、振荡器频率、LED引脚和电压。50MHz时周期20ns；只有实际频率也是50MHz才使用这个周期。约束填错会让时序报告采用错误预算。板上的闪烁速度则由实际振荡频率和计数参数决定；单独编辑约束不会改变振荡器频率。",
         "约束有两类：时钟告诉工具分析时间，引脚和I/O标准决定实际接线与电压。Vivado XDC、Quartus QSF+SDC、Efinity接口配置不能互换。打开下方工具适配核对具体版本；本教材不提供猜测的引脚号。"
       ]
     ],
@@ -63,5 +63,97 @@ window.IC_FPGA_LED_PROJECT={
         "从干净目录按下载包README重做。完成这个最小系统后，再进入项目B：UART接收器把串行波形变成字节，命令模块在valid时改变LED。项目B增加协议与集成难度，开发流程沿用刚才九步。"
       ]
     ]
-  ]
+  ],
+  "tools": {
+    "vivado": {
+      "3": {
+        "title": "综合最小 LED 工程",
+        "steps": [
+          "把 rtl/led_minimal.v 加入设计源，综合顶层选 led_minimal。打开综合网表，从 led_pin 回看 led_core 的状态寄存器。"
+        ],
+        "command": "report_utilization"
+      },
+      "4": {
+        "title": "约束 LED 端口",
+        "steps": [
+          "从板卡原理图核对 clk、rst_n、led_pin，按器件填写 XDC；打开时钟报告，确认分析时钟命中顶层 clk。"
+        ],
+        "command": "report_clocks"
+      },
+      "5": {
+        "title": "实现与路径",
+        "steps": [
+          "完成布局布线，分别打开设计规则、建立与保持检查，记录计数器路径的起点和终点。"
+        ],
+        "command": "report_drc\nreport_timing_summary"
+      },
+      "6": {
+        "title": "配置与观察",
+        "steps": [
+          "在检查过的实现结果上生成适用器件的配置，Hardware Manager 选择对应器件和本次文件。记录复位、翻转与实际周期。"
+        ],
+        "command": "# 对使用 .bit 格式的器件，选择本次 LED 工程生成的 .bit。"
+      }
+    },
+    "quartus": {
+      "3": {
+        "title": "分析与综合",
+        "steps": [
+          "将 rtl/led_minimal.v 加入设计源，Analysis & Synthesis 顶层选 led_minimal。检查编译报告中的寄存器资源。"
+        ],
+        "command": "set_global_assignment -name TOP_LEVEL_ENTITY led_minimal"
+      },
+      "4": {
+        "title": "分配引脚与时钟",
+        "steps": [
+          "在 Pin Planner 或 QSF 中按板卡资料绑定 clk、rst_n、led_pin。把时钟 SDC 加入工程，在 Timing Analyzer 中检查时钟。"
+        ],
+        "command": "# 仅在实际输入为 50 MHz 时，在 SDC 中使用：\ncreate_clock -period 20 [get_ports {clk}]"
+      },
+      "5": {
+        "title": "布局布线",
+        "steps": [
+          "运行本 LED 工程的 Fitter，再读 Timing Analyzer 的最差建立与保持路径，并核对未约束路径。"
+        ],
+        "command": "# 从当前 LED 工程打开 Compilation Report。"
+      },
+      "6": {
+        "title": "配置与观察",
+        "steps": [
+          "在 Assembler 输出中选择匹配当前器件的配置。用 Programmer 核对链与器件，下载本次 LED 工程结果。"
+        ],
+        "command": "# 临时下载与上电启动应分别记录。"
+      }
+    },
+    "efinity": {
+      "3": {
+        "title": "映射 LED 电路",
+        "steps": [
+          "加入 rtl/led_minimal.v，设置顶层 led_minimal 及真实器件。运行综合后查计数器和输出寄存器。"
+        ],
+        "command": "# 测试台 tb_led_minimal 只用于仿真。"
+      },
+      "4": {
+        "title": "配置接口",
+        "steps": [
+          "在 Interface Designer 中核对时钟、复位和 LED 管脚、方向与电气标准，再检查顶层 clk 的时钟约束。"
+        ],
+        "command": "# 端口名：clk、rst_n、led_pin"
+      },
+      "5": {
+        "title": "物理实现",
+        "steps": [
+          "执行当前器件对应的布局布线流程。查看时钟识别、最大和最小路径报告，并查资源冲突。"
+        ],
+        "command": "# 记录本次工程和器件对应的报告。"
+      },
+      "6": {
+        "title": "加载配置",
+        "steps": [
+          "选择当前实现生成的位流与匹配的下载器，在 Programmer 核对目标器件。观察复位释放后灯是否按规格翻转。"
+        ],
+        "command": "# 配置格式取决于器件与启动方式。"
+      }
+    }
+  }
 };

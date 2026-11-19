@@ -374,4 +374,31 @@ const LESSONS = [
  quiz:{q:'以下哪一组证据最能支持“完成基础综合”这一结论？',options:['网页动画和一张课程完成截图','实际RTL、库/约束说明、DC日志、网表及检查/时序/面积报告','只要没有语法错误'],correct:1,why:'综合结果依赖RTL、目标库和约束；日志、网表和报告使结论可检查、可复现。'},sources:['dc','vcs'],download:true,checklist:true
 }
 ];
+const foundationByLesson = {
+  "bits": "numbers",
+  "gates": "logic-gates",
+  "mux": "branches",
+  "clock": "storage",
+  "module": "module",
+  "width": "vectors",
+  "combinational": "branches",
+  "sequential": "nba",
+  "counter": "counter",
+  "fsm": "fsm",
+  "testbench": "testbench",
+  "waveforms": "scheduling",
+  "selfcheck": "checking",
+  "local-tools": "tool-start",
+  "linux-vcs": "tool-start",
+  "vcs-run": "testbench",
+  "debug": "checking",
+  "synthesis": "synthesis-lab",
+  "libraries": "synthesis-lab",
+  "constraints": "timing-path",
+  "dc-run": "clock-skew",
+  "post-synthesis": "synthesis-lab",
+  "project": "capstone",
+  "acceptance": "capstone"
+};
+for (const lesson of LESSONS) lesson.foundation = foundationByLesson[lesson.id];
 window.IC_COURSE = {SOURCES,STAGES,LESSONS};

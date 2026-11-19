@@ -72,10 +72,10 @@ function placement(l,host){
  const [type,location,indices,title,prompt,answer]=row;
  const target=host.querySelector('#study-'+location)||host.querySelector('#study-concept');
  target.dataset.teachingType=type;
- if(l.id==='numbers')target.append(numberExplorer());
+ if(l.id==='numbers')host.querySelector('#study-concept > p:not(.section-number)').after(numberExplorer());
  if(['logic-gates','boolean-decoder','mindset'].includes(l.id))target.append(truthTable(l.id));
  target.append(guidedCard(title,prompt,answer));
- const targetFor=i=>l.lab.exercises[i].kind==='fill'?host.querySelector('#study-code'):target;
+ const targetFor=i=>l.id==='module'&&i===1?host.querySelector('.worked-sequence'):l.lab.exercises[i].kind==='fill'?host.querySelector('#study-code'):target;
  return {indices,targetFor};
 }
 function engineering(id,target){

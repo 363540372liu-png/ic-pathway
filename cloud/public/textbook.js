@@ -9,13 +9,15 @@ function hardware(kind){
  let b='';
  if(kind==='mux')b=box(215,45,130,100,'MUX')+'<path d="M60 65H215 M60 125H215 M345 95H530 M280 190V145"/><text x="25" y="70">a</text><text x="25" y="130">b</text><text x="535" y="100">y</text><text x="260" y="215">sel</text>';
  else if(kind==='pipeline')b=box(150,65,100,75,'DFF a')+box(385,65,100,75,'DFF b')+'<path d="M50 100H150 M250 100H385 M485 100H585 M200 185V140 M435 185V140 M200 185H435"/><text x="25" y="105">D</text><text x="300" y="85">旧 a →</text><text x="550" y="85">b</text><text x="295" y="210">共用 clk ↑</text>';
+ else if(kind==='buffer')b=box(205,55,210,90,'一格缓冲：有效位＋数据')+'<path d="M45 100H205 M415 100H595 M205 170H65 M575 170H415"/><text x="18" y="80">s_valid / s_data →</text><text x="435" y="80">m_valid / m_data →</text><text x="40" y="195">← s_ready</text><text x="440" y="195">← m_ready</text><text x="145" y="230">空位，或旧数据本沿被接走时，可以装入新数据</text>';
+ else if(kind==='synchronizer')b=box(170,60,100,75,'meta')+box(375,60,105,75,'stable')+'<path d="M30 100H170 M270 100H375 M480 100H590 M220 175V135 M425 175V135 M220 175H425"/><text x="20" y="80">异步电平 →</text><text x="495" y="82">synced</text><text x="220" y="210">两级都由目的时钟采样</text>';
  else if(kind==='counter')b=box(100,65,110,65,'+ 1')+box(270,65,105,65,'选择器')+box(450,65,110,65,'4位寄存器')+'<path d="M210 95H270 M375 95H450 M560 95H590V175H55V95H100 M320 30V65 M500 205V130"/><text x="270" y="23">复位 / en</text><text x="485" y="225">clk ↑</text><text x="565" y="85">Q</text>';
  else if(kind==='fsm')b=box(65,65,170,80,'下一状态逻辑')+box(345,65,145,80,'state寄存器')+'<path d="M235 105H345 M490 105H580V185H30V105H65 M420 215V145"/><text x="260" y="85">next</text><text x="495" y="90">state</text><text x="395" y="238">clk ↑</text><text x="35" y="40">start / finish → 逻辑</text>';
  else if(kind==='gates')b=box(220,45,160,60,'逻辑门 & / |')+box(220,140,160,60,'输出布尔关系')+'<path d="M60 75H220 M380 75H560 M300 105V140"/><text x="35" y="65">a,b</text><text x="570" y="80">y</text>';
  else if(kind==='fifo')b=box(185,40,260,145,'FIFO 存储')+box(20,65,130,60,'写指针')+box(480,65,130,60,'读指针')+'<path d="M150 95H185 M445 95H480"/><text x="210" y="220">本域控制 → full / empty</text>';
  else if(kind==='memory')b=box(190,35,260,150,'16 × 8 RAM')+'<path d="M30 80H190 M450 100H600 M320 225V185"/><text x="30" y="65">addr / data / we</text><text x="470" y="80">rdata 寄存输出</text><text x="280" y="245">clk ↑</text>';
  else b=box(245,60,130,100,'DFF / Q')+'<path d="M60 110H245 M375 110H555 M310 205V160"/><text x="35" y="115">D</text><text x="560" y="115">Q</text><text x="280" y="230">clk ↑</text>';
- return '<figure class="hardware-map"><svg viewBox="0 0 640 255" role="img" aria-label="'+e({mux:'a与b经sel控制的MUX到y',dff:'D接触发器输入，clk上升沿采样，Q保持',pipeline:'D经a、b两个触发器，同一沿b采旧a',counter:'Q反馈到加法器与控制选择器，再接寄存器D',fsm:'组合下一状态经state寄存器，当前状态反馈到组合逻辑'}[kind]||({gates:'组合逻辑门关系',fifo:'存储与独立读写指针及数量控制',memory:'地址选择存储元素，沿后读出'}[kind]||'触发器数据路径'))+'">'+b+'</svg><figcaption>结构图表示逻辑映射；不按门级数量、布线或真实延迟绘制。</figcaption></figure>';
+ return '<figure class="hardware-map"><svg viewBox="0 0 640 255" role="img" aria-label="'+e({buffer:'一格缓冲保存有效位和一个数据字节，ready向上游反馈',synchronizer:'异步单比特电平依次经过目的域的meta和stable，两级提供恢复时间',mux:'a与b经sel控制的MUX到y',dff:'D接触发器输入，clk上升沿采样，Q保持',pipeline:'D经a、b两个触发器，同一沿b采旧a',counter:'Q反馈到加法器与控制选择器，再接寄存器D',fsm:'组合下一状态经state寄存器，当前状态反馈到组合逻辑'}[kind]||({gates:'组合逻辑门关系',fifo:'存储与独立读写指针及数量控制',memory:'地址选择存储元素，沿后读出'}[kind]||'触发器数据路径'))+'">'+b+'</svg><figcaption>结构图表示逻辑映射；不按门级数量、布线或真实延迟绘制。</figcaption></figure>';
 }
 function enhance(api,l){
  cleanup();cleanup=()=>{};
@@ -75,10 +77,11 @@ function enhance(api,l){
  const remaining=plan?all.filter(i=>!plan.indices.includes(i)):all;
  if(remaining.length)mountExercises(api,l,st,{indices:remaining});
 }
-function exerciseWave(w){
- const count=w.signals[0][1].length,width=110+count*85,height=45+w.signals.length*55;
- let body='';w.signals.forEach(([name,values],j)=>{const y=45+j*55;body+='<text x="5" y="'+y+'">'+e(name)+'</text>';values.forEach((v,i)=>{const x=100+i*85,bit=v===0||v===1;if(bit){const old=i?values[i-1]:v;body+='<path d="M'+x+' '+(y-(old===1?24:0))+'V'+(y-(v===1?24:0))+'h85"/>';}else body+='<rect x="'+x+'" y="'+(y-27)+'" width="85" height="32"/>';body+='<text x="'+(x+34)+'" y="'+(y+20)+'">'+e(v)+'</text>';});});
- return '<figure class="exercise-wave"><div class="timeline-scroll"><svg width="'+width+'" height="'+height+'" role="img" aria-label="'+e(w.caption)+'">'+body+'</svg></div><figcaption>'+e(w.caption)+'</figcaption><details><summary>波形的文本记录</summary><table><tbody>'+w.signals.map(([n,v])=>'<tr><th>'+e(n)+'</th>'+v.map(x=>'<td>'+e(x)+'</td>').join('')+'</tr>').join('')+'</tbody></table></details></figure>';
+function exerciseWave(w, reveal=false){
+ const signals=w.signals.filter(([name])=>reveal||name!==w.predictSignal);
+ const count=w.signals[0][1].length,width=110+count*85,height=45+signals.length*55;
+ let body='';signals.forEach(([name,values],j)=>{const y=45+j*55;body+='<text x="5" y="'+y+'">'+e(name)+'</text>';values.forEach((v,i)=>{const x=100+i*85,bit=v===0||v===1;if(bit){const old=i?values[i-1]:v;body+='<path d="M'+x+' '+(y-(old===1?24:0))+'V'+(y-(v===1?24:0))+'h85"/>';}else body+='<rect x="'+x+'" y="'+(y-27)+'" width="85" height="32"/>';body+='<text x="'+(x+34)+'" y="'+(y+20)+'">'+e(v)+'</text>';});});
+ return '<figure class="exercise-wave"><div class="timeline-scroll"><svg width="'+width+'" height="'+height+'" role="img" aria-label="'+e(w.caption)+'">'+body+'</svg></div><figcaption>'+e(w.caption)+'</figcaption><details><summary>波形的文本记录</summary><table><tbody>'+signals.map(([n,v])=>'<tr><th>'+e(n)+'</th>'+v.map(x=>'<td>'+e(x)+'</td>').join('')+'</tr>').join('')+'</tbody></table></details></figure>';
 }
 function mountExercises(api,l,st,{target,indices,reviewTarget,inline=false}={}){
  st.activities||={};const section=document.createElement('section');section.className=inline?'practice-ladder practice-inline':'practice-ladder';
@@ -91,13 +94,18 @@ function mountExercises(api,l,st,{target,indices,reviewTarget,inline=false}={}){
   else if(ex.kind==='repair')control='<p class="exercise-objective">本题目标：'+e(ex.objective)+'</p><label for="'+name+'-response">修改错误代码</label><textarea id="'+name+'-response" data-response spellcheck="false">'+e(a.response||ex.starter)+'</textarea><label>定位原因（先说明哪条输入会暴露错误）<textarea data-reason rows="3">'+e(a.reason||'')+'</textarea></label><label class="review-check"><input type="checkbox" data-unverified-review '+(a.reviewed?'checked':'')+'>我已按规格自查这份修改（仅自评，不算自动通过）</label>';
   else if(!manual)control='<label>你的推导结果<input data-response value="'+e(a.response||'')+'" spellcheck="false" autocomplete="off"></label>';
   else control=(ex.interface?'<pre>'+e(ex.interface)+'</pre>':'')+(ex.tests?'<p><strong>测试条件：</strong>'+e(ex.tests.join('；'))+'</p>':'')+'<label for="'+name+'-draft">写下实现、推导与测试记录</label><textarea id="'+name+'-draft" data-draft spellcheck="false">'+e(a.draft||ex.starter||'')+'</textarea><details><summary>参考解答与自查要点</summary><pre>'+e(ex.solution)+'</pre></details><label class="review-check"><input type="checkbox" data-review '+(a.reviewed?'checked':'')+'>我已对照规格和测试条件核对自己的解答</label>';
-  return '<details class="practice-step" '+(inline||(!target&&i===(indices?.[0]??0))?'open':'')+'><summary><span>'+String(i+1).padStart(2,'0')+' · '+e(ex.type)+'</span><span id="'+name+'-badge">'+(a.passed||a.reviewed?'✓ 已核对':'待练习')+'</span></summary><p>'+e(ex.prompt)+'</p>'+(ex.wave?exerciseWave(ex.wave):'')+(a.history?'<details><summary>保留的旧版作答记录</summary><pre>'+e(JSON.stringify(a.history,null,2))+'</pre></details>':'')+'<details class="exercise-hint"><summary>需要一点提示</summary><p>'+e(ex.hint)+'</p></details><form data-activity="'+i+'">'+control+(manual?'':'<button type="submit" class="secondary-button">核对答案</button>')+'<p class="activity-feedback" role="status">'+(a.passed?'✓ 正确。'+e(ex.explain):'')+'</p><button type="button" class="review-explanation">回看本课解释 ↑</button></form></details>';
+  return '<details class="practice-step" '+(inline||(!target&&i===(indices?.[0]??0))?'open':'')+'><summary><span>'+String(i+1).padStart(2,'0')+' · '+e(ex.type)+'</span><span id="'+name+'-badge">'+(a.passed||a.reviewed?'✓ 已核对':'待练习')+'</span></summary><p>'+e(ex.prompt)+'</p>'+(ex.wave?exerciseWave(ex.wave,Boolean(a.passed)):'')+(a.history?'<details><summary>保留的旧版作答记录</summary><pre>'+e(JSON.stringify(a.history,null,2))+'</pre></details>':'')+'<details class="exercise-hint"><summary>需要一点提示</summary><p>'+e(ex.hint)+'</p></details><form data-activity="'+i+'">'+control+(manual?'':'<button type="submit" class="secondary-button">核对答案</button>')+'<p class="activity-feedback" role="status">'+(a.passed?'✓ 正确。'+e(ex.explain):'')+'</p><button type="button" class="review-explanation">回看本课解释 ↑</button></form></details>';
  }).join('');
  if(target)target.append(section);else document.querySelector('#study-practice .complete-row').before(section);
  section.querySelectorAll('[data-activity]').forEach(form=>{
   const i=+form.dataset.activity,ex=l.lab.exercises[i],manual=['implementation','analysis'].includes(ex.kind),feedback=form.querySelector('.activity-feedback');
   function collect(){return {...(st.activities[i]||{}),revision:ex.revision||1,choice:form.querySelector('input[type=radio]:checked')?+form.querySelector('input[type=radio]:checked').value:null,answers:[...form.querySelectorAll('[data-blank]')].map(el=>el.value),response:form.querySelector('[data-response]')?.value||'',reason:form.querySelector('[data-reason]')?.value||'',draft:form.querySelector('[data-draft]')?.value||''};}
-  function save(a){st.activities[i]=a;api.persist();api.refreshStatus();section.querySelector('#activity-'+i+'-badge').textContent=a.passed||a.reviewed?'✓ 已核对':'待练习';}
+  function save(a){
+   if(ex.wave && Boolean(a.passed)!==Boolean(st.activities[i]?.passed)){
+    const figure=form.closest('.practice-step').querySelector('.exercise-wave');
+    figure.outerHTML=exerciseWave(ex.wave,Boolean(a.passed));
+   }
+   st.activities[i]=a;api.persist();api.refreshStatus();section.querySelector('#activity-'+i+'-badge').textContent=a.passed||a.reviewed?'✓ 已核对':'待练习';}
   form.querySelectorAll('textarea').forEach(t=>window.IC_EDITING?.bind(t));
   form.oninput=ev=>{if(ev.target.type==='checkbox')return;const a=collect();a.passed=false;a.reviewed=false;form.querySelectorAll('[data-review],[data-unverified-review]').forEach(check=>check.checked=false);save(a);feedback.textContent='解答已保存，核对后查看反馈。';};
   form.onsubmit=ev=>{ev.preventDefault();if(manual)return;const a=collect(),g=M.grade(ex,a);a.passed=g.status==='recognized';a.attempts=(a.attempts||0)+1;save(a);
