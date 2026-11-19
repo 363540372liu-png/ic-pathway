@@ -53,3 +53,8 @@ html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 .fpga-source .plain-code-line{display:block;white-space:pre;min-height:30px;font:var(--font-code)/1.9 var(--mono)}.fpga-source .plain-code-line .line-number{display:inline-block;width:36px;color:#b9cbdf;font-size:var(--font-caption);user-select:none}.fpga-source [data-code-line]{border-left:2px solid #94badd;padding-left:6px}.fpga-source .plain-code-line{padding-left:8px}
 .study-goals li:before{content:'•';color:inherit}
 @media(max-width:900px){.sidebar-backdrop:not([hidden]),.hdl-mode .sidebar-backdrop:not([hidden]){left:min(310px,85vw)}body.menu-open{overflow:hidden}}
+
+.worked-example { margin-block: 1.75rem; min-width: 0; }
+.worked-example h3 { line-height: 1.5; }
+.worked-example .teaching-table { max-width: 100%; overflow-x: auto; }
+.worked-example details > summary { cursor: pointer; padding-block: .5rem; }

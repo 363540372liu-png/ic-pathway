@@ -78,6 +78,12 @@ function highlight(code){
 function table(trace){
  return '<div class="teaching-table hdl-trace"><table><caption>跟着例子手算一遍</caption><thead><tr>'+trace.heads.map(h=>'<th scope="col">'+e(h)+'</th>').join('')+'</tr></thead><tbody>'+trace.rows.map(r=>'<tr>'+r.map(c=>'<td>'+e(c)+'</td>').join('')+'</tr>').join('')+'</tbody></table></div>';
 }
+function workedExample(example){
+ if(!example)return '';
+ const comparison=example.rows?table({heads:example.heads,rows:example.rows}):'';
+ const prediction=example.after?'<p>'+e(example.after)+'</p><details><summary>对照这次推导</summary><p>'+e(example.derivation)+'</p></details>':'';
+ return '<section class="worked-example"><h3>'+e(example.title)+'</h3>'+example.body.map(p=>'<p>'+e(p)+'</p>').join('')+comparison+prediction+'</section>';
+}
 function prerequisiteHtml(l,p){
  if(!l.prerequisites.length)return '<p>本课从零开始，不要求编程基础。</p>';
  return '<p>用到这些已学概念；不熟时直接回看：</p><div class="prereq-links">'+l.prerequisites.map(id=>{
@@ -134,7 +140,7 @@ function render(api,id){
  }
  const sections=[['study-concept','理解概念'],...(l.diagram||l.trace||l.lab?.timing?[['study-example','看图与推演']]:[]),['study-code','逐步拆代码'],['study-quiz','预测与检查'],['study-practice','独立练习']];
  host.innerHTML=lessonHeader(l,ix,p)+'<div class="study-layout"><div class="study-article">'+
- (l.learningTier?'<p class="learning-tier">'+e(l.learningTier)+' · 可按前置提示返回基础，所有课程均可直接阅读。</p>':'')+'<section id="study-concept" class="study-section"><p class="section-number">01 / 理解概念</p><h2>'+e(l.goals[0])+'</h2>'+l.concept.map(t=>'<p>'+e(t)+'</p>').join('')+'</section>'+
+ (l.learningTier?'<p class="learning-tier">'+e(l.learningTier)+' · 可按前置提示返回基础，所有课程均可直接阅读。</p>':'')+'<section id="study-concept" class="study-section"><p class="section-number">01 / 理解概念</p><h2>'+e(l.goals[0])+'</h2>'+l.concept.map(t=>'<p>'+e(t)+'</p>').join('')+workedExample(l.workedExample)+'</section>'+
  (l.diagram||l.trace||l.lab?.timing?'<section id="study-example" class="study-section"><p class="section-number">02 / 看图与推演</p><h2>先顺着这个例子走一遍</h2>'+(l.diagram?diagram(l.diagram)+'<p class="figure-caption">图示采用理想行为模型；横向滑动可查看完整图。</p>':'')+(l.trace?table(l.trace):'')+(['sample','pipeline','counter','reset'].includes(l.diagram)?'<div id="hdl-demo" class="experiment"></div>':'')+(l.diagram==='setup'?'<div id="hdl-window" class="experiment"></div>':'')+'</section>':'')+
  '<section id="study-code" class="study-section"><p class="section-number">代码 / 逐步拆解</p><h2>把规则对应到每一段代码</h2><p class="code-context">'+e(l.context)+'</p><div class="code-workbench"><div class="code-workbench-header"><span>'+e(l.language==='text'||!/^\s*(module|package)\b/m.test(l.code)&&l.code.split('\n').every(x=>!x.trim()||x.trim().startsWith('//'))?'行为规格 / 推导说明':l.language==='terminal'?'系统终端':l.language==='systemverilog'?'SystemVerilog · .sv':'Verilog · .v')+'</span><button id="hdl-copy" class="copy-button">复制代码</button></div><pre><code>'+highlight(l.code)+'</code></pre></div><ol class="code-explanations">'+l.notes.map(t=>'<li>'+e(t)+'</li>').join('')+'</ol><aside class="common-mistake"><strong>容易误会的地方</strong><p>'+e(l.trap)+'</p></aside></section>'+
  '<section id="study-quiz" class="study-section"><p class="section-number">练习 / 先预测</p><h2>'+e(l.q)+'</h2><form id="hdl-quiz"><fieldset><legend class="sr-only">本课理解检查</legend><div class="quiz-options">'+l.options.map((o,i)=>'<label class="quiz-option"><input type="radio" name="hdl-answer" value="'+i+'" '+(st.choice===i?'checked':'')+'><span>'+e(o)+'</span></label>').join('')+'</div></fieldset><button class="secondary-button">检查答案</button><p id="hdl-feedback" class="study-feedback" role="status">'+(st.passed?'答对了。'+e(l.answer):'选好再检查，答案会附推理说明。')+'</p></form></section>'+
